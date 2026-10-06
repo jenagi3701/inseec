@@ -90,7 +90,7 @@ window.BSC_I18N = {
       'DAILY COMPLETE!': 'DÉFI TERMINÉ !', 'NEW TODAY\'S BEST!': 'NOUVEAU RECORD DU JOUR !',
       'Same bus for everyone today. Come back tomorrow for a new one!': 'Le même bus pour tout le monde aujourd\'hui. Reviens demain pour un nouveau !',
       'PAUSED': 'PAUSE', 'The scene is hidden while paused — no peeking!': 'La scène est cachée pendant la pause — pas de triche !',
-      'RESUME': 'REPRENDRE', 'QUIT TO MENU': 'QUITTER', 'MENU': 'MENU', 'LANGUAGE': 'LANGUE'
+      'RESUME': 'REPRENDRE', 'CONTINUE': 'CONTINUER', 'RESUMING AT SITUATION': 'REPRISE À LA SITUATION', 'QUIT TO MENU': 'QUITTER', 'MENU': 'MENU', 'LANGUAGE': 'LANGUE'
     },
     passengers: {
       young: ['Jeune adulte', 'Peut rester debout sans souci.'],

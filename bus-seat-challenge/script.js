@@ -64,6 +64,7 @@
       best: { score: 0, combo: 0, reaction: null, level: 0 },
       stats: { games: 0, correct: 0, decisions: 0 },
       daily: { date: '', best: 0, plays: 0 },
+      resume: null,                             // run in progress (CONTINUE)
       settings: { sound: true, music: false, contrast: false, reduced, lang: (navigator.language || 'en').toLowerCase().startsWith('fr') ? 'fr' : 'en' }
     };
   }
@@ -75,7 +76,7 @@
         const s = JSON.parse(raw);
         for (const k of Object.keys(d)) {
           if (s[k] === undefined) continue;
-          if (d[k] && typeof d[k] === 'object' && !Array.isArray(d[k])) Object.assign(d[k], s[k]);
+          if (d[k] && typeof d[k] === 'object' && !Array.isArray(d[k]) && s[k] && typeof s[k] === 'object') Object.assign(d[k], s[k]);
           else d[k] = s[k];
         }
       }
@@ -223,6 +224,12 @@
   }
 
   function renderMenu() {
+    const c = save.resume, btn = $('#btn-continue');
+    if (c && c.kind === 'daily' && c.date !== todayStr()) { save.resume = null; persist(); }
+    if (save.resume) {
+      btn.hidden = false;
+      btn.textContent = c.kind === 'daily' ? `▶ CONTINUE · DAILY · ⭐ ${c.score}` : `▶ CONTINUE · STOP ${pad2(c.level)} · ⭐ ${c.score}`;
+    } else btn.hidden = true;
     const b = save.best;
     $('#menu-best').textContent = b.score > 0 ? `HI-SCORE ${b.score} · BEST STOP ${pad2(b.level)}` : 'NEW PASSENGER? START WITH STOP 01!';
   }
@@ -609,6 +616,48 @@
      ================================================================= */
   function levelCfg() { return G.run.kind === 'daily' ? CFG.daily : LEVELS[G.run.level - 1]; }
 
+  /* ---- save the run in progress (survives closing the tab) ---- */
+  function checkpoint() {
+    const run = G.run; if (!run || run.over) return;
+    run.cp = {
+      kind: run.kind, startLevel: run.startLevel, level: run.level, roundNo: run.roundNo,
+      score: run.score, hearts: run.hearts, combo: run.combo, bestCombo: run.bestCombo,
+      decisions: run.decisions.slice(), highest: run.highest,
+      levelStats: JSON.parse(JSON.stringify(run.levelStats)), date: todayStr()
+    };
+    saveResume();
+  }
+  function saveResume() {
+    const run = G.run;
+    if (!run || run.over || !run.cp) return;
+    // hearts lost since the checkpoint stay lost (no free retries by reloading)
+    const r = Object.assign({}, run.cp, { hearts: Math.min(run.cp.hearts, run.hearts) });
+    save.resume = r.hearts > 0 ? r : null;
+    persist();
+  }
+  function clearResume() { if (G.run) G.run.over = true; save.resume = null; persist(); }
+  window.addEventListener('pagehide', saveResume);
+  window.addEventListener('beforeunload', saveResume);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveResume(); });
+
+  function continueRun() {
+    const c = save.resume; if (!c) return;
+    SFX.unlock();
+    const run = G.run = {
+      kind: c.kind, startLevel: c.startLevel, level: c.level, score: c.score, hearts: c.hearts,
+      combo: c.combo, bestCombo: c.bestCombo, decisions: c.decisions.slice(), highest: c.highest,
+      roundNo: c.roundNo, levelStats: c.levelStats, resumed: true,
+      rng: c.kind === 'daily' ? mulberry32(hashStr('bsc-daily-' + todayStr())) : Math.random
+    };
+    // daily: replay the seeded generator so the remaining buses are the same as before
+    if (run.kind === 'daily') for (let i = 0; i < run.roundNo; i++) generateRound(CFG.daily, run.rng, i + 1);
+    G.round = null;
+    show('game');
+    checkpoint();
+    updateHUD();
+    openLevelIntro();
+  }
+
   function startRun(kind, level) {
     SFX.unlock();
     G.run = {
@@ -625,7 +674,9 @@
     const run = G.run;
     run.level = n; run.highest = Math.max(run.highest, n); run.roundNo = 0;
     run.levelStats = { correct: 0, total: 0, score: 0, rts: [], mistakes: 0 };
+    run.resumed = false;
     G.round = null;
+    checkpoint();
     updateHUD();
     openLevelIntro();
   }
@@ -633,6 +684,7 @@
   function nextRound() {
     const run = G.run, Lv = levelCfg();
     if (run.roundNo >= Lv.rounds) return levelComplete();
+    checkpoint();                       // completed situations so far
     run.roundNo++;
     const r = generateRound(Lv, run.kind === 'daily' ? run.rng : Math.random, run.roundNo);
     r.phase = 'arrive'; r.phaseT = 0; r.mistakes = 0; r.decisions = 0; r.hidden = false; r.marks = [];
@@ -1364,6 +1416,7 @@
       <span class="tag">${daily ? '📅 ' + today : `STOP ${pad2(run.level)} · ${Lv.skill}`}</span>
       <h2>${Lv.icon} ${Lv.stop}</h2>
       ${learnFigures(Lv.learn)}
+      ${run.resumed && run.roundNo > 0 ? `<p class="new-best">↻ RESUMING AT SITUATION ${run.roundNo + 1}/${Lv.rounds}</p>` : ''}
       <p class="tip">💡 ${Lv.tip}</p>
       <div class="kv">
         <span>🧍 Passengers</span><b>${Lv.passengers[0]}${Lv.passengers[1] !== Lv.passengers[0] ? '–' + Lv.passengers[1] : ''}</b>
@@ -1428,6 +1481,10 @@
     if (n >= LEVELS.length) return completion();
     const healed = Math.min(CFG.lives, run.hearts + CFG.healOnLevelClear) - run.hearts;
     run.hearts += healed;
+    run.level = n + 1; run.highest = Math.max(run.highest, n + 1); run.roundNo = 0;
+    run.levelStats = { correct: 0, total: 0, score: 0, rts: [], mistakes: 0 };
+    run.cp = null; checkpoint();
+    run.level = n;                      // keep the cleared stop for this screen
     SFX.play('levelUp');
     const avg = ls.rts.length ? ls.rts.reduce((a, b) => a + b, 0) / ls.rts.length : null;
     const title = pick(Math.random, ['BUS STOP CLEARED!', 'BUS STOP CLEARED!', "YOU'RE GETTING FASTER!"]);
@@ -1474,6 +1531,7 @@
 
   function gameOver() {
     const run = G.run;
+    clearResume();
     if (run.kind === 'daily') return finishDaily(false);
     const { newScore } = recordRunBests(true);
     SFX.play('gameOver');
@@ -1492,6 +1550,7 @@
 
   function completion() {
     const run = G.run;
+    clearResume();
     const { newScore } = recordRunBests(true);
     SFX.play('victory');
     for (let i = 0; i < 4; i++) setTimeout(() => sparkles(rand(60, view.L.W - 60), rand(40, 120), ['#ffd23f', '#5ad1ff', '#ff6fb5', '#7dff9a'][i], 30), i * 250);
@@ -1514,6 +1573,7 @@
 
   function finishDaily(cleared) {
     const run = G.run, today = todayStr();
+    clearResume();
     G.round = null;
     if (save.daily.date !== today) { save.daily.date = today; save.daily.best = 0; save.daily.plays = 0; }
     save.daily.plays++;
@@ -1565,6 +1625,7 @@
     SFX.unlock(); SFX.play('click');
     const a = b.dataset.action;
     if (a === 'start') show('map');
+    else if (a === 'continue') continueRun();
     else if (a === 'daily') startRun('daily', 1);
     else if (a === 'how' || a === 'score' || a === 'settings' || a === 'menu') show(a);
     else if (a === 'lang') toggleSetting('lang');
