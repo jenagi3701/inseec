@@ -1,0 +1,104 @@
+/* ==========================================================================
+   MARKETRACK — responsive.css
+   Desktop → laptop → tablet → mobile. Mobile gets a compact bottom nav,
+   drawer filters, a horizontally scrollable Kanban and single-column flows.
+   ========================================================================== */
+
+@media (max-width: 1280px) {
+  .kpis--strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dash-actions, .dash-funnel, .dash-upcoming, .dash-ach { grid-column: span 6; }
+  .dash-recent { grid-column: 1 / -1; }
+  .jgrid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1100px) {
+  :root { --sidebar-w: 224px; }
+  .detail, .editor-layout { grid-template-columns: 1fr; }
+  .detail__side { position: static; }
+  .jobs-layout { grid-template-columns: 230px minmax(0, 1fr); }
+  .hello { grid-template-columns: 1fr; }
+  .saved { grid-template-columns: 1fr; }
+  .saved__actions { flex-direction: row; }
+  .charts { grid-template-columns: 1fr; }
+}
+
+/* ---------- tablet ---------- */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { display: none; }
+  .brand--mobile { display: flex; }
+  .topbar { padding: 10px 16px; }
+  .topbar__updated { display: none; }
+  .view { padding: 20px 16px 110px; }
+  .footer { padding: 18px 16px 100px; }
+  .mobile-nav {
+    display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 120;
+    background: rgba(255, 253, 248, .97); border-top: 1px solid var(--line); padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); backdrop-filter: blur(10px);
+  }
+  .mnav__link { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font: 600 .7rem var(--font-body); color: var(--muted); text-decoration: none; background: none; border: 0; border-radius: 12px; cursor: pointer; min-height: 48px; }
+  .mnav__link span:first-child { font-size: 1.15rem; }
+  .mnav__link.is-active { color: var(--ink); background: var(--yellow-soft); }
+  .more-sheet { display: block; position: fixed; left: 10px; right: 10px; bottom: 74px; z-index: 119; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 8px; box-shadow: var(--shadow-2); transform: translateY(20px); opacity: 0; pointer-events: none; transition: all .2s var(--ease); }
+  .more-sheet.is-open { transform: none; opacity: 1; pointer-events: auto; }
+  .jobs-layout { grid-template-columns: 1fr; }
+  .filters-toggle { display: inline-flex; }
+  .filters { display: none; position: static; max-height: none; }
+  .filters.is-open { display: block; }
+  .grid-2, .grid-2--wide-left { grid-template-columns: 1fr; }
+  .dash-grid > * { grid-column: 1 / -1 !important; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis--strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mission-path { grid-template-columns: repeat(7, minmax(70px, 1fr)); overflow-x: auto; }
+  .kanban { grid-auto-columns: minmax(240px, 78vw); }
+  .toasts { bottom: 84px; }
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 600px) {
+  body { font-size: 15px; }
+  .hide-sm { display: none; }
+  .page-head { margin-bottom: 14px; }
+  .refresh-box { align-items: flex-start; }
+  .card { padding: 16px; border-radius: 18px; }
+  .jgrid, .jgrid--3 { grid-template-columns: 1fr; }
+  .form-grid, .form-grid--3 { grid-template-columns: 1fr; }
+  .kpis--strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis--sm { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr 1fr; }
+  .saved__edit { grid-template-columns: 1fr; }
+  .quality { grid-template-columns: 1fr; }
+  .q-intro, .interview-hero, .company-head { flex-direction: column; align-items: flex-start; }
+  .map-svg { display: none; }
+  .journey__list { display: flex; flex-direction: column; gap: 4px; list-style: none; padding: 0; margin: 8px 0 0; }
+  .journey__list li { padding: 8px 12px; border-radius: 10px; background: var(--surface-2); color: var(--muted); font: 400 .78rem var(--font-pixel); }
+  .journey__list li.is-reached { background: var(--yellow-soft); color: var(--ink); }
+  .journey__list li.is-here { background: var(--ink); color: var(--yellow); }
+  .mission-path { padding-top: 54px; }
+  .mstep__l { font-size: .7rem; }
+  .letter-edit { min-height: 420px; padding: 16px; font-size: .95rem; }
+  .cv-row { grid-template-columns: 30px 1fr; }
+  .cv-row__act { grid-column: 1 / -1; justify-content: flex-start; }
+  .detail-actions .btn, .confirm-box .btn { flex: 1 1 100%; }
+  .hbar { grid-template-columns: minmax(80px, 38%) 1fr 28px; }
+  .modal-backdrop { padding: 0; align-items: end; }
+  .modal { max-height: 92vh; border-radius: 22px 22px 0 0; width: 100% !important; }
+  .timeline::before { left: 64px; }
+  .timeline__item { grid-template-columns: 50px 30px 1fr; }
+  .record-head__side { width: 100%; }
+  .record-head__side .field { flex: 1 1 100%; }
+  .ccard { grid-template-columns: 44px 1fr; }
+  .ccard__stats { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+  .display { font-size: 2rem; }
+}
+
+@media (forced-colors: active) {
+  .btn, .card, .jcard, .kcard { border: 1px solid CanvasText; }
+  .hbar__fill, .col__bar, .xpbar span { forced-color-adjust: none; background: Highlight; fill: Highlight; }
+}
+
+@media print {
+  .sidebar, .topbar, .mobile-nav, .footer, .toolbar, .assistant { display: none !important; }
+  .shell { display: block; }
+}

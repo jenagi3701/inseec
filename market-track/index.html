@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MARKETRACK · Your career journey, one quest at a time</title>
+  <meta name="description" content="MARKETRACK — find the right marketing job, apply smarter, track everything. A local prototype with demo data and a Career Chicken.">
+  <meta name="theme-color" content="#FBF6EC">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect x='7' y='1' width='3' height='2' fill='%23E5484D'/%3E%3Crect x='4' y='3' width='8' height='9' fill='%23FFFDF7'/%3E%3Crect x='12' y='5' width='3' height='2' fill='%23F28C28'/%3E%3Crect x='10' y='5' width='1' height='1' fill='%232B2622'/%3E%3Crect x='5' y='12' width='1' height='3' fill='%23F2B53A'/%3E%3Crect x='9' y='12' width='1' height='3' fill='%23F2B53A'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Silkscreen&family=Fraunces:ital,opsz,wght@1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#view">Skip to content</a>
+
+  <div class="shell">
+    <aside class="sidebar" aria-label="Main">
+      <a class="brand" href="#/dashboard" aria-label="MARKETRACK home">
+        <span class="brand__mark" aria-hidden="true">🐔</span>
+        <span class="brand__txt"><span class="brand__name">MARKETRACK</span><span class="brand__sub">Find the right job. Apply smarter. Track everything.</span></span>
+      </a>
+      <nav id="nav" class="nav" aria-label="Main navigation"></nav>
+      <div id="chicken-widget" class="chicken-widget"></div>
+      <p class="sidebar__demo small"><span class="badge badge--demo">DEMO</span> Fictional job data · local only</p>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <a class="brand brand--mobile" href="#/dashboard" aria-label="MARKETRACK home"><span class="brand__mark" aria-hidden="true">🐔</span><span class="brand__name">MARKETRACK</span></a>
+        <p class="topbar__updated small">Last updated: <strong class="js-last-updated">—</strong></p>
+        <div class="topbar__actions">
+          <button class="btn btn--ghost btn--sm" id="refresh-top" title="Run the (demo) job refresh now">↻ <span class="hide-sm">Refresh jobs</span></button>
+          <button class="btn btn--ghost btn--sm" id="bell" hidden title="Enable reminder notifications">🔔</button>
+          <button class="btn btn--dark btn--sm" id="assistant-btn" aria-controls="assistant">🐔 <span class="hide-sm">Career Chicken</span></button>
+        </div>
+      </header>
+      <main id="view" class="view" tabindex="-1"></main>
+      <footer class="footer">
+        <p class="footer__brand">🐔 FIND. · PREPARE. · APPLY. · GROW. · CONQUER.</p>
+        <p class="small muted">Your career journey, one quest at a time. Prototype — job offers are fictional DEMO DATA; no live LinkedIn, Indeed or Welcome to the Jungle integration; AI runs locally (rule-based). Your data stays in this browser.</p>
+      </footer>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation"></nav>
+  <div id="more-sheet" class="more-sheet"></div>
+  <aside id="assistant" class="assistant" hidden></aside>
+  <div id="modal-root"></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <noscript><p style="padding:2rem">MARKETRACK needs JavaScript to run.</p></noscript>
+
+  <!-- Data & services -->
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/knowledge.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/adapters.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/chicken.js"></script>
+  <script src="js/cv.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/cover-letter.js"></script>
+  <!-- Views -->
+  <script src="js/applications.js"></script>
+  <script src="js/jobs.js"></script>
+  <script src="js/mission.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/companies.js"></script>
+  <script src="js/statistics.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/assistant.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
