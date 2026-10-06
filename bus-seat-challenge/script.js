@@ -64,7 +64,7 @@
       best: { score: 0, combo: 0, reaction: null, level: 0 },
       stats: { games: 0, correct: 0, decisions: 0 },
       daily: { date: '', best: 0, plays: 0 },
-      settings: { sound: true, music: false, contrast: false, reduced }
+      settings: { sound: true, music: false, contrast: false, reduced, lang: (navigator.language || 'en').toLowerCase().startsWith('fr') ? 'fr' : 'en' }
     };
   }
   function load() {
@@ -86,6 +86,75 @@
   let save = load();
   function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(save)); } catch (e) { /* ignore */ } }
 
+  /* ---------------- i18n (English source → French) ---------------- */
+  let howBuilt = false;
+  const I18N = window.BSC_I18N || {};
+  let LANG = 'en', phraseRe = null, phraseMap = null;
+  const tCache = new Map();
+  for (const [id, d] of Object.entries(P)) d._en = [d.name, d.why];
+  LEVELS.concat([CFG.daily]).forEach(L => { L._en = [L.stop, L.skill, L.tip]; });
+  function T(str) {
+    if (LANG === 'en' || !str || !phraseRe) return str;
+    let v = tCache.get(str);
+    if (v === undefined) {
+      v = str.replace(phraseRe, m => phraseMap[m]);
+      if (tCache.size > 2000) tCache.clear();
+      tCache.set(str, v);
+    }
+    return v;
+  }
+  function translateText(node) {
+    if (node.data === node.__tr) return;
+    const p = node.parentElement;
+    if (!p || p.closest('[data-fr], script, style')) return;
+    node.__en = node.data;
+    node.__tr = T(node.data);
+    if (node.__tr !== node.data) node.data = node.__tr;
+  }
+  function translateTree(root) {
+    if (root.nodeType === 3) return translateText(root);
+    if (root.nodeType !== 1) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) translateText(n);
+  }
+  new MutationObserver(muts => {
+    if (LANG === 'en') return;
+    for (const m of muts) {
+      if (m.type === 'characterData') translateText(m.target);
+      else m.addedNodes.forEach(translateTree);
+    }
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+
+  function setLang(lang) {
+    LANG = I18N[lang] ? lang : 'en';
+    document.documentElement.lang = LANG;
+    const D = I18N[LANG];
+    tCache.clear();
+    if (D) {
+      phraseMap = D.phrases;
+      const esc = k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const keys = Object.keys(phraseMap).sort((a, b) => b.length - a.length).map(esc);
+      phraseRe = new RegExp('(?<![\\p{L}\\p{N}])(?:' + keys.join('|') + ')(?![\\p{L}\\p{N}])', 'gu');
+    } else { phraseRe = null; phraseMap = null; }
+    for (const [id, d] of Object.entries(P)) { const f = D && D.passengers[id]; [d.name, d.why] = f || d._en; }
+    LEVELS.concat([CFG.daily]).forEach(L => { const f = D && D.levels[L.id]; [L.stop, L.skill, L.tip] = f || L._en; });
+    // static blocks with a full French version
+    document.querySelectorAll('[data-fr]').forEach(el => {
+      if (el.__en == null) el.__en = el.innerHTML;
+      el.innerHTML = LANG === 'fr' ? el.dataset.fr : el.__en;
+    });
+    // every other text node: back to English source, then translate
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) {
+      if (n.__en != null && n.data === n.__tr) n.data = n.__en;
+      n.__tr = undefined;
+      translateText(n);
+    }
+    const b = document.getElementById('btn-lang');
+    if (b) b.textContent = LANG === 'fr' ? '🌐 ENGLISH' : '🌐 FRANÇAIS';
+    howBuilt = false; const cb = document.getElementById('cluebook'); if (cb) cb.innerHTML = '';
+  }
+
   /* =================================================================
      2. SETTINGS
      ================================================================= */
@@ -93,7 +162,8 @@
     { key: 'sound', label: '🔊 SOUND', desc: 'Arcade sound effects.' },
     { key: 'music', label: '🎵 MUSIC', desc: 'Chiptune background loop.' },
     { key: 'contrast', label: '◐ HIGH CONTRAST', desc: 'Stronger colours, dimmer background passengers.' },
-    { key: 'reduced', label: '🐢 REDUCED MOTION', desc: 'No shake, no scrolling scenery, calmer effects.' }
+    { key: 'reduced', label: '🐢 REDUCED MOTION', desc: 'No shake, no scrolling scenery, calmer effects.' },
+    { key: 'lang', label: '🌐 LANGUAGE', desc: 'English / Français' }
   ];
   function applySettings() {
     const s = save.settings;
@@ -103,22 +173,29 @@
     SFX.setMusic(s.music);
   }
   function toggleSetting(key) {
+    if (key === 'lang') {
+      save.settings.lang = save.settings.lang === 'fr' ? 'en' : 'fr';
+      persist(); setLang(save.settings.lang);
+      if (G.screen !== 'game') show(G.screen);
+      return;
+    }
     save.settings[key] = !save.settings[key];
     persist(); applySettings();
     if (key === 'sound' && save.settings.sound) SFX.play('click');
   }
   function settingsHTML() {
     return SETTINGS.map(o => `
-      <button class="toggle" data-toggle="${o.key}" aria-pressed="${!!save.settings[o.key]}">
+      <button class="toggle" data-toggle="${o.key}" aria-pressed="${o.key === 'lang' ? false : !!save.settings[o.key]}">
         <span>${o.label}<small>${o.desc}</small></span>
-        <span class="state">${save.settings[o.key] ? 'ON' : 'OFF'}</span>
+        <span class="state">${stateText(o.key)}</span>
       </button>`).join('');
   }
+  function stateText(k) { return k === 'lang' ? (save.settings.lang === 'fr' ? 'FR' : 'EN') : save.settings[k] ? 'ON' : 'OFF'; }
   function bindToggles(root) {
     $$('[data-toggle]', root).forEach(b => b.addEventListener('click', () => {
       toggleSetting(b.dataset.toggle);
-      b.setAttribute('aria-pressed', !!save.settings[b.dataset.toggle]);
-      $('.state', b).textContent = save.settings[b.dataset.toggle] ? 'ON' : 'OFF';
+      b.setAttribute('aria-pressed', b.dataset.toggle === 'lang' ? 'false' : !!save.settings[b.dataset.toggle]);
+      $('.state', b).textContent = stateText(b.dataset.toggle);
     }));
   }
 
@@ -191,7 +268,6 @@
     const rng = mulberry32(hashStr('book-' + type));
     return SP.randomLook(rng, P[type]);
   }
-  let howBuilt = false;
   function renderHow() {
     if (howBuilt) return; howBuilt = true;
     const box = $('#cluebook');
@@ -961,6 +1037,7 @@
   function px(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); }
 
   function textOut(str, x, y, size, color, align = 'center') {
+    str = T(str);
     ctx.font = `${size}px "Press Start 2P", monospace`;
     ctx.textAlign = align; ctx.textBaseline = 'middle';
     ctx.lineJoin = 'round';
@@ -1490,9 +1567,10 @@
     if (a === 'start') show('map');
     else if (a === 'daily') startRun('daily', 1);
     else if (a === 'how' || a === 'score' || a === 'settings' || a === 'menu') show(a);
+    else if (a === 'lang') toggleSetting('lang');
     else if (a === 'reset') {
-      if (confirm('Reset all progress, scores and unlocked stops?')) {
-        const keep = save.settings; save = defaults(); save.settings = keep; persist(); renderScores();
+      if (confirm(T('Reset all progress, scores and unlocked stops?'))) {
+        const keep = save.settings; save = defaults(); save.settings = keep; setLang(keep.lang); persist(); renderScores();
       }
     }
   }));
@@ -1516,6 +1594,7 @@
   }
 
   applySettings();
+  setLang(save.settings.lang);
   renderMenu();
   resize();
   requestAnimationFrame(loop);

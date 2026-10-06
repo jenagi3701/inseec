@@ -20,7 +20,7 @@
     <div class="menu-wrap">
       <canvas id="menu-canvas" width="320" height="110" aria-hidden="true"></canvas>
       <h1 id="title" class="title"><span class="t1">BUS SEAT</span><span class="t2">CHALLENGE</span></h1>
-      <p class="tagline">👀 Look. 🧠 Think. ⚡ React. 🚌 Catch the right seat.</p>
+      <p class="tagline" data-fr="👀 Regarde. 🧠 Réfléchis. ⚡ Réagis. 🚌 Attrape la bonne place.">👀 Look. 🧠 Think. ⚡ React. 🚌 Catch the right seat.</p>
       <div class="train">
         <span>TRAIN YOUR</span>
         <ul><li>👀 OBSERVATION</li><li>⚡ REFLEX</li><li>🧠 THINKING</li></ul>
@@ -32,7 +32,10 @@
           <button class="btn" data-action="how">❓ HOW TO PLAY</button>
           <button class="btn" data-action="score">🏆 SCORE</button>
         </div>
-        <button class="btn btn-small" data-action="settings">⚙ SETTINGS</button>
+        <div class="btn-row">
+          <button class="btn btn-small" data-action="settings">⚙ SETTINGS</button>
+          <button class="btn btn-small" data-action="lang" id="btn-lang" aria-label="Language / Langue">🌐 FRANÇAIS</button>
+        </div>
       </nav>
       <p class="menu-best" id="menu-best"></p>
     </div>
@@ -59,12 +62,12 @@
       <span class="head-spacer"></span>
     </header>
     <div class="scroll">
-      <div class="steps">
+      <div class="steps" data-fr="&lt;div class=&quot;step&quot;&gt;&lt;b&gt;1 · 👀 REGARDE&lt;/b&gt;&lt;span&gt;Le bus s'arrête. Des passagers montent. Une place libre est marquée d'une &lt;b&gt;★&lt;/b&gt; et d'une flèche qui rebondit.&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;b&gt;2 · 🧠 RÉFLÉCHIS&lt;/b&gt;&lt;span&gt;Qui en a le plus besoin &lt;i&gt;maintenant&lt;/i&gt; ? Lis les indices sur chaque passager.&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;b&gt;3 · ⚡ CLIQUE&lt;/b&gt;&lt;span&gt;Touche-le avant la fin du chrono. Plus tu es rapide, plus tu marques. 3 erreurs = fin de partie.&lt;/span&gt;&lt;/div&gt;">
         <div class="step"><b>1 · 👀 LOOK</b><span>The bus stops. Passengers board. A free spot is marked with <b>★</b> and a bouncing arrow.</span></div>
         <div class="step"><b>2 · 🧠 THINK</b><span>Who needs that spot most <i>right now</i>? Read the clues on each passenger.</span></div>
         <div class="step"><b>3 · ⚡ CLICK</b><span>Tap / click them before the timer runs out. Faster = more points. 3 mistakes = game over.</span></div>
       </div>
-      <div class="rules">
+      <div class="rules" data-fr="&lt;p&gt;🔁 &lt;b&gt;Le contexte compte.&lt;/b&gt; Une personne en fauteuil a besoin de l'&lt;b&gt;espace ♿&lt;/b&gt;, pas d'un siège. Une &lt;b&gt;place prioritaire&lt;/b&gt; libre (orange, rayée, avec une canne) revient à quelqu'un qui en a besoin. Si deux personnes en ont autant besoin, les deux réponses sont bonnes.&lt;/p&gt;&lt;p&gt;⚡ &lt;b&gt;Bonus de vitesse :&lt;/b&gt; &amp;lt;1s +100 · &amp;lt;2s +75 · &amp;lt;3s +50 · &amp;lt;5s +25. Les &lt;b&gt;combos&lt;/b&gt; à 3 / 5 / 10 multiplient tes points.&lt;/p&gt;&lt;p&gt;⌨ &lt;b&gt;Clavier :&lt;/b&gt; ← → ou Tab pour choisir, Entrée/Espace pour valider, 1–9 pour choisir par numéro, P/Échap pour la pause.&lt;/p&gt;">
         <p>🔁 <b>Context matters.</b> A wheelchair user needs the <b>♿ space</b>, not a seat. A free <b>priority seat</b> (orange, striped, with a cane icon) should go to someone who needs it. When two people need it equally, either answer is right.</p>
         <p>⚡ <b>Speed bonus:</b> &lt;1s +100 · &lt;2s +75 · &lt;3s +50 · &lt;5s +25. <b>Combos</b> at 3 / 5 / 10 multiply your points.</p>
         <p>⌨ <b>Keyboard:</b> ← → or Tab to move, Enter/Space to pick, 1–9 to pick by number, P/Esc to pause.</p>
@@ -131,6 +134,7 @@
 </div>
 
 <script src="config.js"></script>
+<script src="i18n.js"></script>
 <script src="assets/characters/characters.js"></script>
 <script src="assets/bus/bus.js"></script>
 <script src="assets/sounds/sfx.js"></script>

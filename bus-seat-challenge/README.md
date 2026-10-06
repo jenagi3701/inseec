@@ -31,6 +31,7 @@ bus-seat-challenge/
 ├── index.html                    screens: menu, route map, how-to, scores, settings, game, modal
 ├── style.css                     pixel UI, responsive layout, high-contrast & reduced-motion modes
 ├── config.js                     ★ MAIN GAME CONFIGURATION (levels, passengers, scoring, daily)
+├── i18n.js                       French translation (UI phrases, passengers, levels)
 ├── script.js                     game engine: generator, state machine, scoring, rendering, UI
 ├── assets/
 │   ├── characters/characters.js  procedural pixel-art passengers (auto-outlined, cached)
@@ -152,6 +153,7 @@ Other useful places:
 
 - **Mouse / touch:** click or tap a passenger (or a spot). Hit areas are generous, and a tap near a passenger counts.
 - **Keyboard:** `← → ↑ ↓` / `Tab` move the focus, `Enter` / `Space` pick, `1`–`9` pick by number (labels appear), `P` / `Esc` pause.
+- **Language:** 🌐 English / Français (menu button or Settings; defaults to the browser language).
 - **Settings** (menu or pause): 🔊 Sound, 🎵 Music, ◐ High contrast (stronger colours, background passengers dimmed), 🐢 Reduced motion (no shake, no scrolling scenery or particles, instant boarding). Reduced motion follows the OS preference on first launch.
 - Important information never relies on colour alone. Priority seats have stripes and a pictogram, the ♿ space has an icon, hearts are ♥ / ♡, results show ✓ / ✗ marks plus text, and the low-time warning blinks and shows a striped bar.
 - Responsive: landscape uses a side-view bus (front to the right), portrait phones get a vertical bus (front at the top). The layout switches live when the device rotates.
