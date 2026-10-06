@@ -65,7 +65,7 @@
       stats: { games: 0, correct: 0, decisions: 0 },
       daily: { date: '', best: 0, plays: 0 },
       resume: null,                             // run in progress (CONTINUE)
-      settings: { sound: true, music: false, contrast: false, reduced, lang: (navigator.language || 'en').toLowerCase().startsWith('fr') ? 'fr' : 'en' }
+      settings: { sound: true, music: true, contrast: false, reduced, lang: (navigator.language || 'en').toLowerCase().startsWith('fr') ? 'fr' : 'en' }
     };
   }
   function load() {
@@ -172,6 +172,8 @@
     document.body.classList.toggle('reduced', !!s.reduced);
     SFX.setSound(s.sound);
     SFX.setMusic(s.music);
+    const m = document.getElementById('btn-mute');
+    if (m) { const on = s.sound || s.music; m.textContent = on ? '🔊' : '🔇'; m.setAttribute('aria-pressed', String(!on)); }
   }
   function toggleSetting(key) {
     if (key === 'lang') {
@@ -182,7 +184,7 @@
     }
     save.settings[key] = !save.settings[key];
     persist(); applySettings();
-    if (key === 'sound' && save.settings.sound) SFX.play('click');
+    if ((key === 'sound' || key === 'music') && save.settings[key]) { SFX.unlock(); SFX.play('correct'); }
   }
   function settingsHTML() {
     return SETTINGS.map(o => `
@@ -434,6 +436,7 @@
       return;
     }
     if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') { e.preventDefault(); pause(); return; }
+    if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleMute(); return; }
     const r = G.round;
     if (!r || r.phase !== 'decide') return;
     const list = candidates();
@@ -1617,6 +1620,13 @@
     $('#game-canvas').focus({ preventScroll: true });
   }
   $('#btn-pause').addEventListener('click', () => { SFX.unlock(); pause(); });
+  function toggleMute() {
+    const on = !(save.settings.sound || save.settings.music);
+    save.settings.sound = on; save.settings.music = on;
+    persist(); applySettings();
+    if (on) { SFX.unlock(); SFX.play('correct'); }
+  }
+  $('#btn-mute').addEventListener('click', toggleMute);
 
   /* =================================================================
      10. BOOT

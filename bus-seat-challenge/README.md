@@ -152,7 +152,7 @@ Other useful places:
 ## Controls & accessibility
 
 - **Mouse / touch:** click or tap a passenger (or a spot). Hit areas are generous, and a tap near a passenger counts.
-- **Keyboard:** `← → ↑ ↓` / `Tab` move the focus, `Enter` / `Space` pick, `1`–`9` pick by number (labels appear), `P` / `Esc` pause.
+- **Keyboard:** `← → ↑ ↓` / `Tab` move the focus, `Enter` / `Space` pick, `1`–`9` pick by number (labels appear), `P` / `Esc` pause, `M` (or the 🔊 button in the HUD) mutes / unmutes.
 - **Language:** 🌐 English / Français (menu button or Settings; defaults to the browser language).
 - **Settings** (menu or pause): 🔊 Sound, 🎵 Music, ◐ High contrast (stronger colours, background passengers dimmed), 🐢 Reduced motion (no shake, no scrolling scenery or particles, instant boarding). Reduced motion follows the OS preference on first launch.
 - Important information never relies on colour alone. Priority seats have stripes and a pictogram, the ♿ space has an icon, hearts are ♥ / ♡, results show ✓ / ✗ marks plus text, and the low-time warning blinks and shows a striped bar.
