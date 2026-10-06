@@ -47,6 +47,12 @@ Coin characters are bought on the character-select screen.
 4. Moonlit Cove — new enemy types (gunners)
 5. Storm Fortress — **Final boss: Admiral Murkfang**
 
+## Saving your journey
+
+- Each level has checkpoint flags (two along the route, plus one at the boss gate). Passing one saves your journey, banks the coins you've found and restores 20% HP.
+- If you're shipwrecked, choose **Continue from checkpoint**. If you quit or close the tab, use **Continue** on the title screen.
+- The **Journey** screen shows your progress and gives you a **save code**. Copy it, then paste it into **Load a save code** on another device or browser to carry on there.
+
 ## Save data
 
 Progress (coins, scores, unlocked crew, highest level, bosses beaten, sound setting) is stored in `localStorage` under `pixelPirateAdventure_v1`. Use **Reset Save** on the title screen to start over.

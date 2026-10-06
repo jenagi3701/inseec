@@ -64,8 +64,10 @@
       <p class="tag">Explore · Fight · Collect · Unlock your crew!</p>
       <div class="wallet">🪙 <span class="walletCoins">0</span> &nbsp; ⭐ BEST <span id="titleBest">0</span></div>
       <div class="btn-col">
+        <button class="btn primary hidden" id="btnContinue">▶ CONTINUE</button>
         <button class="btn primary" id="btnPlay">▶ PLAY</button>
         <button class="btn" id="btnCrew">☠ CREW</button>
+        <button class="btn" id="btnJourney">📜 JOURNEY</button>
         <button class="btn" id="btnHelp">? CONTROLS</button>
         <button class="btn" id="btnMute">♪ SOUND: ON</button>
         <button class="btn danger" id="btnReset">RESET SAVE</button>
@@ -115,8 +117,30 @@
       <div class="btn-col">
         <button class="btn primary" id="btnResume">▶ RESUME</button>
         <button class="btn" id="btnRestart">↻ RESTART LEVEL</button>
-        <button class="btn danger" id="btnQuit">⚑ QUIT TO MAP</button>
+        <button class="btn danger" id="btnQuit">⚑ QUIT (KEEPS LAST CHECKPOINT)</button>
       </div>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section id="screen-journey" class="screen hidden">
+    <div class="panel wide journey-panel">
+      <h2>📜 CAPTAIN'S JOURNEY</h2>
+      <div id="journeyLog"></div>
+      <div class="codes">
+        <div class="code-box">
+          <label for="saveCodeOut">YOUR SAVE CODE</label>
+          <textarea id="saveCodeOut" rows="3" readonly></textarea>
+          <button class="btn" id="btnCopyCode">COPY CODE</button>
+        </div>
+        <div class="code-box">
+          <label for="saveCodeIn">LOAD A SAVE CODE</label>
+          <textarea id="saveCodeIn" rows="3" placeholder="Paste a code that starts with PPA1-"></textarea>
+          <button class="btn" id="btnLoadCode">LOAD JOURNEY</button>
+        </div>
+      </div>
+      <p id="saveMsg" class="tiny save-msg"></p>
+      <div class="btn-row"><button class="btn" id="journeyBack">◀ BACK</button></div>
     </div>
   </section>
 

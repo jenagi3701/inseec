@@ -26,7 +26,7 @@ const FONT = '8px "Press Start 2P", monospace';
 // save (localStorage)
 // ---------------------------------------------------------
 const SAVE_KEY = 'pixelPirateAdventure_v1';
-const defaultSave = () => ({ coins: 0, totalScore: 0, bestScore: 0, unlocked: ['captain'], highestLevel: 1, bosses: [], levelBest: {}, cleared: [], selected: 'captain', muted: false });
+const defaultSave = () => ({ journey: null, coins: 0, totalScore: 0, bestScore: 0, unlocked: ['captain'], highestLevel: 1, bosses: [], levelBest: {}, cleared: [], selected: 'captain', muted: false });
 function loadSave() {
   try {
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -87,23 +87,84 @@ function sfx(name) {
   } catch (e) { /* audio not available */ }
 }
 
-// background music: 16-step loop scheduled slightly ahead on the audio clock
+// background music: an original heroic march (drums, galloping bass, brass
+// swells and a horn fanfare), scheduled slightly ahead on the audio clock
+let musicBus = null, noiseBuf = null;
+function musicOut() {
+  if (!musicBus) {
+    musicBus = actx.createGain(); musicBus.gain.value = 0.6; musicBus.connect(actx.destination);
+    const len = Math.floor(actx.sampleRate * 0.6);
+    noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let k = 0; k < len; k++) d[k] = Math.random() * 2 - 1;
+  }
+  return musicBus;
+}
+const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+function voice(m, t, d, type, vol, cutoff, attack, detune) {
+  const o = actx.createOscillator(); o.type = type; o.frequency.value = mf(m); if (detune) o.detune.value = detune;
+  const f = actx.createBiquadFilter(); f.type = 'lowpass';
+  f.frequency.setValueAtTime(cutoff * 0.45, t); f.frequency.linearRampToValueAtTime(cutoff, t + attack + 0.06);
+  const gn = actx.createGain();
+  gn.gain.setValueAtTime(0.0001, t); gn.gain.linearRampToValueAtTime(vol, t + attack);
+  gn.gain.setValueAtTime(vol, t + Math.max(attack, d - 0.07)); gn.gain.linearRampToValueAtTime(0.0001, t + d);
+  o.connect(f).connect(gn).connect(musicOut()); o.start(t); o.stop(t + d + 0.05);
+}
+function drum(kind, t, vol) {
+  const out = musicOut();
+  if (kind === 'kick' || kind === 'tom') {
+    const o = actx.createOscillator(), gn = actx.createGain(), kick = kind === 'kick';
+    o.type = 'sine'; o.frequency.setValueAtTime(kick ? 150 : 120, t); o.frequency.exponentialRampToValueAtTime(kick ? 40 : 70, t + 0.2);
+    gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.001, t + (kick ? 0.32 : 0.4));
+    o.connect(gn).connect(out); o.start(t); o.stop(t + 0.45); return;
+  }
+  const src = actx.createBufferSource(); src.buffer = noiseBuf;
+  const f = actx.createBiquadFilter(); f.type = kind === 'hat' ? 'highpass' : 'bandpass'; f.frequency.value = kind === 'hat' ? 7000 : kind === 'crash' ? 5000 : 1700;
+  const gn = actx.createGain(), dd = kind === 'hat' ? 0.04 : kind === 'crash' ? 0.55 : 0.2;
+  gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.001, t + dd);
+  src.connect(f).connect(gn).connect(out); src.start(t); src.stop(t + dd + 0.02);
+}
+// 4 bars of 16 steps. chords = brass voicing per bar (bass plays the root an octave down),
+// melody = [step, midi note, length in steps]
 const SONGS = {
-  sea: { bpm: 132, bass: [110, 0, 110, 0, 147, 0, 147, 0, 131, 0, 131, 0, 98, 0, 123, 0], lead: [440, 0, 523, 587, 659, 0, 587, 0, 523, 0, 440, 0, 392, 440, 0, 0] },
-  boss: { bpm: 160, bass: [110, 110, 0, 110, 117, 117, 0, 117, 104, 104, 0, 104, 98, 0, 98, 0], lead: [440, 0, 466, 0, 440, 0, 415, 0, 440, 523, 0, 466, 440, 0, 0, 0] },
+  hero: { bpm: 104, introLoops: 1, kicks: [0, 6, 8], gallop: true,
+    chords: [[50, 53, 57], [46, 50, 53], [53, 57, 60], [48, 52, 55]], // Dm  Bb  F  C
+    melody: [[0, 69, 3], [3, 74, 5], [8, 77, 2], [10, 76, 2], [12, 74, 4], [16, 77, 6], [22, 74, 2], [24, 70, 4], [28, 74, 2], [30, 77, 2],
+      [32, 81, 6], [38, 79, 2], [40, 77, 4], [44, 72, 4], [48, 76, 4], [52, 79, 4], [56, 84, 8]] },
+  boss: { bpm: 124, introLoops: 0, kicks: [0, 3, 6, 8, 11, 14], gallop: true,
+    chords: [[50, 53, 57], [51, 55, 58], [50, 53, 57], [49, 52, 57]], // Dm  Eb  Dm  A
+    melody: [[0, 74, 2], [2, 74, 2], [4, 77, 2], [6, 74, 2], [8, 81, 4], [12, 80, 4], [16, 79, 6], [22, 75, 2], [24, 74, 8],
+      [32, 74, 2], [34, 74, 2], [36, 77, 2], [38, 79, 2], [40, 81, 4], [44, 84, 4], [48, 82, 4], [52, 81, 4], [56, 73, 8]] },
 };
-const music = { next: 0, step: 0 };
+const music = { next: 0, step: 0, song: null };
+function playStep(song, step, t, len) {
+  const i = step % 64, bar = Math.floor(i / 16), b = i % 16, loop = Math.floor(step / 64);
+  const chord = song.chords[bar];
+  // drums
+  if (i === 0) drum('crash', t, 0.07);
+  if (song.kicks.includes(b)) drum('kick', t, 0.5);
+  if (b === 4 || b === 12) drum('snare', t, 0.22);
+  if (b % 2 === 0) drum('hat', t, 0.035);
+  if (bar === 3 && b >= 12) drum('tom', t, 0.28);
+  // galloping bass (da-da-DUM)
+  if (!song.gallop || b % 4 !== 1) voice(chord[0] - 12, t, len * 0.9, 'sawtooth', b % 4 === 0 ? 0.11 : 0.07, 520, 0.01);
+  // brass swell at the top of each bar, stab on beat 3
+  if (b === 0) for (const n of chord) { voice(n + 12, t, len * 15, 'sawtooth', 0.03, 1500, 0.18, -8); voice(n + 12, t, len * 15, 'sawtooth', 0.03, 1500, 0.18, 8); }
+  if (b === 8) for (const n of chord) voice(n + 12, t, len * 2, 'square', 0.025, 2200, 0.02);
+  // horn melody (after the intro build-up)
+  if (loop >= song.introLoops) for (const [st, m, l] of song.melody) if (st === i) {
+    voice(m, t, len * l * 0.95, 'sawtooth', 0.045, 2600, 0.04, -6);
+    voice(m, t, len * l * 0.95, 'sawtooth', 0.045, 2600, 0.04, 6);
+    voice(m - 12, t, len * l * 0.95, 'square', 0.02, 1400, 0.04);
+  }
+}
 function musicTick() {
   if (!actx || save.muted || !G || !G.running || G.paused || G.over) { music.next = 0; return; }
-  const song = G.arena ? SONGS.boss : SONGS.sea;
-  const len = 60 / song.bpm / 2;
+  const song = G.arena ? SONGS.boss : SONGS.hero;
+  if (music.song !== song || music.level !== G.level) { music.song = song; music.level = G.level; music.step = 0; music.next = 0; }
+  const len = 60 / song.bpm / 4;
   if (music.next < actx.currentTime) music.next = actx.currentTime + 0.05;
-  while (music.next < actx.currentTime + 0.12) {
-    const i = music.step % 16, d = music.next - actx.currentTime;
-    try {
-      if (song.bass[i]) tone(song.bass[i], len * 0.9, 'triangle', 0, 0.05, d);
-      if (song.lead[i] && Math.floor(music.step / 16) % 2) tone(song.lead[i], len * 0.8, 'square', 0, 0.014, d);
-    } catch (e) { /* audio unavailable */ }
+  while (music.next < actx.currentTime + 0.15) {
+    try { playStep(song, music.step, music.next, len); } catch (e) { /* audio unavailable */ }
     music.step++; music.next += len;
   }
 }
@@ -1290,7 +1351,7 @@ const LEVELS = [
   { n: 5, name: 'Storm Fortress', theme: 'storm', len: 2800, mix: { slime: 3, grunt: 5, gunner: 4, flyer: 5, heavy: 3 }, coins: 22, boss: 'kraken', bossN: 2, desc: 'FINAL BOSS' },
 ];
 
-function startLevel(n, charId) {
+function startLevel(n, charId, resume) {
   const L = LEVELS[n - 1];
   const D = CH[charId];
   const rng = seeded(n * 977);
@@ -1298,7 +1359,7 @@ function startLevel(n, charId) {
   G = {
     level: n, L, theme: L.theme, worldW: L.len, t: 0, running: true, paused: false, over: false, won: false,
     enemies: [], hbs: [], hz: [], hearts: [], parts: [], texts: [], fx: [], coins: [], timers: [], plats: [],
-    cam: 0, shake: 0, flash: 0, weather: 0, score: 0, coinCount: 0,
+    cam: 0, shake: 0, flash: 0, weather: 0, score: 0, coinCount: 0, banked: 0, cps: [],
     stats: { kills: 0, dmg: 0, hurt: 0 },
     arena: false, arenaX: L.boss ? L.len - W : 0, boss: null, chest: null, endT: 0,
   };
@@ -1330,6 +1391,22 @@ function startLevel(n, charId) {
     if (t === 'flyer') e.baseY = e.y;
   });
   if (!L.boss) G.chest = { x: L.len - 60, open: false };
+  // checkpoints: two along the route, plus one at the boss gate
+  for (const k of [0.36, 0.68]) G.cps.push({ x: Math.round(L.len * k), done: false });
+  if (L.boss) G.cps.push({ x: G.arenaX - 40, done: false });
+  const J = save.journey;
+  if (resume && J && J.level === n && J.cp > 0) {
+    // continue the saved journey from its last checkpoint
+    const cx = J.cpx;
+    G.cps.forEach((c, i) => { if (i < J.cp) c.done = true; });
+    G.enemies = G.enemies.filter(e => e.x > cx + 60);
+    G.coins = G.coins.filter(c => c.x > cx);
+    P.x = cx + 4; G.cam = clamp(P.x - W * 0.42, 0, G.worldW - W);
+    G.score = J.score || 0; G.coinCount = G.banked = J.coins || 0; G.stats.kills = J.kills || 0;
+  } else {
+    save.journey = { level: n, char: charId, cp: 0, cpx: 0, score: 0, coins: 0, kills: 0 };
+  }
+  save.journey.char = charId;
   P.face = 1;
   setupHUD();
   showScreen(null);
@@ -1337,7 +1414,7 @@ function startLevel(n, charId) {
   updateTouchVisibility();
   input.queue.length = 0;
   for (const k in input.held) input.held[k] = false;
-  toast('LEVEL ' + n + ': ' + L.name.toUpperCase(), 2);
+  toast(resume && save.journey.cp > 0 ? 'JOURNEY CONTINUES · CHECKPOINT ' + save.journey.cp : 'LEVEL ' + n + ': ' + L.name.toUpperCase(), 2);
   save.selected = charId; persist();
 }
 
@@ -1384,6 +1461,7 @@ function update(dt) {
   updateCoins(dt);
   updateFx(dt);
   updateChest(dt);
+  updateCheckpoints();
 
   // boss arena trigger
   const L = G.L;
@@ -1568,6 +1646,27 @@ function updateFx(dt) {
   G.fx = G.fx.filter(f => f.age < f.life);
 }
 
+function updateCheckpoints() {
+  G.cps.forEach((c, i) => {
+    if (c.done || G.over || P.x < c.x) return;
+    c.done = true;
+    // bank the coins found so far and record where to resume
+    save.coins += G.coinCount - G.banked; G.banked = G.coinCount;
+    save.journey = { level: G.level, char: P.id, cp: i + 1, cpx: c.x, score: G.score, coins: G.coinCount, kills: G.stats.kills };
+    persist();
+    P.hp = Math.min(P.maxHp, P.hp + Math.round(P.maxHp * 0.2));
+    toast('⚑ JOURNEY SAVED!', 1.4); sfx('open');
+    particles(c.x + 6, GROUND - 30, 20, ['#ffd23f', '#fff8c2', '#8ef59b'], { spd: 90, grav: -40 });
+  });
+}
+function drawCheckpoint(c) {
+  const x = Math.round(c.x), wave = Math.floor(G.t * 6) % 2;
+  R(x, GROUND - 34, 2, 34, '#5a3412'); R(x - 1, GROUND - 36, 4, 3, '#ffd23f');
+  const col = c.done ? '#ffd23f' : '#c62828';
+  R(x + 2, GROUND - 33, 12, 8, col); R(x + 14, GROUND - 31 + wave, 2, 5, col);
+  R(x + 6, GROUND - 31, 4, 4, c.done ? '#fff8c2' : '#fff');
+  R(x - 3, GROUND - 2, 8, 2, '#5a3412');
+}
 function updateChest(dt) {
   const c = G.chest;
   if (!c) return;
@@ -1619,6 +1718,7 @@ function render() {
       pxText(str, x, 154, '#fff7e0');
     }
   }
+  for (const c of G.cps) if (c.x > cam - 20 && c.x < cam + W + 20) drawCheckpoint(c);
   if (G.chest) { g.save(); g.translate(0, G.chest.drop || 0); drawChest(G.chest); g.restore(); }
   for (const h of G.hearts) if (h.age < 9 || Math.floor(G.t * 8) % 2) drawHeart(h.x, h.y + Math.sin(G.t * 5) * 1.5);
   for (const c of G.coins) if (c.x > cam - 10 && c.x < cam + W + 10) drawCoin(c.x, c.y, G.t + c.x * 0.01);
@@ -1783,13 +1883,66 @@ function updateHUD() {
 // =========================================================
 // SCREENS / FLOW
 // =========================================================
-const SCREENS = ['title', 'levels', 'select', 'result', 'pause', 'help', 'unlock', 'confirm'];
+const SCREENS = ['title', 'levels', 'select', 'result', 'pause', 'help', 'unlock', 'confirm', 'journey'];
 function showScreen(name) {
   for (const s of SCREENS) if (s !== 'unlock' && s !== 'confirm') $('#screen-' + s).classList.toggle('hidden', s !== name);
   document.querySelectorAll('.walletCoins').forEach(el => { el.textContent = save.coins.toLocaleString('en-US'); });
   if (name && name !== 'pause' && name !== 'help') { $('#hud').classList.add('hidden'); $('#touch').classList.add('hidden'); }
 }
-function goTitle() { G = null; $('#titleBest').textContent = save.bestScore.toLocaleString('en-US'); $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON'); showScreen('title'); }
+function goTitle() {
+  G = null;
+  $('#titleBest').textContent = save.bestScore.toLocaleString('en-US');
+  $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON');
+  const J = save.journey, c = $('#btnContinue');
+  c.classList.toggle('hidden', !J);
+  if (J) c.textContent = '▶ CONTINUE · LV ' + J.level + (J.cp > 0 ? ' ⚑' + J.cp : '');
+  $('#btnPlay').classList.toggle('primary', !J);
+  $('#btnPlay').textContent = J ? '⚑ VOYAGE MAP' : '▶ PLAY';
+  showScreen('title');
+}
+function continueJourney() {
+  const J = save.journey;
+  if (!J) return goLevels();
+  if (J.cp > 0 && isUnlocked(J.char)) startLevel(J.level, J.char, true);
+  else { selChar = isUnlocked(J.char) ? J.char : 'captain'; goSelect(Math.min(J.level, maxPlayable())); }
+}
+
+// ---- journey log + transferable save code ----
+const SAVE_PREFIX = 'PPA1-';
+function saveCode() { return SAVE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(save)))); }
+function parseSaveCode(code) {
+  code = String(code || '').trim().replace(/\s+/g, '');
+  if (!code.startsWith(SAVE_PREFIX)) throw new Error('A save code starts with ' + SAVE_PREFIX);
+  let o;
+  try { o = JSON.parse(decodeURIComponent(escape(atob(code.slice(SAVE_PREFIX.length))))); } catch (e) { throw new Error('This code is incomplete or damaged. Copy the whole code and try again.'); }
+  if (!o || typeof o !== 'object') throw new Error('This code is incomplete or damaged.');
+  const n = (v, lo, hi) => (Number.isFinite(v) ? clamp(Math.floor(v), lo, hi) : lo);
+  const s2 = defaultSave();
+  s2.coins = n(o.coins, 0, 1e9); s2.totalScore = n(o.totalScore, 0, 1e12); s2.bestScore = n(o.bestScore, 0, 1e12);
+  s2.highestLevel = n(o.highestLevel, 1, 6);
+  s2.unlocked = ['captain'].concat((Array.isArray(o.unlocked) ? o.unlocked : []).filter(id => CH[id] && id !== 'captain'));
+  s2.bosses = (Array.isArray(o.bosses) ? o.bosses : []).filter(b => b === 1 || b === 2);
+  s2.cleared = (Array.isArray(o.cleared) ? o.cleared : []).filter(l => l >= 1 && l <= 5);
+  if (o.levelBest && typeof o.levelBest === 'object') for (const k of ['1', '2', '3', '4', '5']) if (Number.isFinite(o.levelBest[k])) s2.levelBest[k] = n(o.levelBest[k], 0, 1e12);
+  s2.selected = CH[o.selected] ? o.selected : 'captain';
+  s2.muted = !!o.muted;
+  const J = o.journey;
+  if (J && typeof J === 'object' && J.level >= 1 && J.level <= 5 && CH[J.char]) s2.journey = { level: n(J.level, 1, 5), char: J.char, cp: n(J.cp, 0, 3), cpx: n(J.cpx, 0, 5000), score: n(J.score, 0, 1e9), coins: n(J.coins, 0, 1e9), kills: n(J.kills, 0, 999) };
+  return s2;
+}
+function goJourney() {
+  const lv = LEVELS.map(L => {
+    const J = save.journey, cleared = save.cleared.includes(L.n), here = J && J.level === L.n;
+    const st = cleared ? '✔ CLEARED · BEST ' + (save.levelBest[L.n] || 0).toLocaleString('en-US') : here ? (J.cp > 0 ? '⚑ CHECKPOINT ' + J.cp + ' OF ' + (L.boss ? 3 : 2) : '▶ NEXT STOP') : L.n > maxPlayable() ? '🔒 NOT REACHED' : '· OPEN';
+    return `<li class="${cleared ? 'done' : here ? 'here' : ''}"><b>${L.n}. ${L.name}</b>${L.boss ? ' ☠' : ''}<span>${st}</span></li>`;
+  }).join('');
+  $('#journeyLog').innerHTML = `<ol class="jlog">${lv}</ol>
+    <div class="jstats"><div>CREW <b>${save.unlocked.length}/9</b></div><div>BOSSES <b>${save.bosses.length}/2</b></div><div>🪙 <b>${save.coins.toLocaleString('en-US')}</b></div><div>⭐ TOTAL <b>${save.totalScore.toLocaleString('en-US')}</b></div></div>`;
+  $('#saveCodeOut').value = saveCode();
+  $('#saveCodeIn').value = '';
+  $('#saveMsg').textContent = 'Your journey saves automatically in this browser at every checkpoint.';
+  showScreen('journey');
+}
 
 function maxPlayable() { return Math.min(5, save.highestLevel); }
 function goLevels() {
@@ -1921,13 +2074,14 @@ function finishLevel(win) {
   let bonus = 0, hpBonus = 0;
   if (win) { bonus = 500 * n; hpBonus = Math.round(P.hp) * 5; G.score += bonus + hpBonus; }
   const coins = G.coinCount;
-  save.coins += coins;
+  save.coins += coins - G.banked; G.banked = coins;
   save.totalScore += G.score;
   let newBest = false;
   if (win) {
     if (!save.cleared.includes(n)) save.cleared.push(n);
     save.highestLevel = Math.max(save.highestLevel, n + 1);
     if (G.score > (save.levelBest[n] || 0)) { save.levelBest[n] = G.score; newBest = true; }
+    save.journey = n < 5 ? { level: n + 1, char: P.id, cp: 0, cpx: 0, score: 0, coins: 0, kills: 0 } : null;
   }
   save.bestScore = Math.max(save.bestScore, G.score);
   persist();
@@ -1941,14 +2095,16 @@ function finishLevel(win) {
     (newBest ? '<div class="newbest">NEW BEST FOR THIS LEVEL!</div>' : '') +
     `<div>🪙 COINS: ${coins.toLocaleString('en-US')}</div>` +
     `<div>☠ ENEMIES DEFEATED: ${kills}</div>` +
-    (win ? `<div>⚓ CLEAR BONUS: ${bonus}</div><div>❤ HP BONUS: ${hpBonus}</div>` : '<div class="tiny">You keep the coins you collected!</div>') +
+    (win ? `<div>⚓ CLEAR BONUS: ${bonus}</div><div>❤ HP BONUS: ${hpBonus}</div>` : '<div class="tiny">You keep the coins you collected!' + (save.journey && save.journey.cp > 0 ? '<br>Your journey is saved at checkpoint ' + save.journey.cp + '.' : '') + '</div>') +
     `<div class="tiny">🪙 TOTAL COINS: ${save.coins.toLocaleString('en-US')}</div>`;
   const btns = $('#resultButtons');
   btns.innerHTML = '';
   const add = (label, cls, fn, id) => { const b = document.createElement('button'); b.className = 'btn ' + cls; b.textContent = label; if (id) b.id = id; b.addEventListener('click', fn); btns.appendChild(b); };
   if (win && !final) add('[ NEXT LEVEL ]', 'primary', () => goSelect(n + 1), 'btnNext');
   if (final) add('[ PLAY AGAIN ]', 'primary', () => goLevels(), 'btnAgain');
-  if (!win) add('↻ RETRY', 'primary', () => goSelect(n), 'btnRetry');
+  const J = save.journey;
+  if (!win && J && J.level === n && J.cp > 0) add('⚑ CONTINUE FROM CHECKPOINT ' + J.cp, 'primary', () => startLevel(n, P.id, true), 'btnCheckpoint');
+  if (!win) add('↻ RETRY LEVEL', J && J.cp > 0 ? '' : 'primary', () => goSelect(n), 'btnRetry');
   add('⚑ VOYAGE MAP', '', () => goLevels(), 'btnMap');
   showScreen('result');
   sfx(win ? 'open' : 'over');
@@ -2003,6 +2159,19 @@ document.querySelectorAll('#touch .tbtn').forEach(b => {
 // buttons
 $('#btnPlay').addEventListener('click', () => { sfx('coin'); goLevels(); });
 $('#btnCrew').addEventListener('click', () => goSelect(maxPlayable()));
+$('#btnContinue').addEventListener('click', () => { sfx('coin'); continueJourney(); });
+$('#btnJourney').addEventListener('click', goJourney);
+$('#journeyBack').addEventListener('click', goTitle);
+$('#btnCopyCode').addEventListener('click', () => {
+  const ta = $('#saveCodeOut');
+  const fallback = () => { ta.focus(); ta.select(); $('#saveMsg').textContent = 'Code selected. Press Ctrl+C (or Copy) to copy it.'; };
+  try { navigator.clipboard.writeText(ta.value).then(() => { $('#saveMsg').textContent = 'Save code copied. Paste it on another device to continue.'; }, fallback); } catch (e) { fallback(); }
+});
+$('#btnLoadCode').addEventListener('click', () => {
+  let next;
+  try { next = parseSaveCode($('#saveCodeIn').value); } catch (e) { $('#saveMsg').textContent = e.message; return; }
+  askConfirm('REPLACE THIS JOURNEY WITH THE LOADED ONE?', () => { save = next; persist(); goJourney(); $('#saveMsg').textContent = 'Journey loaded! Press BACK and CONTINUE to play.'; });
+});
 $('#btnHelp').addEventListener('click', () => $('#screen-help').classList.remove('hidden'));
 $('#helpClose').addEventListener('click', () => $('#screen-help').classList.add('hidden'));
 $('#btnMute').addEventListener('click', () => { save.muted = !save.muted; persist(); $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON'); });
@@ -2048,5 +2217,6 @@ window.PP = {
   step(n, dt) { for (let i = 0; i < (n || 1); i++) update(dt || STEP); },
   press, release,
   reload() { save = loadSave(); },
+  saveCode, parseSaveCode, continueJourney, goJourney,
 };
 })();
