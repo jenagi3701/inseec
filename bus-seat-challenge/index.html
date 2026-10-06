@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151225">
+  <meta name="description" content="BUS SEAT CHALLENGE — a pixel-art reflex & observation game. Look. Think. React. Catch the right seat.">
+  <title>Bus Seat Challenge</title>
+  <link rel="icon" href="assets/ui/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ MAIN MENU ============ -->
+  <section id="screen-menu" class="screen active" aria-labelledby="title">
+    <div class="menu-wrap">
+      <canvas id="menu-canvas" width="320" height="110" aria-hidden="true"></canvas>
+      <h1 id="title" class="title"><span class="t1">BUS SEAT</span><span class="t2">CHALLENGE</span></h1>
+      <p class="tagline" data-fr="👀 Regarde. 🧠 Réfléchis. ⚡ Réagis. 🚌 Attrape la bonne place.">👀 Look. 🧠 Think. ⚡ React. 🚌 Catch the right seat.</p>
+      <div class="train">
+        <span>TRAIN YOUR</span>
+        <ul><li>👀 OBSERVATION</li><li>⚡ REFLEX</li><li>🧠 THINKING</li></ul>
+      </div>
+      <nav class="menu-buttons">
+        <button class="btn btn-primary" data-action="continue" id="btn-continue" hidden>▶ CONTINUE</button>
+        <button class="btn btn-primary" data-action="start">▶ START GAME</button>
+        <button class="btn btn-daily" data-action="daily">📅 DAILY CHALLENGE</button>
+        <div class="btn-row">
+          <button class="btn" data-action="how">❓ HOW TO PLAY</button>
+          <button class="btn" data-action="score">🏆 SCORE</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-small" data-action="settings">⚙ SETTINGS</button>
+          <button class="btn btn-small" data-action="lang" id="btn-lang" aria-label="Language / Langue">🌐 FRANÇAIS</button>
+        </div>
+      </nav>
+      <p class="menu-best" id="menu-best"></p>
+    </div>
+  </section>
+
+  <!-- ============ ROUTE MAP / LEVEL SELECT ============ -->
+  <section id="screen-map" class="screen" aria-labelledby="map-title">
+    <header class="screen-head">
+      <button class="btn btn-icon" data-action="menu" aria-label="Back to menu">◀</button>
+      <h2 id="map-title">ROUTE MAP</h2>
+      <span class="head-spacer"></span>
+    </header>
+    <div class="scroll">
+      <div class="route-strip" aria-hidden="true">🚏 → 🚌 → 👀 → ⚡ → 🧠 → 🏆</div>
+      <ol id="route" class="route"></ol>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO PLAY ============ -->
+  <section id="screen-how" class="screen" aria-labelledby="how-title">
+    <header class="screen-head">
+      <button class="btn btn-icon" data-action="menu" aria-label="Back to menu">◀</button>
+      <h2 id="how-title">HOW TO PLAY</h2>
+      <span class="head-spacer"></span>
+    </header>
+    <div class="scroll">
+      <div class="steps" data-fr="&lt;div class=&quot;step&quot;&gt;&lt;b&gt;1 · 👀 REGARDE&lt;/b&gt;&lt;span&gt;Le bus s'arrête. Des passagers montent. Une place libre est marquée d'une &lt;b&gt;★&lt;/b&gt; et d'une flèche qui rebondit.&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;b&gt;2 · 🧠 RÉFLÉCHIS&lt;/b&gt;&lt;span&gt;Qui en a le plus besoin &lt;i&gt;maintenant&lt;/i&gt; ? Lis les indices sur chaque passager.&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;b&gt;3 · ⚡ CLIQUE&lt;/b&gt;&lt;span&gt;Touche-le avant la fin du chrono. Plus tu es rapide, plus tu marques. 3 erreurs = fin de partie.&lt;/span&gt;&lt;/div&gt;">
+        <div class="step"><b>1 · 👀 LOOK</b><span>The bus stops. Passengers board. A free spot is marked with <b>★</b> and a bouncing arrow.</span></div>
+        <div class="step"><b>2 · 🧠 THINK</b><span>Who needs that spot most <i>right now</i>? Read the clues on each passenger.</span></div>
+        <div class="step"><b>3 · ⚡ CLICK</b><span>Tap / click them before the timer runs out. Faster = more points. 3 mistakes = game over.</span></div>
+      </div>
+      <div class="rules" data-fr="&lt;p&gt;🔁 &lt;b&gt;Le contexte compte.&lt;/b&gt; Une personne en fauteuil a besoin de l'&lt;b&gt;espace ♿&lt;/b&gt;, pas d'un siège. Une &lt;b&gt;place prioritaire&lt;/b&gt; libre (orange, rayée, avec une canne) revient à quelqu'un qui en a besoin. Si deux personnes en ont autant besoin, les deux réponses sont bonnes.&lt;/p&gt;&lt;p&gt;⚡ &lt;b&gt;Bonus de vitesse :&lt;/b&gt; &amp;lt;1s +100 · &amp;lt;2s +75 · &amp;lt;3s +50 · &amp;lt;5s +25. Les &lt;b&gt;combos&lt;/b&gt; à 3 / 5 / 10 multiplient tes points.&lt;/p&gt;&lt;p&gt;⌨ &lt;b&gt;Clavier :&lt;/b&gt; ← → ou Tab pour choisir, Entrée/Espace pour valider, 1–9 pour choisir par numéro, P/Échap pour la pause.&lt;/p&gt;">
+        <p>🔁 <b>Context matters.</b> A wheelchair user needs the <b>♿ space</b>, not a seat. A free <b>priority seat</b> (orange, striped, with a cane icon) should go to someone who needs it. When two people need it equally, either answer is right.</p>
+        <p>⚡ <b>Speed bonus:</b> &lt;1s +100 · &lt;2s +75 · &lt;3s +50 · &lt;5s +25. <b>Combos</b> at 3 / 5 / 10 multiply your points.</p>
+        <p>⌨ <b>Keyboard:</b> ← → or Tab to move, Enter/Space to pick, 1–9 to pick by number, P/Esc to pause.</p>
+      </div>
+      <h3 class="sub-title">CLUE BOOK</h3>
+      <p class="hint">In this game, need levels are a guide for the scenarios — not a ranking of people.</p>
+      <div id="cluebook" class="cluebook"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCORES ============ -->
+  <section id="screen-score" class="screen" aria-labelledby="score-title">
+    <header class="screen-head">
+      <button class="btn btn-icon" data-action="menu" aria-label="Back to menu">◀</button>
+      <h2 id="score-title">HIGH SCORES</h2>
+      <span class="head-spacer"></span>
+    </header>
+    <div class="scroll">
+      <div id="score-body"></div>
+      <button class="btn btn-danger btn-small" data-action="reset">🗑 RESET PROGRESS</button>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="screen-settings" class="screen" aria-labelledby="settings-title">
+    <header class="screen-head">
+      <button class="btn btn-icon" data-action="menu" aria-label="Back to menu">◀</button>
+      <h2 id="settings-title">SETTINGS</h2>
+      <span class="head-spacer"></span>
+    </header>
+    <div class="scroll settings-list" id="settings-list"></div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="screen-game" class="screen" aria-label="Game">
+    <header class="hud">
+      <div class="hud-left">
+        <span class="hud-level" id="hud-level">STOP 01</span>
+        <span class="hud-round" id="hud-round">1/4</span>
+      </div>
+      <div class="hud-hearts" id="hud-hearts" aria-label="Lives"></div>
+      <div class="hud-score"><span aria-hidden="true">⭐</span> <span id="hud-score">0</span></div>
+      <div class="hud-combo" id="hud-combo" aria-live="polite"></div>
+      <div class="hud-timer" id="hud-timer"><span aria-hidden="true">⏱</span> <span id="hud-time">--.-</span></div>
+      <button class="btn btn-icon hud-pause" id="btn-mute" aria-label="Sound on/off (M)">🔊</button>
+      <button class="btn btn-icon hud-pause" id="btn-pause" aria-label="Pause (P)">❚❚</button>
+    </header>
+    <div class="timer-bar"><div id="timer-fill"></div></div>
+    <div id="stage">
+      <canvas id="game-canvas" tabindex="0" aria-label="Bus interior. Use arrow keys to choose and Enter to select."></canvas>
+      <div id="callout" class="callout" aria-live="assertive"><div class="c-main"></div><div class="c-sub"></div></div>
+    </div>
+    <footer class="prompt">
+      <div id="prompt-text" class="prompt-text">WHO GETS THE SEAT?</div>
+      <div class="prompt-sub">👀 OBSERVE → 🧠 THINK → ⚡ CLICK</div>
+    </footer>
+  </section>
+
+  <!-- ============ MODAL (level intro / complete / pause / game over) ============ -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" hidden>
+    <div class="modal-card" id="modal-card"></div>
+  </div>
+
+  <div id="sr-live" class="sr-only" aria-live="polite"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="i18n.js"></script>
+<script src="assets/characters/characters.js"></script>
+<script src="assets/bus/bus.js"></script>
+<script src="assets/sounds/sfx.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
