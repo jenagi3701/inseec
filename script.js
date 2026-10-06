@@ -139,6 +139,34 @@ function R(x, y, w, h, c) { g.fillStyle = c; g.fillRect(Math.round(x), Math.roun
 function painter(face, ox, oy) {
   return (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(face > 0 ? ox + x : ox - x - w, oy + y, w, h); };
 }
+// Draw a sprite with a 1px dark outline so it reads clearly on any background.
+// The sprite is painted to an offscreen buffer, a silhouette is made from it,
+// and the silhouette is stamped in 4 directions underneath the sprite.
+const OUT_AX = 380, OUT_AY = 110;
+const sprBuf = document.createElement('canvas'), silBuf = document.createElement('canvas');
+sprBuf.width = silBuf.width = OUT_AX * 2; sprBuf.height = silBuf.height = OUT_AY + 20;
+const sprX = sprBuf.getContext('2d'), silX = silBuf.getContext('2d');
+function outlined(hw, up, drawFn, x, y, color) {
+  hw = Math.min(OUT_AX, Math.ceil(hw)); up = Math.min(OUT_AY, Math.ceil(up));
+  const sx = OUT_AX - hw, sy = OUT_AY - up, w = hw * 2, h = up + 12;
+  sprX.clearRect(sx, sy, w, h);
+  withCtx(sprX, () => drawFn(OUT_AX, OUT_AY));
+  silX.clearRect(sx, sy, w, h);
+  silX.drawImage(sprBuf, sx, sy, w, h, sx, sy, w, h);
+  silX.globalCompositeOperation = 'source-in';
+  silX.fillStyle = color || '#120d1c'; silX.fillRect(sx, sy, w, h);
+  silX.globalCompositeOperation = 'source-over';
+  const dx = Math.round(x) - OUT_AX, dy = Math.round(y) - OUT_AY;
+  for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) g.drawImage(silBuf, sx, sy, w, h, sx + dx + ox, sy + dy + oy, w, h);
+  g.drawImage(sprBuf, sx, sy, w, h, sx + dx, sy + dy, w, h);
+}
+function heroOutlined(id, x, fy, face, pose, color) {
+  pose = pose || {};
+  const hw = 26 + (pose.L || 0) + (pose.fist || 0);
+  outlined(hw, 40, (ax, ay) => drawHero(id, ax, ay, face, pose), x, fy, color);
+}
+function shadow(x, y, w) { g.fillStyle = 'rgba(0,0,0,0.28)'; g.fillRect(Math.round(x - w / 2), Math.round(y) - 1, w, 2); g.fillRect(Math.round(x - w / 2) + 2, Math.round(y), w - 4, 1); }
+
 function pxText(str, x, y, color, align) {
   g.font = FONT; g.textAlign = align || 'center'; g.textBaseline = 'middle';
   g.fillStyle = '#000'; g.fillText(str, x + 1, y + 1);
@@ -301,7 +329,12 @@ function drawHero(id, x, fy, face, pose) {
 // enemy sprites
 // ---------------------------------------------------------
 function drawEnemy(e) {
-  const ox = Math.round(e.x), fy = Math.round(e.y);
+  const hw = e.boss ? 50 : 22, up = e.h + (e.boss ? 14 : 10);
+  if (!e.fly) shadow(e.x, GROUND, Math.max(10, e.w));
+  outlined(hw, up, (ax, ay) => drawEnemyBody(e, ax, ay), e.x, e.y);
+  drawEnemyStatus(e);
+}
+function drawEnemyBody(e, ox, fy) {
   const f = e.face || 1;
   const t = G ? G.t : 0;
   const flash = e.flash > 0;
@@ -372,6 +405,9 @@ function drawEnemy(e) {
     p(-2, 30, 10, 3, '#3b0f5c');
     if (e.st === 'cannons' || e.st === 'wind') { p(24, 20, 14, 6, '#37474f'); p(36, 18, 4, 10, '#263238'); }
   }
+}
+function drawEnemyStatus(e) {
+  const ox = Math.round(e.x), fy = Math.round(e.y), t = G.t;
   // stun stars / hold arms
   if (G && (G.t < e.stunUntil || G.t < e.holdUntil)) {
     const top = fy - e.h - 5;
@@ -650,7 +686,7 @@ function addHazard(o) {
 // =========================================================
 const CH = {
   captain: {
-    short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96,
+    color: '#ff4f4f', short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96,
     unlock: { type: 'free' },
     basic: { name: 'Punch', cd: 0.26, desc: 'Quick rubber punches.', use() {
       act('punch', 0.12); sfx('punch');
@@ -678,7 +714,7 @@ const CH = {
     } },
   },
   swordsman: {
-    short: 'Swordsman', name: 'Kaito Triblade', title: 'Three-Blade Swordsman', emoji: '⚔️', role: 'Close-range damage dealer', hp: 110, spd: 90,
+    color: '#3fd15b', short: 'Swordsman', name: 'Kaito Triblade', title: 'Three-Blade Swordsman', emoji: '⚔️', role: 'Close-range damage dealer', hp: 110, spd: 90,
     unlock: { type: 'coins', n: 300 },
     basic: { name: 'Slash', cd: 0.3, desc: 'Fast sword slash.', use() {
       act('slash', 0.14); sfx('slash');
@@ -712,7 +748,7 @@ const CH = {
     } },
   },
   navigator: {
-    short: 'Navigator', name: 'Nimbus Mira', title: 'Weather Navigator', emoji: '🌩', role: 'Ranged / area damage', hp: 90, spd: 94,
+    color: '#ff9a2a', short: 'Navigator', name: 'Nimbus Mira', title: 'Weather Navigator', emoji: '🌩', role: 'Ranged / area damage', hp: 90, spd: 94,
     unlock: { type: 'level', n: 2 },
     basic: { name: 'Gust', cd: 0.4, desc: 'Small wind projectile.', use() {
       act('cast', 0.15); sfx('wind');
@@ -743,7 +779,7 @@ const CH = {
     } },
   },
   sniper: {
-    short: 'Sniper', name: 'Pip Longshot', title: 'Long-Range Sniper', emoji: '🎯', role: 'Long-range damage', hp: 85, spd: 92,
+    color: '#ffd23f', short: 'Sniper', name: 'Pip Longshot', title: 'Long-Range Sniper', emoji: '🎯', role: 'Long-range damage', hp: 85, spd: 92,
     unlock: { type: 'coins', n: 500 },
     basic: { name: 'Shot', cd: 0.45, desc: 'Long-distance bullet.', use() {
       act('shoot', 0.15); sfx('shoot');
@@ -779,7 +815,7 @@ const CH = {
     } },
   },
   cook: {
-    short: 'Cook', name: 'Remy Flambé', title: 'Kick Fighter / Cook', emoji: '🔥', role: 'Fast melee combo', hp: 100, spd: 106,
+    color: '#ffe066', short: 'Cook', name: 'Remy Flambé', title: 'Kick Fighter / Cook', emoji: '🔥', role: 'Fast melee combo', hp: 100, spd: 106,
     unlock: { type: 'level', n: 3 },
     basic: { name: 'Kick Combo', cd: 0.22, desc: 'Fast 3-hit kick combo (3rd kick knocks back).', use() {
       if (G.t - P.comboT > 0.6) P.combo = 0;
@@ -819,7 +855,7 @@ const CH = {
     } },
   },
   doctor: {
-    short: 'Doctor', name: 'Doc Tansy', title: 'Pirate Doctor', emoji: '💊', role: 'Support / healing', hp: 95, spd: 88,
+    color: '#3fd0c9', short: 'Doctor', name: 'Doc Tansy', title: 'Pirate Doctor', emoji: '💊', role: 'Support / healing', hp: 95, spd: 88,
     unlock: { type: 'boss', n: 1 },
     basic: { name: 'Pill Toss', cd: 0.42, desc: 'Throw a small medical capsule.', use() {
       act('shoot', 0.14); sfx('shoot');
@@ -847,7 +883,7 @@ const CH = {
     } },
   },
   archaeologist: {
-    short: 'Archaeologist', name: 'Iris Tidewell', title: 'Mystical Archaeologist', emoji: '🌊', role: 'Crowd control / area damage', hp: 95, spd: 92,
+    color: '#a77bff', short: 'Archaeologist', name: 'Iris Tidewell', title: 'Mystical Archaeologist', emoji: '🌊', role: 'Crowd control / area damage', hp: 95, spd: 92,
     unlock: { type: 'level', n: 4 },
     basic: { name: 'Spirit Hand', cd: 0.38, desc: 'A magic hand sprouts beneath an enemy. In Mermaid Form: water jet.', use() {
       act('cast', 0.15);
@@ -898,7 +934,7 @@ const CH = {
     } },
   },
   shipwright: {
-    short: 'Shipwright', name: 'Bolt Ironkeel', title: 'Cyborg Shipwright', emoji: '🤖', role: 'Heavy ranged damage', hp: 130, spd: 82,
+    color: '#2ec5ff', short: 'Shipwright', name: 'Bolt Ironkeel', title: 'Cyborg Shipwright', emoji: '🤖', role: 'Heavy ranged damage', hp: 130, spd: 82,
     unlock: { type: 'coins', n: 800 },
     basic: { name: 'Mech Punch / Cannon', cd: 0.45, desc: 'Mechanical punch up close, small cannon shot at range.', use() {
       const close = G.enemies.some(e => e.alive && Math.abs(e.x - (P.x + P.face * 14)) < 18 + e.w / 2 && Math.abs((e.y - e.h / 2) - (P.y - 12)) < 24);
@@ -939,7 +975,7 @@ const CH = {
     } },
   },
   musician: {
-    short: 'Musician', name: 'Maestro Vale', title: 'Musical Swordsman', emoji: '🎵', role: 'Support + sword fighter', hp: 100, spd: 96,
+    color: '#d07bff', short: 'Musician', name: 'Maestro Vale', title: 'Musical Swordsman', emoji: '🎵', role: 'Support + sword fighter', hp: 100, spd: 96,
     unlock: { type: 'boss', n: 2 },
     basic: { name: 'Rapier', cd: 0.3, desc: 'Elegant sword thrust.', use() {
       act('slash', 0.14); sfx('slash');
@@ -1631,7 +1667,13 @@ function drawPlayer() {
   // aura for buffs
   if (P.transform > G.t || hasBuff('POWER')) { g.globalAlpha = 0.35; R(P.x - 9, P.y - 27, 18, 28, '#ff6b6b'); g.globalAlpha = 1; }
   if (P.buffs.some(b => b.stat === 'def' && G.t < b.until)) { g.strokeStyle = 'rgba(142,245,155,0.6)'; g.lineWidth = 1; g.beginPath(); g.arc(P.x, P.y - 12, 16, 0, Math.PI * 2); g.stroke(); }
-  drawHero(P.id, P.x, P.y, face, pose);
+  const groundY = P.onGround ? P.y : GROUND;
+  shadow(P.x, groundY, P.onGround ? 14 : 8);
+  heroOutlined(P.id, P.x, P.y, face, pose);
+  // player marker: small bobbing arrow in the crew member's colour
+  const my = Math.round(P.y - 34 + Math.sin(G.t * 5) * 1.5), mc = CH[P.id].color;
+  g.fillStyle = '#120d1c'; g.fillRect(Math.round(P.x) - 4, my - 1, 9, 3); g.fillRect(Math.round(P.x) - 3, my + 2, 7, 1); g.fillRect(Math.round(P.x) - 2, my + 3, 5, 1); g.fillRect(Math.round(P.x) - 1, my + 4, 3, 1);
+  g.fillStyle = mc; g.fillRect(Math.round(P.x) - 3, my, 7, 1); g.fillRect(Math.round(P.x) - 2, my + 1, 5, 1); g.fillRect(Math.round(P.x) - 1, my + 2, 3, 1); g.fillRect(Math.round(P.x), my + 3, 1, 1);
 }
 
 function drawHazard(h) {
@@ -1655,7 +1697,8 @@ function renderMenuScene() {
   drawGround('day', cam);
   const fakeG = G; // drawHero uses no G
   const id = save.selected && save.unlocked.includes(save.selected) ? save.selected : 'captain';
-  drawHero(id, 150, GROUND, 1, { walk: menuT * 8, t: menuT });
+  shadow(150, GROUND, 14);
+  heroOutlined(id, 150, GROUND, 1, { walk: menuT * 8, t: menuT });
   drawCoin(200 + Math.sin(menuT * 2) * 2, GROUND - 30, menuT);
   void fakeG;
 }
@@ -1781,7 +1824,8 @@ function portrait(canvasEl, id, locked) {
   withCtx(c, () => {
     const s = canvasEl.width / 32;
     c.save(); c.scale(s, s);
-    drawHero(id, 16, 29, 1, { t: 0 });
+    if (!locked) { c.fillStyle = CH[id].color + '55'; c.fillRect(0, 0, 32, 32); c.fillStyle = '#00000022'; c.fillRect(0, 26, 32, 6); }
+    heroOutlined(id, 16, 29, 1, { t: 0 });
     c.restore();
     if (locked) { c.globalCompositeOperation = 'source-atop'; c.fillStyle = '#0b1226'; c.fillRect(0, 0, canvasEl.width, canvasEl.height); c.globalCompositeOperation = 'source-over'; }
   });

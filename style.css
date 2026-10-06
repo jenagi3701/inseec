@@ -286,7 +286,7 @@ h2 { font-size: 16px; line-height: 1.4; }
   text-align: center;
   position: relative;
 }
-.char-card canvas { width: 64px; height: 64px; image-rendering: pixelated; background: linear-gradient(#5ec8ff, #bdf0ff 70%, #f1d08a 70%); border: 2px solid #000; }
+.char-card canvas { width: 80px; height: 80px; image-rendering: pixelated; background: linear-gradient(#5ec8ff, #bdf0ff 70%, #f1d08a 70%); border: 2px solid #000; }
 .char-card.locked canvas { background: #223; }
 .char-card.sel { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
 .char-card .lock { color: #ff9f80; font-size: 7px; }
@@ -333,6 +333,6 @@ table.keys td:first-child { color: var(--gold); }
   .logo { font-size: 22px; }
   .logo span { font-size: 15px; }
   .btn { font-size: 10px; min-width: 170px; padding: 10px 12px; }
-  .char-card canvas { width: 48px; height: 48px; }
+  .char-card canvas { width: 60px; height: 60px; }
   .panel { padding: 12px; }
 }
