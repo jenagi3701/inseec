@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Pixel Pirate Adventure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- GAME STAGE (canvas + HUD) -->
+  <div id="stage">
+    <canvas id="game" width="480" height="270"></canvas>
+
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="hud-box hud-left">
+          <div id="hearts"></div>
+          <div id="hpText" class="tiny"></div>
+          <div id="buffs"></div>
+        </div>
+        <div class="hud-center">
+          <div id="levelName" class="tiny"></div>
+          <div id="bossBar" class="hidden">
+            <div id="bossName" class="tiny"></div>
+            <div class="bar boss"><div id="bossFill"></div></div>
+          </div>
+        </div>
+        <div class="hud-box hud-right">
+          <div>🪙 <span id="hudCoins">0</span></div>
+          <div>⭐ <span id="hudScore">0</span></div>
+          <div>☠ <span id="hudKills">0</span></div>
+          <button id="pauseBtn" class="mini-btn" aria-label="Pause">II</button>
+        </div>
+      </div>
+      <div id="skills"></div>
+      <div id="toast"></div>
+    </div>
+
+    <!-- touch controls -->
+    <div id="touch" class="hidden">
+      <div class="pad-left">
+        <button class="tbtn" data-action="left">◀</button>
+        <button class="tbtn" data-action="right">▶</button>
+      </div>
+      <div class="pad-right">
+        <button class="tbtn small" data-action="s1">S1</button>
+        <button class="tbtn small" data-action="s2">S2</button>
+        <button class="tbtn small hidden" data-action="s3" id="touchS3">S3</button>
+        <button class="tbtn small ult" data-action="ult">ULT</button>
+        <button class="tbtn" data-action="jump">JUMP</button>
+        <button class="tbtn atk" data-action="attack">ATK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <section id="screen-title" class="screen">
+    <div class="panel title-panel">
+      <h1 class="logo">PIXEL<br>PIRATE<br><span>ADVENTURE</span></h1>
+      <p class="tag">Explore · Fight · Collect · Unlock your crew!</p>
+      <div class="wallet">🪙 <span class="walletCoins">0</span> &nbsp; ⭐ BEST <span id="titleBest">0</span></div>
+      <div class="btn-col">
+        <button class="btn primary" id="btnPlay">▶ PLAY</button>
+        <button class="btn" id="btnCrew">☠ CREW</button>
+        <button class="btn" id="btnHelp">? CONTROLS</button>
+        <button class="btn" id="btnMute">♪ SOUND: ON</button>
+        <button class="btn danger" id="btnReset">RESET SAVE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL SELECT -->
+  <section id="screen-levels" class="screen hidden">
+    <div class="panel wide">
+      <h2>CHOOSE YOUR VOYAGE</h2>
+      <div class="wallet">🪙 <span class="walletCoins">0</span></div>
+      <div id="levelList" class="level-list"></div>
+      <div class="btn-row"><button class="btn" data-go="title">◀ BACK</button></div>
+    </div>
+  </section>
+
+  <!-- CHARACTER SELECT -->
+  <section id="screen-select" class="screen hidden">
+    <div class="panel wide">
+      <h2 id="selectTitle">CHARACTER SELECT</h2>
+      <div class="wallet">🪙 <span class="walletCoins">0</span></div>
+      <div class="select-wrap">
+        <div id="charGrid" class="char-grid"></div>
+        <div id="charInfo" class="char-info"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="selectBack">◀ BACK</button>
+        <button class="btn primary" id="btnSail">⚓ SET SAIL</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="screen hidden">
+    <div class="panel">
+      <h2 id="resultTitle">LEVEL COMPLETE!</h2>
+      <div id="resultStats" class="stats"></div>
+      <div id="resultButtons" class="btn-col"></div>
+    </div>
+  </section>
+
+  <!-- PAUSE -->
+  <section id="screen-pause" class="screen hidden dim">
+    <div class="panel">
+      <h2>PAUSED</h2>
+      <div class="btn-col">
+        <button class="btn primary" id="btnResume">▶ RESUME</button>
+        <button class="btn" id="btnRestart">↻ RESTART LEVEL</button>
+        <button class="btn danger" id="btnQuit">⚑ QUIT TO MAP</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELP -->
+  <section id="screen-help" class="screen hidden dim">
+    <div class="panel">
+      <h2>CONTROLS</h2>
+      <table class="keys">
+        <tr><td>A / D</td><td>Move</td></tr>
+        <tr><td>SPACE / W</td><td>Jump</td></tr>
+        <tr><td>J</td><td>Attack (hold to repeat)</td></tr>
+        <tr><td>Q</td><td>Skill 1</td></tr>
+        <tr><td>E</td><td>Skill 2</td></tr>
+        <tr><td>F</td><td>Skill 3 (Archaeologist)</td></tr>
+        <tr><td>R</td><td>Ultimate (needs full energy)</td></tr>
+        <tr><td>ESC / P</td><td>Pause</td></tr>
+      </table>
+      <p class="tiny">On phones &amp; tablets, on-screen buttons appear during play.</p>
+      <div class="btn-row"><button class="btn" id="helpClose">OK!</button></div>
+    </div>
+  </section>
+
+  <!-- UNLOCK CELEBRATION -->
+  <section id="screen-unlock" class="screen hidden dim">
+    <div class="panel unlock-panel">
+      <div class="confetti" id="confetti"></div>
+      <h2 class="flash">NEW CREW MEMBER!</h2>
+      <canvas id="unlockCanvas" width="48" height="48"></canvas>
+      <div id="unlockName" class="unlock-name"></div>
+      <div id="unlockRole" class="tiny"></div>
+      <div class="btn-row"><button class="btn primary" id="unlockOk">WELCOME ABOARD!</button></div>
+    </div>
+  </section>
+
+  <!-- CONFIRM -->
+  <section id="screen-confirm" class="screen hidden dim">
+    <div class="panel">
+      <h2 id="confirmText">ARE YOU SURE?</h2>
+      <div class="btn-row">
+        <button class="btn" id="confirmNo">NO</button>
+        <button class="btn danger" id="confirmYes">YES</button>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
