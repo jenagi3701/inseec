@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — applications.js
+   CHIC CAREER — applications.js
    Application CRM: data model, Kanban tracker (drag & drop + keyboard/mobile
    "Move to"), application record (fields, timeline, documents, follow-ups,
    interview preparation), confirmation + celebration flows.
@@ -202,7 +202,7 @@
   function manualAddModal() {
     const m = U().modal({
       title: 'Add an application manually', size: 'md',
-      body: '<p class="muted small">For an offer found outside MARKETRACK. Nothing is sent anywhere.</p><form id="manual-app" class="form-grid" novalidate>' +
+      body: '<p class="muted small">For an offer found outside Chic Career. Nothing is sent anywhere.</p><form id="manual-app" class="form-grid" novalidate>' +
         field('company', 'Company *', 'text', true) + field('position', 'Job title *', 'text', true) +
         '<label class="field"><span>Contract</span><select name="contract"><option>Stage</option><option>Alternance</option><option>Internship</option><option>Apprenticeship</option></select></label>' +
         field('location', 'Location', 'text') + field('url', 'Original job URL', 'url') +
@@ -344,7 +344,7 @@
     panel.innerHTML = '<div class="grid-2"><div class="card"><h2 class="h3">Reminders</h2>' +
       (rems.length ? '<ul class="list">' + rems.map((r) => '<li class="list__row"><label class="check"><input type="checkbox" data-rem="' + r.id + '"' + (r.done ? ' checked' : '') + '><span>' + esc(r.title) + ' — <strong>' + U().fmtDate(r.date) + '</strong> <span class="muted small">(' + U().relDay(r.date) + ')</span></span></label></li>').join('') + '</ul>' : '<p class="muted">No reminders yet.</p>') +
       '<form id="rem-form" class="row-wrap"><label class="field"><span>Remind me on</span><input type="date" name="date" required value="' + U().isoDay(Date.now() + 7 * U().DAY) + '"></label><button class="btn btn--primary">Set reminder</button></form>' +
-      '<p class="muted small">Reminders are shown in MARKETRACK (and as a browser notification if you allow it). No email is ever sent automatically.</p></div>' +
+      '<p class="muted small">Reminders are shown in Chic Career (and as a browser notification if you allow it). No email is ever sent automatically.</p></div>' +
       '<div class="card"><h2 class="h3">Follow-up message draft 🐔</h2><p class="muted small">A suggestion to copy into your own email client — edit it freely.</p>' +
       '<div class="seg" role="group" aria-label="Language"><button class="seg__btn' + (lang === 'fr' ? ' is-active' : '') + '" data-lang="fr">FR</button><button class="seg__btn' + (lang === 'en' ? ' is-active' : '') + '" data-lang="en">EN</button></div>' +
       '<label class="field"><span class="sr-only">Follow-up message</span><textarea id="fu-text" rows="12">' + esc(MT.ai.followUpMessage(a, lang)) + '</textarea></label>' +

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — profile.js
+   CHIC CAREER — profile.js
    My Profile: Personal information · CVs · Portfolio · Preferences ·
    Knowledge base · AI Settings (+ privacy & data controls).
    ========================================================================== */
@@ -264,20 +264,23 @@
     el.innerHTML = '<div class="grid-2"><form class="card" id="aif"><h2 class="h3">AI Settings</h2>' +
       '<fieldset class="fgroup"><legend>AI provider</legend>' +
       '<label class="radio-card is-on"><input type="radio" name="prov" value="mock" checked><span><strong>Local demo AI</strong> (active)<br><span class="small muted">Rule-based and deterministic. Runs in your browser. Nothing is sent anywhere.</span></span></label>' +
-      '<label class="radio-card is-disabled"><input type="radio" name="prov" value="external" disabled><span><strong>External LLM API</strong> — not configured<br><span class="small muted">Architecture-ready (see <code>js/ai.js</code>). Using it would send your CV data, the offer and your answers to a third-party service — MARKETRACK would ask for your explicit consent first.</span></span></label></fieldset>' +
+      '<label class="radio-card is-disabled"><input type="radio" name="prov" value="external" disabled><span><strong>External LLM API</strong> — not configured<br><span class="small muted">Architecture-ready (see <code>js/ai.js</code>). Using it would send your CV data, the offer and your answers to a third-party service — Chic Career would ask for your explicit consent first.</span></span></label></fieldset>' +
+      '<fieldset class="fgroup"><legend>Platform language</legend><label class="field"><span class="sr-only">Language of the interface</span><select id="lang-settings" data-lang-pick><option value="en">English</option><option value="fr">Français</option></select></label>' +
+      '<p class="small muted">Changes the language of the interface. Your data (offers, CV, letters) stays as written.</p></fieldset>' +
       '<fieldset class="fgroup"><legend>Default cover-letter language</legend><label class="field"><span class="sr-only">Language</span><select name="language"><option value="auto">Auto — detect from the offer</option><option value="fr">Always French</option><option value="en">Always English</option></select></label></fieldset>' +
       '<div class="row-end"><button class="btn btn--primary">Save</button></div></form>' +
       '<div class="card"><h2 class="h3">🔒 Privacy & your data</h2><ul class="privacy">' +
       '<li>All data is stored in this browser’s <code>localStorage</code> (' + kb + ' KB used). There is no account and no server.</li>' +
       '<li>CV files are parsed locally and never uploaded or kept — only extracted text and structured data.</li>' +
       '<li>Portfolio URLs are only displayed and used as you provided them; the app never fetches them.</li>' +
-      '<li>“Open original” links leave MARKETRACK for the job platform. No email or application is ever sent automatically.</li></ul>' +
+      '<li>“Open original” links leave Chic Career for the job platform. No email or application is ever sent automatically.</li></ul>' +
       '<div class="row-wrap"><button class="btn btn--ghost" id="export">Export my data (.json)</button><button class="btn btn--ghost" id="reset-demo">Reload demo data</button><button class="btn btn--danger-ghost" id="fresh">Start fresh (erase everything)</button></div></div></div>';
     el.querySelector('[name=language]').value = s.language || 'auto';
+    const lp = el.querySelector('#lang-settings'); lp.value = MT.i18n.lang; lp.onchange = () => MT.i18n.setLang(lp.value);
     el.querySelector('#aif').onsubmit = (e) => { e.preventDefault(); MT.storage.update('settings', {}, (x) => { x.language = new FormData(e.target).get('language'); x.aiProvider = 'mock'; }); U().toast('AI settings saved', 'success'); };
     el.querySelector('#export').onclick = () => {
       const dump = {}; Object.values(MT.storage.KEYS).forEach((k) => { dump[k] = MT.storage.get(k, null); });
-      U().download('marketrack-export-' + U().isoDay(Date.now()) + '.json', JSON.stringify(dump, null, 2), 'application/json');
+      U().download('chic-career-export-' + U().isoDay(Date.now()) + '.json', JSON.stringify(dump, null, 2), 'application/json');
     };
     el.querySelector('#reset-demo').onclick = async () => { if (await U().confirmDialog('Reload the demo?', 'This replaces all your data with the fictional demo profile, jobs and applications.', 'Reload demo', true)) { MT.seed.seedDemo(); MT.matching.invalidate(); U().toast('Demo data reloaded', 'success'); location.hash = '#/dashboard'; MT.app.render(); } };
     el.querySelector('#fresh').onclick = async () => { if (await U().confirmDialog('Erase everything?', 'Your profile, CVs, applications and letters will be deleted from this browser. Demo job offers stay available.', 'Erase', true)) { MT.seed.startFresh(); MT.matching.invalidate(); U().toast('Fresh start — your chicken is a tiny chick again 🐣', 'info'); location.hash = '#/dashboard'; MT.app.render(); } };

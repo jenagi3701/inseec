@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — app.js
+   CHIC CAREER — app.js
    Bootstrap, hash router, app chrome (sidebar chicken widget, top bar,
    mobile navigation), daily scheduler and local reminder notifications.
    ========================================================================== */
@@ -47,7 +47,7 @@
     const navKey = r.section === 'prepare' ? 'jobs' : r.section;
     U().$$('[data-nav]').forEach((a) => { const on = a.dataset.nav === navKey; a.classList.toggle('is-active', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     const label = (NAV.find((n) => n[0] === navKey) || NAV[0])[1];
-    document.title = (r.section === 'prepare' ? 'Mission' : label) + ' · MARKETRACK';
+    document.title = MT.i18n.t(r.section === 'prepare' ? 'Mission' : label) + ' · Chic Career';
     if (routeChanged) {
       window.scrollTo(0, 0);
       const h1 = view.querySelector('h1'); if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
@@ -80,25 +80,27 @@
     if (!due.length) return;
     due.slice(0, 3).forEach((r) => {
       U().toast((r.kind === 'interview' ? '🎤 ' : '⏰ ') + r.title + ' — ' + U().relDay(r.date).toLowerCase(), 'warn', { duration: 9000, action: { label: 'Open', fn: () => { location.hash = '#/applications/' + r.applicationId + (r.kind === 'interview' ? '/prep' : '/followup'); } } });
-      if ('Notification' in window && Notification.permission === 'granted') { try { new Notification('MARKETRACK 🐔', { body: r.title }); } catch (e) { /* some browsers need a service worker */ } }
+      if ('Notification' in window && Notification.permission === 'granted') { try { new Notification('Chic Career 🐔', { body: r.title }); } catch (e) { /* some browsers need a service worker */ } }
     });
     MT.storage.update('reminders', [], (list) => list.forEach((r) => { if (due.some((d) => d.id === r.id)) r.notified = today; }));
   }
 
   function bindShell() {
-    U().$$('.brand__mark').forEach((m) => { m.innerHTML = MT.chicken.svg({ size: 40, animate: false, mood: 'confident', label: 'MARKETRACK chicken' }); });
+    U().$$('.brand__mark').forEach((m) => { m.innerHTML = MT.chicken.svg({ size: 40, animate: false, mood: 'confident', label: 'Chic Career chicken' }); });
     document.querySelector('#nav').innerHTML = NAV.map((n) => '<a class="nav__link" data-nav="' + n[0] + '" href="#/' + n[0] + '"><span class="nav__icon" aria-hidden="true">' + n[2] + '</span><span>' + n[1] + '</span>' + (n[0] === 'saved' || n[0] === 'applications' ? '<span class="nav__count" data-count="' + n[0] + '" hidden></span>' : '') + '</a>').join('');
     const mob = NAV.slice(0, 4);
     document.querySelector('#mobile-nav').innerHTML = mob.map((n) => '<a class="mnav__link" data-nav="' + n[0] + '" href="#/' + n[0] + '"><span aria-hidden="true">' + n[2] + '</span><span>' + (n[0] === 'applications' ? 'Tracker' : n[1]) + '</span></a>').join('') +
       '<button class="mnav__link" id="more-btn" aria-expanded="false" aria-controls="more-sheet"><span aria-hidden="true">☰</span><span>More</span></button>';
     document.querySelector('#more-sheet').innerHTML = NAV.slice(4).map((n) => '<a class="nav__link" data-nav="' + n[0] + '" href="#/' + n[0] + '"><span class="nav__icon" aria-hidden="true">' + n[2] + '</span>' + n[1] + '</a>').join('');
     document.querySelector('#more-btn').onclick = (e) => { const s = document.querySelector('#more-sheet'); const o = s.classList.toggle('is-open'); e.currentTarget.setAttribute('aria-expanded', o); };
+    U().$$('[data-lang-pick]').forEach((sel) => { sel.value = MT.i18n.lang; sel.onchange = () => MT.i18n.setLang(sel.value); });
     document.querySelector('#assistant-btn').onclick = () => MT.assistant.isOpen() ? MT.assistant.close() : MT.assistant.open();
     document.querySelector('#refresh-top').onclick = () => MT.jobs.runRefresh(() => render());
-    document.querySelector('#bell').onclick = () => Notification.requestPermission().then((p) => { U().toast(p === 'granted' ? 'Reminder notifications enabled 🔔' : 'Notifications not enabled — reminders will still show inside MARKETRACK.', 'info'); renderChrome(); });
+    document.querySelector('#bell').onclick = () => Notification.requestPermission().then((p) => { U().toast(p === 'granted' ? 'Reminder notifications enabled 🔔' : 'Notifications not enabled — reminders will still show inside Chic Career.', 'info'); renderChrome(); });
   }
 
   function boot() {
+    MT.i18n.init();
     MT.seed.ensure();
     bindShell();
     MT.jobsService.startScheduler((r) => {

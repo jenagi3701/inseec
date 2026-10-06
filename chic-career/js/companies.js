@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — companies.js
+   CHIC CAREER — companies.js
    Company tracking: your full history with each company (applications,
    positions, dates, statuses, interviews, rejections, offers) + open offers.
    ========================================================================== */

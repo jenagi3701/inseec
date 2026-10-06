@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — style.css
+   CHIC CAREER — style.css
    Modern editorial UI + pixel-art chicken. Eggshell / cream base, charcoal
    type, one strong warm-orange accent, muted green & blue for meaning.
    ========================================================================== */
@@ -711,3 +711,6 @@ legend { font-weight: 700; font-size: .84rem; margin-bottom: 8px; padding: 0; }
 .kpi__l { overflow-wrap: anywhere; }
 .cv-opt > span { min-width: 0; overflow-wrap: anywhere; }
 .cv-row__main { min-width: 0; overflow-wrap: anywhere; }
+
+.lang-pick { display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid var(--line-2); border-radius: 999px; padding: 0 4px 0 10px; background: var(--surface); min-height: 34px; }
+.lang-pick select { border: 0; min-height: 30px; padding: 2px 6px; width: auto; font-weight: 700; font-size: .84rem; background: transparent; box-shadow: none; }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — mission.js
+   CHIC CAREER — mission.js
    The one-click application preparation ("Chicken Mission"):
      01 CV → 02 Portfolio → 03 Job analysis → 04 Your questions →
      05 Cover letter → 06 Review → 07 Apply
@@ -318,7 +318,7 @@
       '<ol class="apply-steps"><li>Copy or download your letter (step 06).</li><li>Open the offer on <strong>' + esc(MT.jobsService.SOURCE_LABEL[src.source]) + '</strong> and submit your application there.</li><li>Come back and confirm — only then will the tracker say “Applied”.</li></ol>' +
       '<div class="row-wrap"><a class="btn btn--ghost" id="open-orig" href="' + esc(src.url) + '" target="_blank" rel="noopener noreferrer">Open original application ↗</a>' +
       (d.letterId ? '<button class="btn btn--ghost" id="copy-l">Copy my letter</button>' : '') + '</div>' +
-      '<p class="small muted">Demo offer: the link opens a search on ' + esc(MT.jobsService.SOURCE_LABEL[src.source]) + ', not a real listing. MARKETRACK never submits anything for you.</p>' +
+      '<p class="small muted">Demo offer: the link opens a search on ' + esc(MT.jobsService.SOURCE_LABEL[src.source]) + ', not a real listing. Chic Career never submits anything for you.</p>' +
       (opened ? '<p class="notice">You opened the original offer. Did you submit your application?</p>' : '') +
       '<div class="confirm-box"><button class="btn btn--primary btn--lg" id="confirm">✓ I submitted this application</button><button class="btn btn--ghost" id="later">Not yet — keep it in “To Apply”</button></div></div>' +
       '<div class="card chicken-panel">' + CH().svg({ mood: 'determined', accessories: ['document'], size: 120 }) + '<p class="speech">“Last step! I’ll wait here while you apply.”</p></div></div>' +

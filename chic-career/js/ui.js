@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — ui.js
+   CHIC CAREER — ui.js
    Shared UI helpers: escaping, dates, toasts, modals, drawers, text utils.
    ========================================================================== */
 (function (MT) {
@@ -29,25 +29,27 @@
     if (!d) return '—';
     const x = new Date(d);
     if (isNaN(x)) return '—';
-    return x.toLocaleDateString('en-GB', opts || { day: '2-digit', month: 'short', year: 'numeric' });
+    return x.toLocaleDateString(loc(), opts || { day: '2-digit', month: 'short', year: 'numeric' });
   }
   function fmtShort(d) { return fmtDate(d, { day: '2-digit', month: 'short' }); }
   function fmtLong(d) { return fmtDate(d, { day: '2-digit', month: 'long', year: 'numeric' }); }
-  function fmtTime(d) { return new Date(d).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+  function fmtTime(d) { return new Date(d).toLocaleTimeString(loc(), { hour: '2-digit', minute: '2-digit' }); }
+  function fr() { return !!(MT.i18n && MT.i18n.lang === 'fr'); }
+  function loc() { return fr() ? 'fr-FR' : 'en-GB'; }
   function relDay(d) {
     if (!d) return '—';
     const n = daysBetween(today(), d);
-    if (n === 0) return 'Today';
-    if (n === -1) return 'Yesterday';
-    if (n === 1) return 'Tomorrow';
-    if (n < 0) return Math.abs(n) + ' days ago';
-    return 'In ' + n + ' days';
+    if (n === 0) return fr() ? 'Aujourd’hui' : 'Today';
+    if (n === -1) return fr() ? 'Hier' : 'Yesterday';
+    if (n === 1) return fr() ? 'Demain' : 'Tomorrow';
+    if (n < 0) return fr() ? 'il y a ' + Math.abs(n) + ' jours' : Math.abs(n) + ' days ago';
+    return fr() ? 'dans ' + n + ' jours' : 'In ' + n + ' days';
   }
   function lastUpdatedLabel(ts) {
-    if (!ts) return 'Never';
+    if (!ts) return fr() ? 'Jamais' : 'Never';
     const n = daysBetween(ts, today());
-    const day = n === 0 ? 'Today' : n === 1 ? 'Yesterday' : fmtDate(ts);
-    return day + ' at ' + fmtTime(ts);
+    const day = n === 0 ? (fr() ? 'Aujourd’hui' : 'Today') : n === 1 ? (fr() ? 'Hier' : 'Yesterday') : fmtDate(ts);
+    return day + (fr() ? ' à ' : ' at ') + fmtTime(ts);
   }
 
   /* ---------- text utils ---------- */
@@ -226,6 +228,6 @@
   MT.ui = {
     DAY, esc, $, $$, today, startOfDay, isoDay, addDays, daysBetween, fmtDate, fmtShort, fmtLong, fmtTime, relDay, lastUpdatedLabel,
     norm, tokens, jaccard, shingles, hash, seeded, cap, debounce, isValidUrl, isValidEmail, prefersReducedMotion, sleep,
-    toast, modal, confirmDialog, copyText, download, scoreClass, scoreRing, emptyState
+    toast, modal, confirmDialog, locale: loc, copyText, download, scoreClass, scoreRing, emptyState
   };
 })(window.MT = window.MT || {});

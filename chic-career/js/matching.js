@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — matching.js
+   CHIC CAREER — matching.js
    1) Profile Knowledge Base: one structured view of everything the user has
       told us (profile + selected CV + portfolio), with the *evidence* behind
       each skill. Nothing is inferred beyond what the text contains.

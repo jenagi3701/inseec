@@ -1,9 +1,9 @@
-# 🐔 MARKETRACK
+# 🐔 Chic Career
 
 **Find the right job. Apply smarter. Track everything.**
 *Your career journey, one quest at a time.*
 
-MARKETRACK is a working local prototype of a job-search command centre for marketing and communication students: a job board, a personal tracker, an AI application assistant and an application CRM in one place. A pixel-art **Career Chicken** comes along for the whole journey.
+Chic Career is a working local prototype of a job-search command centre for marketing and communication students: a job board, a personal tracker, an AI application assistant and an application CRM in one place. A pixel-art **Career Chicken** comes along for the whole journey.
 
 > **Honesty notes**
 > - **Job offers are DEMO DATA.** The 24 offers (plus 3 that arrive on refresh) are fictional and are labelled DEMO throughout the UI. The prototype has **no live connection** to LinkedIn, Indeed or Welcome to the Jungle, and it does **no scraping**. "Open original" links run a search on the platform; they are not real listings.
@@ -12,13 +12,19 @@ MARKETRACK is a working local prototype of a job-search command centre for marke
 
 ---
 
+## Platform language
+
+The interface is available in **English and French**. Use the 🌐 **EN / FR** selector in the top bar, or **My Profile → AI Settings → Platform language**. The choice is remembered. The first visit follows the browser language.
+
+The translation layer is `js/i18n.js`, which holds a dictionary plus patterns for dynamic text. It translates interface text only. Job offers, CV content, your answers and cover letters stay as written. A cover letter's language is chosen separately: it follows the offer's language, or you can pick French or English.
+
 ## Run it
 
 No build step, no backend and no install are needed.
 
 ```bash
 # option 1: just open the file
-open market-track/index.html            # macOS  (or double-click it)
+open chic-career/index.html            # macOS  (or double-click it)
 
 # option 2: serve the folder (recommended for clipboard access)
 cd market-track && python3 -m http.server 8080
@@ -75,12 +81,13 @@ Two sample CVs for testing upload are in `assets/demo/`: `CV-Demo-Alex-Moreau.do
 ## Architecture
 
 ```
-market-track/
+chic-career/
 ├── index.html              app shell (sidebar, top bar, mobile nav, modal/toast roots)
 ├── css/
 │   ├── style.css           design tokens + components
 │   └── responsive.css      laptop / tablet / mobile
 ├── js/
+│   ├── i18n.js             platform language (EN/FR) translation layer
 │   ├── storage.js          localStorage repository (namespaced keys, pub/sub) ← swap for an API client later
 │   ├── ui.js               escaping, dates, text similarity, modal / toast / confirm helpers
 │   ├── knowledge.js        skills (FR/EN aliases + related), tools, fields, industries, languages
@@ -111,7 +118,7 @@ Scripts are plain (non-module) files attached to a single `window.MT` namespace,
 - **AI:** implement `ExternalProvider` in `js/ai.js` behind a backend endpoint, with a consent step before any CV data leaves the device.
 - **Persistence:** replace `storage.js` with an API client exposing the same `get/set/update` contract.
 
-### Data models (localStorage keys `marketrack:*`)
+### Data models (localStorage keys `chiccareer:*`)
 
 - **profile**: name, email, phone, location, linkedin, portfolio, website, careerGoals, pitch, `preferences{…}`, `portfolioData{url,title,summary,links,projects}`
 - **cvs[]**: `id, name, filename, version, targetRole, uploadDate, isDefault, archived, text, parsedData{education, experience[{role,company,location,dates,type,industry,bullets}], projects, skills, tools, languages, certifications, achievements, jobTitles, industries}`

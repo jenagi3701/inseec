@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — cv.js
+   CHIC CAREER — cv.js
    Local CV processing. Files are read in the browser only; the original
    binary is never uploaded anywhere and is not stored — only the extracted
    text and the structured data (which the user can always edit).

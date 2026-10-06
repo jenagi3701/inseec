@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — ai.js
+   CHIC CAREER — ai.js
    AI layer with a provider interface. The default provider is a LOCAL MOCK:
    deterministic, rule-based, runs entirely in the browser, sends nothing
    anywhere. A real LLM provider can be plugged in later (see ExternalProvider)

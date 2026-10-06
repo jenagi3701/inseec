@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — statistics.js
+   CHIC CAREER — statistics.js
    Application statistics. Charts are plain HTML/SVG (no library):
    single-series bars in one hue, hover/focus tooltips, and a data table
    for every chart. Everything recomputes from the tracker on each render.
@@ -22,7 +22,7 @@
     const months = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push([d.toLocaleDateString('en-GB', { month: 'short' }) + (d.getMonth() === 0 || i === 5 ? ' ' + String(d.getFullYear()).slice(2) : ''), sent.filter((a) => { const x = new Date(a.applicationDate); return x.getMonth() === d.getMonth() && x.getFullYear() === d.getFullYear(); }).length]);
+      months.push([d.toLocaleDateString(U().locale(), { month: 'short' }) + (d.getMonth() === 0 || i === 5 ? ' ' + String(d.getFullYear()).slice(2) : ''), sent.filter((a) => { const x = new Date(a.applicationDate); return x.getMonth() === d.getMonth() && x.getFullYear() === d.getFullYear(); }).length]);
     }
     const group = (fn) => { const m = {}; sent.forEach((a) => { const k = fn(a) || 'Unknown'; m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
     return {

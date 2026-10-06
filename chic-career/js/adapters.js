@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — adapters.js
+   CHIC CAREER — adapters.js
    Job Data Service + one replaceable adapter per platform.
 
        Daily scheduler → JobDataService.refresh()

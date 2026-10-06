@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — storage.js
+   CHIC CAREER — storage.js
    Thin, reusable persistence layer on top of localStorage.
    Every collection lives under its own namespaced key so that a backend /
    database adapter can later replace this file without touching the views.
@@ -7,7 +7,8 @@
 (function (MT) {
   'use strict';
 
-  const PREFIX = 'marketrack:';
+  const PREFIX = 'chiccareer:';
+  const LEGACY_PREFIX = 'marketrack:'; // data saved under the app's previous name
   const SCHEMA_VERSION = 3;
 
   // Known collections. Keeping the list explicit documents the data model.
@@ -37,6 +38,18 @@
     window.localStorage.removeItem(t);
   } catch (e) {
     storageOk = false;
+  }
+
+  // One-time migration from the app's previous name (MARKETRACK) so nobody loses data.
+  if (storageOk) {
+    try {
+      if (window.localStorage.getItem(PREFIX + 'meta') === null) {
+        Object.keys(window.localStorage).filter((k) => k.indexOf(LEGACY_PREFIX) === 0).forEach((k) => {
+          window.localStorage.setItem(PREFIX + k.slice(LEGACY_PREFIX.length), window.localStorage.getItem(k));
+          window.localStorage.removeItem(k);
+        });
+      }
+    } catch (e) { /* ignore */ }
   }
 
   function raw(key) { return PREFIX + key; }

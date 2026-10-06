@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — knowledge.js
+   CHIC CAREER — knowledge.js
    Canonical vocabulary shared by the CV parser, the job normaliser and the
    matching engine: skills (with FR/EN aliases), tools, fields, industries.
    ========================================================================== */

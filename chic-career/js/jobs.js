@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — jobs.js
+   CHIC CAREER — jobs.js
    Job discovery (search, filters, sorting, quest cards), job detail page
    (overview, requirements, transparent match, sources), Saved jobs.
    ========================================================================== */

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — data.js
+   CHIC CAREER — data.js
    DEMO DATA ONLY. Every company, offer and person below is fictional and
    exists so the prototype can be tested end to end. None of it is a live
    listing from LinkedIn, Indeed or Welcome to the Jungle.

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — assistant.js
+   CHIC CAREER — assistant.js
    🐔 Career Chicken side panel. Context-aware actions; every answer is
    labelled: Your profile · Job offer · Your answers · Chicken suggestion.
    The chicken is a companion, never a recruiter, and never states invented

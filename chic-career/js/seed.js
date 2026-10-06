@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — seed.js
+   CHIC CAREER — seed.js
    Loads the DEMO profile, CVs, jobs, applications and past cover letters on
    first run (or when the user asks to reset the demo). "Start fresh" wipes
    everything so the empty states can be explored.

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — cover-letter.js
+   CHIC CAREER — cover-letter.js
    Cover-letter engine (local mock AI, deterministic).
 
    Separation of concerns, as required:

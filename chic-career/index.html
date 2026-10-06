@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MARKETRACK · Your career journey, one quest at a time</title>
-  <meta name="description" content="MARKETRACK — find the right marketing job, apply smarter, track everything. A local prototype with demo data and a Career Chicken.">
+  <title>Chic Career · Your career journey, one quest at a time</title>
+  <meta name="description" content="Chic Career — find the right marketing job, apply smarter, track everything. A local prototype with demo data and a Career Chicken.">
   <meta name="theme-color" content="#FBF6EC">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect x='7' y='1' width='3' height='2' fill='%23E5484D'/%3E%3Crect x='4' y='3' width='8' height='9' fill='%23FFFDF7'/%3E%3Crect x='12' y='5' width='3' height='2' fill='%23F28C28'/%3E%3Crect x='10' y='5' width='1' height='1' fill='%232B2622'/%3E%3Crect x='5' y='12' width='1' height='3' fill='%23F2B53A'/%3E%3Crect x='9' y='12' width='1' height='3' fill='%23F2B53A'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,9 +18,9 @@
 
   <div class="shell">
     <aside class="sidebar" aria-label="Main">
-      <a class="brand" href="#/dashboard" aria-label="MARKETRACK home">
+      <a class="brand" href="#/dashboard" aria-label="Chic Career home">
         <span class="brand__mark" aria-hidden="true">🐔</span>
-        <span class="brand__txt"><span class="brand__name">MARKETRACK</span><span class="brand__sub">Find the right job. Apply smarter. Track everything.</span></span>
+        <span class="brand__txt"><span class="brand__name">Chic Career</span><span class="brand__sub">Find the right job. Apply smarter. Track everything.</span></span>
       </a>
       <nav id="nav" class="nav" aria-label="Main navigation"></nav>
       <div id="chicken-widget" class="chicken-widget"></div>
@@ -29,9 +29,11 @@
 
     <div class="main">
       <header class="topbar">
-        <a class="brand brand--mobile" href="#/dashboard" aria-label="MARKETRACK home"><span class="brand__mark" aria-hidden="true">🐔</span><span class="brand__name">MARKETRACK</span></a>
+        <a class="brand brand--mobile" href="#/dashboard" aria-label="Chic Career home"><span class="brand__mark" aria-hidden="true">🐔</span><span class="brand__name">Chic Career</span></a>
         <p class="topbar__updated small">Last updated: <strong class="js-last-updated">—</strong></p>
         <div class="topbar__actions">
+          <label class="lang-pick" title="Platform language"><span class="sr-only">Platform language</span><span aria-hidden="true">🌐</span>
+            <select id="lang-top" data-lang-pick aria-label="Platform language"><option value="en">EN</option><option value="fr">FR</option></select></label>
           <button class="btn btn--ghost btn--sm" id="refresh-top" title="Run the (demo) job refresh now">↻ <span class="hide-sm">Refresh jobs</span></button>
           <button class="btn btn--ghost btn--sm" id="bell" hidden title="Enable reminder notifications">🔔</button>
           <button class="btn btn--dark btn--sm" id="assistant-btn" aria-controls="assistant">🐔 <span class="hide-sm">Career Chicken</span></button>
@@ -51,10 +53,11 @@
   <div id="modal-root"></div>
   <div id="toasts" class="toasts" aria-live="polite"></div>
 
-  <noscript><p style="padding:2rem">MARKETRACK needs JavaScript to run.</p></noscript>
+  <noscript><p style="padding:2rem">Chic Career needs JavaScript to run.</p></noscript>
 
   <!-- Data & services -->
   <script src="js/storage.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/knowledge.js"></script>
   <script src="js/data.js"></script>

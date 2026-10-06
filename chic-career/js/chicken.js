@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — chicken.js
+   CHIC CAREER — chicken.js
    The Career Chicken: pixel-art sprite generator, moods, accessories,
    levels / XP, achievements, journey position and daily quests.
    Progress is always *derived from real actions* (applications, statuses…),

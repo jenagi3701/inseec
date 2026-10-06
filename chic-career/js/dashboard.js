@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MARKETRACK — dashboard.js
+   CHIC CAREER — dashboard.js
    "What should I do today?" — greeting, the Chicken's Career Journey map,
    daily quests, KPIs, funnel, recommended quests, recent applications,
    next actions, upcoming follow-ups and achievements.
