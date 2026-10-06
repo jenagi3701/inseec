@@ -8,7 +8,10 @@
 // ---------------------------------------------------------
 // constants & utils
 // ---------------------------------------------------------
-const W = 480, H = 270, GROUND = 232, GRAV = 900, STEP = 1 / 60;
+// W x H is the visible camera window (zoomed in 1.5x over the 480x270 HUD layout);
+// CAMY scrolls the view down so it frames the ground and the action.
+const W = 320, H = 180, CAMY = 72, GROUND = 232, GRAV = 900, STEP = 1 / 60;
+const STAGE_W = 480, STAGE_H = 270;
 const $ = s => document.querySelector(s);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -462,12 +465,12 @@ function drawBackground(theme, camX, t, worldW) {
     g.fillRect(0, Math.floor(i * 175 / bands), W, Math.ceil(175 / bands) + 1);
   }
   if (T.moon) {
-    for (let i = 0; i < 40; i++) { const sx = (i * 97) % W, sy = (i * 53) % 120; if ((i + Math.floor(t * 2)) % 7) R(sx, sy, 1, 1, '#fff'); }
-    circle(400 - camX * 0.02, 40, 14, T.moon); circle(394 - camX * 0.02, 36, 3, '#dcd9a8');
-  } else if (T.sun) circle(380 - camX * 0.02, 46, 18, T.sun);
+    for (let i = 0; i < 40; i++) { const sx = (i * 97) % W, sy = CAMY + (i * 53) % 70; if ((i + Math.floor(t * 2)) % 7) R(sx, sy, 1, 1, '#fff'); }
+    circle(270 - camX * 0.02, CAMY + 26, 12, T.moon); circle(265 - camX * 0.02, CAMY + 22, 3, '#dcd9a8');
+  } else if (T.sun) circle(260 - camX * 0.02, CAMY + 30, 15, T.sun);
   // clouds
   for (let i = 0; i < 6; i++) {
-    const cx = ((i * 140 - camX * 0.15 + t * 4) % (W + 120) + W + 120) % (W + 120) - 60, cy = 20 + (i * 37) % 70;
+    const cx = ((i * 140 - camX * 0.15 + t * 4) % (W + 120) + W + 120) % (W + 120) - 60, cy = CAMY + 8 + (i * 37) % 44;
     R(cx, cy, 40, 8, T.cloud); R(cx + 8, cy - 6, 22, 6, T.cloud); R(cx - 6, cy + 4, 52, 5, T.cloud);
   }
   // far islands
@@ -515,13 +518,13 @@ function mix(a, b, k) {
 }
 function drawGround(theme, camX) {
   const T = THEMES[theme];
-  R(0, GROUND, W, H - GROUND, T.sand);
+  R(0, GROUND, W, 80, T.sand);
   R(0, GROUND, W, 2, T.top);
   const start = Math.floor(camX / 16) * 16;
   for (let wx = start; wx < camX + W + 16; wx += 16) {
     const h = (wx * 2654435761) >>> 0;
     const sx = wx - camX;
-    if (T.deck) { R(sx, GROUND + 2, 1, H - GROUND, T.sand2); R(sx + 8, GROUND + 14, 8, 1, T.sand2); continue; }
+    if (T.deck) { R(sx, GROUND + 2, 1, 80, T.sand2); R(sx + 8, GROUND + 14, 8, 1, T.sand2); continue; }
     R(sx + (h % 13), GROUND + 6 + (h % 7) * 3, 2, 1, T.sand2);
     R(sx + ((h >> 4) % 11), GROUND + 12 + ((h >> 8) % 5) * 4, 1, 1, T.sand2);
     if (theme === 'jungle' && h % 3 === 0) R(sx + 4, GROUND - 3, 2, 3, '#3fae4b');
@@ -1137,8 +1140,8 @@ const AI = {
     e.stT -= dt;
     if (e.st === 'wind') { e.vx = 0; if (e.stT <= 0) { e.st = 'idle'; e.stT = rand(1.6, 2.4); sfx('shoot'); addHazard({ x: e.x + e.face * 14, y: e.y - 13, vx: e.face * 170, w: 5, h: 3, life: 2.5, dmg: e.dmg, kind: 'bullet' }); } return; }
     const ad = Math.abs(dx);
-    if (ad < 110) e.vx = -e.face * e.spd; else if (ad > 190) e.vx = e.face * e.spd; else e.vx = 0;
-    if (e.stT <= 0 && ad < 240) { e.st = 'wind'; e.stT = 0.45; }
+    if (ad < 90) e.vx = -e.face * e.spd; else if (ad > 150) e.vx = e.face * e.spd; else e.vx = 0;
+    if (e.stT <= 0 && ad < 170) { e.st = 'wind'; e.stT = 0.45; }
   },
   flyer(e, dt) {
     e.stT -= dt;
@@ -1231,7 +1234,7 @@ const AI = {
         e.vx = 0;
         if (e.stT <= 0) {
           const xs = [P.x, P.x - 70, P.x + 70];
-          if (e.phase2) xs.push(P.x - 140, P.x + 140);
+          if (e.phase2) xs.push(P.x - 120, P.x + 120);
           for (const x of xs) addHazard({ x: clamp(x, G.arenaX + 10, G.arenaX + W - 10), y: GROUND - 30, w: 18, h: 60, delay: 0.9, life: 1.5, dmg: 20, kind: 'tentacle', once: true });
           e.st = 'idle'; e.stT = 2;
         }
@@ -1256,7 +1259,7 @@ const AI = {
 };
 
 function updateEnemy(e, dt) {
-  if (!e.active) { if (Math.abs(e.x - P.x) < 300) e.active = true; else return; }
+  if (!e.active) { if (Math.abs(e.x - P.x) < 210) e.active = true; else return; }
   e.flash -= dt;
   if (G.t < e.burnUntil && G.t >= e.burnNext) { e.burnNext = G.t + 0.3; hitEnemy(e, 4, { kb: 0, colors: ['#ff7a00', '#ffd23f'] }); if (!e.alive) return; }
   const stunned = G.t < e.stunUntil || G.t < e.holdUntil;
@@ -1346,7 +1349,7 @@ function bossDefeated(e) {
   if (!save.bosses.includes(n)) { save.bosses.push(n); persist(); }
   for (const m of G.enemies) if (m.alive) { m.alive = false; particles(m.x, m.y - m.h / 2, 8, ['#fff'], {}); }
   G.hz.length = 0;
-  const cx = P.x < G.arenaX + W / 2 ? P.x + 70 : P.x - 70;
+  const cx = P.x < G.arenaX + W / 2 ? P.x + 50 : P.x - 50;
   G.chest = { x: clamp(cx, G.arenaX + 30, G.arenaX + W - 30), open: false, drop: -60 };
 }
 
@@ -1386,7 +1389,7 @@ function update(dt) {
   const L = G.L;
   if (L.boss && !G.arena && P.x > G.arenaX + 60 && !save._noBoss) {
     G.arena = true;
-    G.boss = spawnEnemy(L.boss, G.arenaX + W - 70, GROUND, G.level);
+    G.boss = spawnEnemy(L.boss, G.arenaX + W - 50, GROUND, G.level);
     G.boss.active = true; G.boss.face = -1; G.boss.stT = 1.5;
     toast('BOSS: ' + G.boss.name, 2.2); sfx('ult'); shake(6);
     for (const e of G.enemies) if (e.alive && e !== G.boss && e.x < G.arenaX) e.alive = false;
@@ -1592,6 +1595,7 @@ function render() {
   const sh = G.shake > 0 ? Math.round(rand(-G.shake, G.shake) * 0.5) : 0;
   const shy = G.shake > 0 ? Math.round(rand(-G.shake, G.shake) * 0.5) : 0;
   const cam = Math.round(G.cam);
+  g.save(); g.translate(0, -CAMY);
   drawBackground(G.theme, cam, G.t, G.worldW);
   g.save();
   g.translate(-cam + sh, shy);
@@ -1603,6 +1607,18 @@ function render() {
   // arena walls
   if (G.arena) { for (const x of [G.arenaX, G.arenaX + W - 4]) { R(x, 120, 4, GROUND - 120, '#5a3412'); R(x, 120, 4, 3, '#ffd23f'); } }
   else if (G.L.boss && !G.boss) { R(G.arenaX + 60, GROUND - 40, 3, 40, '#5a3412'); R(G.arenaX + 63, GROUND - 40, 16, 10, '#c22'); R(G.arenaX + 67, GROUND - 37, 6, 4, '#fff'); }
+  // tutorial signs on level 1
+  if (G.level === 1) {
+    const tips = isTouch
+      ? [[110, '◀ ▶ MOVE · JUMP'], [470, 'ATK = ATTACK'], [830, 'S1 / S2 = SKILLS'], [1190, 'ULT = FULL ENERGY'], [1550, 'COINS UNLOCK NEW CREW!']]
+      : [[110, 'A/D MOVE·SPACE JUMP'], [470, 'J = ATTACK'], [830, 'Q / E = SKILLS'], [1190, 'R = ULTIMATE'], [1550, 'COINS UNLOCK NEW CREW!']];
+    tips.push([G.worldW - 170, 'TREASURE →']);
+    for (const [x, str] of tips) if (x > cam - 120 && x < cam + W + 120) {
+      const wdt = str.length * 8 + 10;
+      R(x - wdt / 2, 146, wdt, 16, '#3b2414cc'); R(x - 1, 162, 3, GROUND - 162, '#5a3412');
+      pxText(str, x, 154, '#fff7e0');
+    }
+  }
   if (G.chest) { g.save(); g.translate(0, G.chest.drop || 0); drawChest(G.chest); g.restore(); }
   for (const h of G.hearts) if (h.age < 9 || Math.floor(G.t * 8) % 2) drawHeart(h.x, h.y + Math.sin(G.t * 5) * 1.5);
   for (const c of G.coins) if (c.x > cam - 10 && c.x < cam + W + 10) drawCoin(c.x, c.y, G.t + c.x * 0.01);
@@ -1624,20 +1640,9 @@ function render() {
     const k = clamp((G.t - P.charging.start) / 1.2, 0, 1);
     R(P.x - 12, P.y - 34, 24, 4, '#000'); R(P.x - 11, P.y - 33, 22 * k, 2, k >= 1 ? '#fff' : '#ffd23f');
   }
-  // tutorial signs on level 1
-  if (G.level === 1) {
-    const tips = isTouch
-      ? [[130, '◀ ▶ MOVE · JUMP'], [330, 'ATK TO ATTACK (HOLD)'], [700, 'S1 / S2 = SKILLS'], [1100, 'ULT WHEN ENERGY IS FULL'], [1500, 'COINS UNLOCK NEW CREW!']]
-      : [[130, 'A/D MOVE · SPACE JUMP'], [330, 'J ATTACK (HOLD)'], [700, 'Q / E = SKILLS'], [1100, 'R = ULTIMATE (FULL ENERGY)'], [1500, 'COINS UNLOCK NEW CREW!']];
-    tips.push([G.worldW - 200, 'GRAB THE TREASURE! →']);
-    for (const [x, str] of tips) if (x > cam - 120 && x < cam + W + 120) {
-      const wdt = str.length * 8 + 10;
-      R(x - wdt / 2, 146, wdt, 16, '#3b2414cc'); R(x - 1, 162, 3, GROUND - 162, '#5a3412');
-      pxText(str, x, 154, '#fff7e0');
-    }
-  }
   // direction hint
-  if (!G.arena && G.chest && !G.chest.open && G.chest.x - P.x > 200 && Math.floor(G.t * 2) % 2) pxText('→', cam + W - 16, 140, '#ffd23f');
+  if (!G.arena && G.chest && !G.chest.open && G.chest.x - P.x > 150 && Math.floor(G.t * 2) % 2) pxText('→', cam + W - 16, 140, '#ffd23f');
+  g.restore();
   g.restore();
   // weather overlay
   const storming = G.t < G.weather;
@@ -1693,13 +1698,15 @@ let menuT = 0, menuLast = 0;
 function renderMenuScene() {
   const now = performance.now() / 1000; const dt = Math.min(0.05, now - (menuLast || now)); menuLast = now; menuT += dt;
   const cam = menuT * 30;
+  g.save(); g.translate(0, -CAMY);
   drawBackground('day', cam, menuT, 1e6);
   drawGround('day', cam);
   const fakeG = G; // drawHero uses no G
   const id = save.selected && save.unlocked.includes(save.selected) ? save.selected : 'captain';
-  shadow(150, GROUND, 14);
-  heroOutlined(id, 150, GROUND, 1, { walk: menuT * 8, t: menuT });
-  drawCoin(200 + Math.sin(menuT * 2) * 2, GROUND - 30, menuT);
+  shadow(110, GROUND, 14);
+  heroOutlined(id, 110, GROUND, 1, { walk: menuT * 8, t: menuT });
+  drawCoin(150 + Math.sin(menuT * 2) * 2, GROUND - 30, menuT);
+  g.restore();
   void fakeG;
 }
 
@@ -1975,10 +1982,10 @@ const isTouch = ('ontouchstart' in window) || (window.matchMedia && matchMedia('
 if (isTouch) document.body.classList.add('touch');
 function updateTouchVisibility() { $('#touch').classList.toggle('hidden', !(isTouch && G && G.running)); }
 function layout() {
-  const s = Math.max(0.5, Math.min(window.innerWidth / W, window.innerHeight / H));
+  const s = Math.max(0.5, Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H));
   const st = $('#stage');
-  st.style.width = Math.floor(W * s) + 'px';
-  st.style.height = Math.floor(H * s) + 'px';
+  st.style.width = Math.floor(STAGE_W * s) + 'px';
+  st.style.height = Math.floor(STAGE_H * s) + 'px';
   st.style.setProperty('--u', s + 'px');
 }
 window.addEventListener('resize', layout);
