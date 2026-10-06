@@ -84,6 +84,27 @@ function sfx(name) {
   } catch (e) { /* audio not available */ }
 }
 
+// background music: 16-step loop scheduled slightly ahead on the audio clock
+const SONGS = {
+  sea: { bpm: 132, bass: [110, 0, 110, 0, 147, 0, 147, 0, 131, 0, 131, 0, 98, 0, 123, 0], lead: [440, 0, 523, 587, 659, 0, 587, 0, 523, 0, 440, 0, 392, 440, 0, 0] },
+  boss: { bpm: 160, bass: [110, 110, 0, 110, 117, 117, 0, 117, 104, 104, 0, 104, 98, 0, 98, 0], lead: [440, 0, 466, 0, 440, 0, 415, 0, 440, 523, 0, 466, 440, 0, 0, 0] },
+};
+const music = { next: 0, step: 0 };
+function musicTick() {
+  if (!actx || save.muted || !G || !G.running || G.paused || G.over) { music.next = 0; return; }
+  const song = G.arena ? SONGS.boss : SONGS.sea;
+  const len = 60 / song.bpm / 2;
+  if (music.next < actx.currentTime) music.next = actx.currentTime + 0.05;
+  while (music.next < actx.currentTime + 0.12) {
+    const i = music.step % 16, d = music.next - actx.currentTime;
+    try {
+      if (song.bass[i]) tone(song.bass[i], len * 0.9, 'triangle', 0, 0.05, d);
+      if (song.lead[i] && Math.floor(music.step / 16) % 2) tone(song.lead[i], len * 0.8, 'square', 0, 0.014, d);
+    } catch (e) { /* audio unavailable */ }
+    music.step++; music.next += len;
+  }
+}
+
 // ---------------------------------------------------------
 // input
 // ---------------------------------------------------------
@@ -1567,6 +1588,18 @@ function render() {
     const k = clamp((G.t - P.charging.start) / 1.2, 0, 1);
     R(P.x - 12, P.y - 34, 24, 4, '#000'); R(P.x - 11, P.y - 33, 22 * k, 2, k >= 1 ? '#fff' : '#ffd23f');
   }
+  // tutorial signs on level 1
+  if (G.level === 1) {
+    const tips = isTouch
+      ? [[130, '◀ ▶ MOVE · JUMP'], [330, 'ATK TO ATTACK (HOLD)'], [700, 'S1 / S2 = SKILLS'], [1100, 'ULT WHEN ENERGY IS FULL'], [1500, 'COINS UNLOCK NEW CREW!']]
+      : [[130, 'A/D MOVE · SPACE JUMP'], [330, 'J ATTACK (HOLD)'], [700, 'Q / E = SKILLS'], [1100, 'R = ULTIMATE (FULL ENERGY)'], [1500, 'COINS UNLOCK NEW CREW!']];
+    tips.push([G.worldW - 200, 'GRAB THE TREASURE! →']);
+    for (const [x, str] of tips) if (x > cam - 120 && x < cam + W + 120) {
+      const wdt = str.length * 8 + 10;
+      R(x - wdt / 2, 146, wdt, 16, '#3b2414cc'); R(x - 1, 162, 3, GROUND - 162, '#5a3412');
+      pxText(str, x, 154, '#fff7e0');
+    }
+  }
   // direction hint
   if (!G.arena && G.chest && !G.chest.open && G.chest.x - P.x > 200 && Math.floor(G.t * 2) % 2) pxText('→', cam + W - 16, 140, '#ffd23f');
   g.restore();
@@ -1948,7 +1981,7 @@ function frame(ts) {
     while (acc >= STEP && steps < 5) { update(STEP); acc -= STEP; steps++; }
     if (steps >= 5) acc = 0;
   }
-  try { render(); updateHUD(); } catch (err) { console.error(err); }
+  try { render(); updateHUD(); musicTick(); } catch (err) { console.error(err); }
   requestAnimationFrame(frame);
 }
 
