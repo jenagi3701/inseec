@@ -2,7 +2,8 @@
 
 Site portfolio statique (HTML/CSS/JS, sans dépendances) : Marketing Digital & Communication.
 
-- `index.html` — contenu (à propos, compétences, expériences, formation, contact)
+- `index.html` — version française (à propos, compétences, expériences, formation, contact)
+- `en/index.html` — English version (bouton FR | EN dans le menu)
 - `style.css` — styles (responsive, titres en contour comme le portfolio d'origine)
 - `script.js` — menu mobile, animations au défilement, galerie en plein écran
 - `assets/img/` — images extraites du portfolio PDF
