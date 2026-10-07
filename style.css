@@ -428,3 +428,11 @@ table.keys td:first-child { color: var(--gold); }
 body.bomb-mode .hud-box { padding: calc(var(--u) * 2) calc(var(--u) * 3); }
 body.bomb-mode .hud-right, body.bomb-mode .hud-left { max-width: calc(var(--u) * 58); font-size: calc(var(--u) * 6); }
 body.bomb-mode #hearts svg { width: calc(var(--u) * 9); height: calc(var(--u) * 8); }
+
+#rotateHint { display: none; }
+@media (orientation: portrait) {
+  body.touch-on #rotateHint {
+    display: block; position: absolute; left: 0; right: 0; top: calc(100% + 12px);
+    text-align: center; font-size: 11px; color: var(--gold); line-height: 1.6; padding: 0 16px;
+  }
+}

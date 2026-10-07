@@ -59,7 +59,9 @@ function spawnEnemy(type, x, y, lvl, variant) {
 
 // quick attack hitbox in front of an enemy (optionally following it)
 function eStrike(e, ox, oy, w, h, life, dmg, extra) {
-  return addHazard(Object.assign({ x: e.x + e.face * ox, y: e.y - oy, w, h, life, dmg, kind: 'none', follow: extra && extra.follow ? e : null, fox: ox, foy: oy }, extra || {}));
+  const hz = addHazard(Object.assign({ x: e.x + e.face * ox, y: e.y - oy, w, h, life, dmg, kind: 'none', fox: ox, foy: oy }, extra || {}));
+  hz.follow = extra && extra.follow ? e : null;
+  return hz;
 }
 function bombLand(h) {
   if (!solidAt(h.x)) { h.dead = true; particles(h.x, GROUND, 6, ['#b3e5fc', '#fff'], { spd: 50 }); return; }
@@ -142,7 +144,7 @@ const AI = {
     if (e.st === 'lunge') { e.vx = e.face * 240; if (e.stT <= 0) { e.st = 'rest'; e.stT = 1.1; } return; }
     if (e.st === 'rest') { e.vx = 0; if (e.stT <= 0) e.st = 'idle'; return; }
     e.face = Math.sign(dx) || e.face;
-    if (ad < 75 && ad > 18 && Math.abs(P.y - e.y) < 30 && e.stT <= 0) { e.st = 'wind'; e.stT = 0.38; e.vx = 0; }
+    if (ad < 75 && Math.abs(P.y - e.y) < 30 && e.stT <= 0) { e.st = 'wind'; e.stT = 0.38; e.vx = 0; }
     else e.vx = ad > 18 ? e.face * e.spd : 0;
   },
   shield(e, dt) {

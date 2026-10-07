@@ -16,7 +16,7 @@ function setupHazards(map, built, rng) {
     } else if (kind === 'thunder') {
       for (let x = 650; x < built.len - (G.L.boss ? W + 120 : 300); x += 560) G.env.push({ kind: 'thunder', x, t0: rng() * 3, cycle: 4.2 });
     } else if (kind === 'icicles') {
-      for (let x = 420; x < built.len - 300; x += 230) G.env.push({ kind: 'icicle', x: x + Math.round(rng() * 60), y: 112, state: 'hang', t: 0 });
+      for (let x = 420; x < built.len - 300; x += 230) G.env.push({ kind: 'icicle', x: x + Math.round(rng() * 60), y: 122, state: 'hang', t: 0 });
     } else if (kind === 'rocks') {
       G.env.push({ kind: 'rockfall', next: 2 });
     } else if (kind === 'sandstorm') {
@@ -57,9 +57,9 @@ function updateEnv(dt) {
       case 'rockfall': {
         h.next -= dt;
         if (h.next <= 0 && !G.arena) {
-          h.next = rand(1.6, 2.6);
+          h.next = rand(2.4, 3.6);
           const x = clamp(P.x + rand(-40, 130) * (P.face || 1), G.cam + 10, G.cam + W - 10);
-          addHazard({ x, y: CAMY - 10, vy: 0, grav: 260, w: 10, h: 10, dmg: 16, kind: 'rock', life: 4, delay: 0, shadow: true, ground: true, fire: true });
+          addHazard({ x, y: CAMY - 10, vy: 0, grav: 260, w: 10, h: 10, dmg: 14, kind: 'rock', life: 4, delay: 0, shadow: true, ground: true, fire: true });
         }
         break;
       }
@@ -93,9 +93,9 @@ function drawEnv(cam) {
         if (h.x < cam - 40 || h.x > cam + W + 40) break;
         const tt = h.tt || 0, warn = tt > h.cycle - 0.9;
         const col = warn && Math.floor(G.t * 12) % 2 ? '#fff59d' : '#5c6378';
-        R(h.x - 22, 104, 44, 10, col); R(h.x - 14, 98, 28, 6, col); R(h.x - 26, 110, 52, 6, '#474c5c');
+        R(h.x - 22, 116, 44, 10, col); R(h.x - 14, 110, 28, 6, col); R(h.x - 26, 122, 52, 6, '#474c5c');
         if (warn) { R(h.x - 8, GROUND - 2, 16, 2, '#fff59d'); }
-        if (tt < 0.18) { g.strokeStyle = '#fff59d'; g.lineWidth = 3; g.beginPath(); g.moveTo(h.x, 116); for (let y = 130; y < GROUND; y += 16) g.lineTo(h.x + rand(-6, 6), y); g.lineTo(h.x, GROUND); g.stroke(); }
+        if (tt < 0.18) { g.strokeStyle = '#fff59d'; g.lineWidth = 3; g.beginPath(); g.moveTo(h.x, 128); for (let y = 140; y < GROUND; y += 16) g.lineTo(h.x + rand(-6, 6), y); g.lineTo(h.x, GROUND); g.stroke(); }
         break;
       }
       case 'icicle': {

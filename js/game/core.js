@@ -4,7 +4,7 @@
 // ---------------------------------------------------------
 // W x H is the visible camera window (zoomed in 1.5x over the 480x270 HUD layout);
 // CAMY scrolls the view down so it frames the ground and the action.
-const W = 320, H = 180, CAMY = 72, GROUND = 232, GRAV = 900, STEP = 1 / 60;
+const W = 320, H = 180, CAMY = 84, GROUND = 232, GRAV = 900, STEP = 1 / 60;
 const STAGE_W = 480, STAGE_H = 270;
 const $ = s => document.querySelector(s);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

@@ -174,7 +174,8 @@ function updatePlayer(dt) {
   if (Math.abs(P.vx) > 1 && (P.onGround || P.swim)) P.walk += dt * 10 * (Math.abs(P.vx) / 90); else P.walk = 0;
   // terrain effects
   const here = segAt(P.x);
-  if (P.onGround && !P.plat && solidAt(P.x) && here.kind !== 'quicksand') { P.safeX = P.x; }
+  // remember solid footing well away from any edge, so a rescue never drops you straight back in
+  if (P.onGround && !P.plat && here.kind !== 'quicksand' && solidAt(P.x - 24) && solidAt(P.x + 24) && !inWind(P.x)) { P.safeX = P.x; }
   if (P.onGround && !P.plat && here.kind === 'quicksand') {
     P.sink = Math.min(14, (P.sink || 0) + dt * 9);
     if (P.sink >= 14 && G.t > (P.sinkHurt || 0)) { P.sinkHurt = G.t + 0.8; P.hp -= 3; popText(P.x, P.y - 28, '-3', '#ff9f43'); if (P.hp <= 0) { P.hp = 0; gameOver(); } }
@@ -193,7 +194,7 @@ function updatePlayer(dt) {
 
 // pull the player back to the last safe ground after falling in water, a gap or lava
 function rescue(kind) {
-  const pct = kind === 'lava' ? (TRAITS.fireproof(P.id) ? 0.06 : 0.18) : kind === 'sea' ? 0.12 : 0.15;
+  const pct = kind === 'lava' ? (TRAITS.fireproof(P.id) ? 0.06 : 0.16) : 0.12;
   const dmg = Math.max(1, Math.round(P.maxHp * pct));
   P.hp -= dmg; G.stats.hurt += dmg;
   if (kind === 'sea') P.energy = Math.max(0, P.energy - 25);
