@@ -2,9 +2,19 @@
 // ---------------------------------------------------------
 // constants & utils
 // ---------------------------------------------------------
-// W x H is the visible camera window (zoomed in 1.5x over the 480x270 HUD layout);
-// CAMY scrolls the view down so it frames the ground and the action.
-const W = 320, H = 180, CAMY = 84, GROUND = 232, GRAV = 900, STEP = 1 / 60;
+// W x H is the visible camera window. Two camera modes: 'wide' (384x216, more vision)
+// and 'close' (320x180, bigger sprites). CAMY scrolls the view so the ground sits 32px
+// above the bottom edge. AW is the fixed width of boss arenas, independent of the camera.
+const GROUND = 232, GRAV = 900, STEP = 1 / 60, AW = 320;
+const CAMERA_MODES = { wide: [384, 216], close: [320, 180] };
+let W = 384, H = 216, CAMY = GROUND - H + 32;
+function setCameraMode(mode) {
+  const [w, h] = CAMERA_MODES[mode] || CAMERA_MODES.wide;
+  W = w; H = h; CAMY = GROUND - H + 32;
+  const cv = document.querySelector('#game');
+  if (cv) { cv.width = W; cv.height = H; }
+  if (typeof fogBuf !== 'undefined') { fogBuf.width = W; fogBuf.height = H; }
+}
 const STAGE_W = 480, STAGE_H = 270;
 const $ = s => document.querySelector(s);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

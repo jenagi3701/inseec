@@ -24,7 +24,7 @@ function buildTerrain(map, rng, hasBoss) {
     for (let i = 0; i < 2; i++) coinSpots.push([x0 + r(30, w - 30), GROUND - 8 - Math.floor(rng() * 3) * 10]);
   };
   ground(300, false);
-  const endLimit = map.len - (hasBoss ? W + 80 : 280);
+  const endLimit = map.len - (hasBoss ? AW + 120 : 280);
   let ci = 0;
   while (x < endLimit) {
     const c = map.chunks[ci++ % map.chunks.length];
@@ -77,7 +77,7 @@ function buildTerrain(map, rng, hasBoss) {
     }
   }
   // the finish: a long safe stretch (boss arena or treasure)
-  const tail = hasBoss ? Math.max(W + 120, map.len - x) : Math.max(260, map.len - x);
+  const tail = hasBoss ? Math.max(AW + 160, map.len - x) : Math.max(260, map.len - x);
   const tx = x; seg(map.theme === 'ocean' ? 'ship' : 'ground', tail);
   if (!hasBoss) for (let gx = tx + 40; gx < x - 120; gx += 80) slots.ground.push(gx);
   for (const p of plats) { p.baseX = p.x; p.baseY = p.y; p.dx = 0; }
@@ -115,7 +115,7 @@ function updatePlatforms(dt) {
 const TERRAIN_COLORS = {
   forest: { top: '#4caf50', body: '#8d6e3f', dark: '#6d5230' },
   ocean: { top: '#fff0b5', body: '#f1d08a', dark: '#d9b56a' },
-  sky: { top: '#ffffff', body: '#e3f2fd', dark: '#b3d4f0' },
+  sky: { top: '#7cb342', body: '#a1785a', dark: '#7a5a40' },
   desert: { top: '#ffe0a3', body: '#e8bf76', dark: '#c99a50' },
   snow: { top: '#ffffff', body: '#dfe9f3', dark: '#b8c8d8' },
   volcano: { top: '#6d4c41', body: '#3e2723', dark: '#2a1a17' },
@@ -135,6 +135,7 @@ function drawTerrain(theme, cam) {
           R(wx + (h % 11), GROUND + 6 + (h % 5) * 4, 2, 1, C.dark);
           if (theme === 'forest' && h % 3 === 0) R(wx + 4, GROUND - 3, 2, 3, '#3fae4b');
           if (theme === 'snow' && h % 4 === 0) R(wx + 6, GROUND - 2, 4, 2, '#ffffff');
+          if (theme === 'sky') { R(wx, GROUND + 2, 16, 2, '#558b2f'); if (h % 3 === 0) { R(wx + 5, GROUND - 3, 2, 3, '#8bc34a'); R(wx + 5, GROUND - 4, 2, 1, h % 2 ? '#fff176' : '#f8bbd0'); } }
         }
         if (s.x0 >= x0) edge(s.x0, C);
         if (s.x1 <= x1) edge(s.x1 - 3, C);
@@ -196,8 +197,15 @@ function drawPlatform(p, theme) {
       R(x + 2, y, w - 4, 14, '#8b5a2b'); R(x, y + 3, w, 2, '#5d4037'); R(x, y + 9, w, 2, '#5d4037'); R(x + 2, y, w - 4, 2, '#a0682f');
       break;
     case 'cloud': {
-      R(x, y + 1, w, 6, '#ffffff'); R(x + 4, y - 2, w - 8, 4, '#ffffff'); R(x + 2, y + 7, w - 4, 2, '#cfe8fb');
-      if (p.move) R(x + w / 2 - 2, y + 9, 4, 2, '#90caf9');
+      if (p.move) {
+        // dotted track showing where the moving cloud travels
+        for (let tx = p.move.ax; tx < p.move.bx + w; tx += 8) R(tx, y + 12, 3, 1, 'rgba(255,255,255,0.75)');
+        R(p.move.ax - 2, y + 10, 2, 5, '#64b5f6'); R(p.move.bx + w, y + 10, 2, 5, '#64b5f6');
+      }
+      const edge = p.move ? '#1e88e5' : '#90caf9';
+      R(x - 1, y, w + 2, 8, edge); R(x + 3, y - 3, w - 6, 4, edge);
+      R(x, y + 1, w, 6, '#ffffff'); R(x + 4, y - 2, w - 8, 4, '#ffffff'); R(x + 2, y + 7, w - 4, 2, '#bbdefb');
+      if (p.move) { const k = Math.floor(G.t * 4) % 2; R(x + 4 + k, y + 3, 2, 2, '#1e88e5'); R(x + w - 6 - k, y + 3, 2, 2, '#1e88e5'); pxText('↔', x + w / 2, y - 7, '#1565c0'); }
       break;
     }
     case 'cabin':

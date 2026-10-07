@@ -14,7 +14,7 @@ function setupHazards(map, built, rng) {
       let dir = 1;
       for (let x = 500; x < built.len - 500; x += 620) { G.env.push({ kind: 'wind', x0: x, x1: x + 220, dir, phase: rng() * 6 }); dir = -dir; }
     } else if (kind === 'thunder') {
-      for (let x = 650; x < built.len - (G.L.boss ? W + 120 : 300); x += 560) G.env.push({ kind: 'thunder', x, t0: rng() * 3, cycle: 4.2 });
+      for (let x = 650; x < built.len - (G.L.boss ? AW + 160 : 300); x += 560) G.env.push({ kind: 'thunder', x, t0: rng() * 3, cycle: 4.2 });
     } else if (kind === 'icicles') {
       for (let x = 420; x < built.len - 300; x += 230) G.env.push({ kind: 'icicle', x: x + Math.round(rng() * 60), y: 122, state: 'hang', t: 0 });
     } else if (kind === 'rocks') {

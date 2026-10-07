@@ -22,6 +22,8 @@ Open `index.html` in any modern browser (or serve the folder with any static ser
 
 **Touch:** a large virtual joystick (bottom-left; drag in 8 directions, push up to jump) and round icon buttons (bottom-right) for Attack, Jump, Skill 1-3 and Ultimate. Buttons darken with a clockwise cooldown sweep and a seconds counter. Toggle on-screen controls (Auto / On / Off) from the title screen — they also work with a mouse.
 
+**Camera:** choose **Wide** (default, more of the level in view) or **Close** (bigger sprites) from the title screen or the pause menu. Your choice is saved.
+
 ## Maps and strategy
 
 | # | Map | Rules that change your play |

@@ -17,7 +17,7 @@ function render() {
   drawTerrain(G.theme, cam);
   for (const pl of G.plats) if (pl.x + pl.w > cam && pl.x < cam + W) drawPlatform(pl, G.theme);
   // arena walls
-  if (G.arena) { for (const x of [G.arenaX, G.arenaX + W - 4]) { R(x, 120, 4, GROUND - 120, '#5a3412'); R(x, 120, 4, 3, '#ffd23f'); } }
+  if (G.arena) { for (const x of [G.arenaX, G.arenaX + AW - 4]) { R(x, 120, 4, GROUND - 120, '#5a3412'); R(x, 120, 4, 3, '#ffd23f'); } }
   else if (G.L.boss && !G.boss) { R(G.arenaX + 60, GROUND - 40, 3, 40, '#5a3412'); R(G.arenaX + 63, GROUND - 40, 16, 10, '#c22'); R(G.arenaX + 67, GROUND - 37, 6, 4, '#fff'); }
   // tutorial signs on level 1
   if (G.level === 1) {

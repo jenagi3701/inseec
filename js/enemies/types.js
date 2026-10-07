@@ -266,7 +266,7 @@ const AI = {
       case 'charge':
         e.vx = e.face * 250 * sp;
         if (e.variant === 'magma' && Math.random() < 0.08) fireZone(e.x, 2.5);
-        if ((e.face > 0 && e.x >= G.arenaX + W - 26) || (e.face < 0 && e.x <= G.arenaX + 26)) { e.vx = 0; e.st = 'idle'; e.stT = 1.4; shake(6); sfx('boom'); e.stunUntil = G.t + 0.9; }
+        if ((e.face > 0 && e.x >= G.arenaX + AW - 26) || (e.face < 0 && e.x <= G.arenaX + 26)) { e.vx = 0; e.st = 'idle'; e.stT = 1.4; shake(6); sfx('boom'); e.stunUntil = G.t + 0.9; }
         break;
       case 'slamwind':
         if (e.stT <= 0 && e.onGround && !e.jumped) { e.jumped = true; e.vy = -420; e.onGround = false; e.vx = clamp(dx, -200, 200); }
@@ -281,7 +281,7 @@ const AI = {
         e.vx = 0;
         if (e.stT <= 0) {
           const minions = G.enemies.filter(m => m.alive && !m.boss).length;
-          if (minions < 3) for (const o of [-60, 60]) { const t = e.variant === 'magma' ? 'firemonster' : 'raider'; const m = spawnEnemy(t, clamp(e.x + o, G.arenaX + 20, G.arenaX + W - 20), GROUND, G.level); m.active = true; m.coins = 5; if (m.hidden) { m.hidden = false; m.st = 'attack'; m.stT = 4; } }
+          if (minions < 3) for (const o of [-60, 60]) { const t = e.variant === 'magma' ? 'firemonster' : 'raider'; const m = spawnEnemy(t, clamp(e.x + o, G.arenaX + 20, G.arenaX + AW - 20), GROUND, G.level); m.active = true; m.coins = 5; if (m.hidden) { m.hidden = false; m.st = 'attack'; m.stT = 4; } }
           particles(e.x, e.y - 30, 20, ['#ffd23f', '#fff'], { spd: 100 });
           e.st = 'idle'; e.stT = 1.6;
         }
@@ -301,7 +301,7 @@ const AI = {
       case 'wind': e.vx = 0; e.x += Math.sin(G.t * 60) * 0.6; if (e.stT <= 0) { e.st = 'charge'; e.face = Math.sign(dx) || e.face; } break;
       case 'charge':
         e.vx = e.face * 230 * sp;
-        if ((e.face > 0 && e.x >= G.arenaX + W - 34) || (e.face < 0 && e.x <= G.arenaX + 34)) { e.vx = 0; e.st = 'dizzy'; e.stT = 1; shake(6); sfx('boom'); e.stunUntil = G.t + 0.9; }
+        if ((e.face > 0 && e.x >= G.arenaX + AW - 34) || (e.face < 0 && e.x <= G.arenaX + 34)) { e.vx = 0; e.st = 'dizzy'; e.stT = 1; shake(6); sfx('boom'); e.stunUntil = G.t + 0.9; }
         break;
       case 'dizzy': e.vx = 0; if (e.stT <= 0) { e.st = 'idle'; e.stT = 1; } break;
       case 'bubbles':
@@ -348,7 +348,7 @@ const AI = {
         if (e.stT <= 0) {
           const xs = [P.x, P.x - 70, P.x + 70];
           if (e.phase2) xs.push(P.x - 120, P.x + 120);
-          for (const x of xs) addHazard({ x: clamp(x, G.arenaX + 10, G.arenaX + W - 10), y: GROUND - 30, w: 18, h: 60, delay: 0.9, life: 1.5, dmg: 20, kind: 'tentacle', once: true });
+          for (const x of xs) addHazard({ x: clamp(x, G.arenaX + 10, G.arenaX + AW - 10), y: GROUND - 30, w: 18, h: 60, delay: 0.9, life: 1.5, dmg: 20, kind: 'tentacle', once: true });
           e.st = 'idle'; e.stT = 2;
         }
         break;
@@ -365,7 +365,7 @@ const AI = {
       case 'charge':
         e.vx = e.face * 250 * sp;
         if (Math.random() < 0.5) particles(e.x - e.face * 20, e.y - 20, 1, ['#3b0f5c', '#111'], { spd: 20, grav: 0 });
-        if ((e.face > 0 && e.x >= G.arenaX + W - 34) || (e.face < 0 && e.x <= G.arenaX + 34)) { e.vx = 0; e.st = 'idle'; e.stT = 1.4; shake(7); sfx('boom'); e.stunUntil = G.t + 0.8; }
+        if ((e.face > 0 && e.x >= G.arenaX + AW - 34) || (e.face < 0 && e.x <= G.arenaX + 34)) { e.vx = 0; e.st = 'idle'; e.stT = 1.4; shake(7); sfx('boom'); e.stunUntil = G.t + 0.8; }
         break;
     }
   },
@@ -414,7 +414,7 @@ function updateEnemy(e, dt) {
   if (G.t < e.holdUntil) { e.kx = 0; if (!e.fly && e.vy < 0) e.vy = 0; }
   e.x += (e.vx + e.kx) * dt;
   e.kx -= e.kx * Math.min(1, 8 * dt);
-  let minX = G.arena ? G.arenaX + 10 : 10, maxX = G.arena ? G.arenaX + W - 10 : G.worldW - 10;
+  let minX = G.arena ? G.arenaX + 10 : 10, maxX = G.arena ? G.arenaX + AW - 10 : G.worldW - 10;
   if (e.type === 'seacreature' && e.sub) { minX = e.hx0 + 10; maxX = e.hx1 - 10; }
   if (e.type === 'cannonship') { minX = maxX = e.x; }
   e.x = clamp(e.x, minX, maxX);

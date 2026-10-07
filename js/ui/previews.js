@@ -2,11 +2,13 @@
 // =========================================================
 // MAP PREVIEWS — paint a still of each map into any canvas
 // =========================================================
-const previewBuf = document.createElement('canvas'); previewBuf.width = W; previewBuf.height = H;
+const previewBuf = document.createElement('canvas'); previewBuf.width = 320; previewBuf.height = 180;
 const previewCache = {};
 function renderMapPreview(canvasEl, mapId) {
   const M = MAPS[mapId];
   if (!previewCache[mapId]) {
+    const keep = [W, H, CAMY]; W = 320; H = 180; CAMY = GROUND - H + 32; // previews use the close framing
+    try {
     const pc = previewBuf.getContext('2d');
     pc.imageSmoothingEnabled = false;
     pc.clearRect(0, 0, W, H);
@@ -44,6 +46,7 @@ function renderMapPreview(canvasEl, mapId) {
     const out = document.createElement('canvas'); out.width = W; out.height = H;
     out.getContext('2d').drawImage(previewBuf, 0, 0);
     previewCache[mapId] = out;
+    } finally { [W, H, CAMY] = keep; }
   }
   const c = canvasEl.getContext('2d');
   c.imageSmoothingEnabled = false;

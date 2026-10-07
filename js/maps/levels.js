@@ -29,7 +29,7 @@ function startLevel(n, charId, resume) {
     stats: { kills: 0, dmg: 0, hurt: 0 },
     mods: { atk: sm[0], def: sm[1], spd: sm[2], rank: 1 },
     rank: 1, rankKills: 0, combo: 0, comboT: -9,
-    arena: false, arenaX: L.boss ? built.len - W : 0, boss: null, chest: null, endT: 0,
+    arena: false, arenaX: L.boss ? built.len - AW - 40 : 0, boss: null, chest: null, endT: 0,
   };
   P = {
     id: charId, x: 96, y: GROUND, w: 12, h: 22, vx: 0, vy: 0, kx: 0, face: 1, onGround: true, coyote: 0,
@@ -78,8 +78,8 @@ function bossDefeated(e) {
   if (n && !save.bosses.includes(n)) { save.bosses.push(n); persist(); }
   for (const m of G.enemies) if (m.alive) { m.alive = false; particles(m.x, m.y - m.h / 2, 8, ['#fff'], {}); }
   G.hz.length = 0;
-  const cx = P.x < G.arenaX + W / 2 ? P.x + 50 : P.x - 50;
-  G.chest = { x: clamp(cx, G.arenaX + 30, G.arenaX + W - 30), open: false, drop: -60 };
+  const cx = P.x < G.arenaX + AW / 2 ? P.x + 50 : P.x - 50;
+  G.chest = { x: clamp(cx, G.arenaX + 30, G.arenaX + AW - 30), open: false, drop: -60 };
 }
 
 const WATER_TYPES = { seacreature: 1, cannonship: 1 }, FLY_TYPES = { flyer: 1, skywarrior: 1 };

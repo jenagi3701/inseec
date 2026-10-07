@@ -38,14 +38,14 @@ function update(dt) {
   const L = G.L;
   if (L.boss && !G.arena && P.x > G.arenaX + 60 && !save._noBoss) {
     G.arena = true;
-    G.boss = spawnEnemy(L.boss, G.arenaX + W - 50, GROUND, G.level, L.variant);
+    G.boss = spawnEnemy(L.boss, G.arenaX + AW - 50, GROUND, G.level, L.variant);
     G.boss.active = true; G.boss.face = -1; G.boss.stT = 1.5;
     toast('BOSS: ' + G.boss.name, 2.2); sfx('ult'); shake(6);
     for (const e of G.enemies) if (e.alive && e !== G.boss && e.x < G.arenaX) e.alive = false;
   }
   // camera
   let target = P.x - W * (touchOn() ? 0.34 : 0.42);
-  if (G.arena) target = G.arenaX;
+  if (G.arena) target = G.arenaX - (W - AW) / 2; // centre the arena in the view
   target = clamp(target, 0, G.worldW - W);
   G.cam += (target - G.cam) * Math.min(1, dt * 8);
   G.shake = Math.max(0, G.shake - dt * 30);
@@ -168,7 +168,7 @@ function updatePlayer(dt) {
     if (P.swim) { P.swim = false; P.y = GROUND; P.vy = 0; P.onGround = true; sfx('jump'); }
     else P.x = prevX;
   }
-  const minX = G.arena ? G.arenaX + 8 : 8, maxX = G.arena ? G.arenaX + W - 8 : G.worldW - 8;
+  const minX = G.arena ? G.arenaX + 8 : 8, maxX = G.arena ? G.arenaX + AW - 8 : G.worldW - 8;
   P.x = clamp(P.x, minX, maxX);
   if (Math.abs(P.vx) > 1 && (P.onGround || P.swim)) P.walk += dt * 10 * (Math.abs(P.vx) / 90); else P.walk = 0;
   // terrain effects

@@ -87,6 +87,16 @@ $('#btnLoadCode').addEventListener('click', () => {
 });
 $('#btnHelp').addEventListener('click', () => $('#screen-help').classList.remove('hidden'));
 $('#helpClose').addEventListener('click', () => $('#screen-help').classList.add('hidden'));
+function applyCamera() {
+  setCameraMode(save.camera || 'wide');
+  const label = '📷 CAMERA: ' + (save.camera === 'close' ? 'CLOSE' : 'WIDE');
+  for (const id of ['#btnCamera', '#btnCamera2']) $(id).textContent = label;
+  if (G && G.running) G.cam = clamp(P.x - W * 0.42, G.arena ? G.arenaX - (W - AW) / 2 : 0, G.worldW - W);
+}
+applyCamera();
+const toggleCamera = () => { save.camera = save.camera === 'close' ? 'wide' : 'close'; persist(); applyCamera(); };
+$('#btnCamera').addEventListener('click', toggleCamera);
+$('#btnCamera2').addEventListener('click', toggleCamera);
 $('#btnTouch').addEventListener('click', () => { const order = ['auto', 'on', 'off']; save.touchMode = order[(order.indexOf(save.touchMode || 'auto') + 1) % 3]; persist(); applyTouchMode(); });
 $('#btnMute').addEventListener('click', () => { save.muted = !save.muted; persist(); $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON'); });
 $('#btnReset').addEventListener('click', () => askConfirm('ERASE ALL PROGRESS?', () => { save = defaultSave(); persist(); goTitle(); }));
