@@ -22,9 +22,7 @@ function render() {
   // tutorial signs on level 1
   if (G.level === 1) {
     const tips = isTouch
-      ? (simpleControls()
-        ? [[110, 'JOYSTICK = MOVE'], [470, 'YOU ATTACK BY ITSELF!'], [830, 'BLUE = SMART SKILL'], [1190, 'GOLD = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']]
-        : [[110, 'JOYSTICK = MOVE'], [470, 'RED = ATTACK'], [830, 'ROUND BUTTONS = SKILLS'], [1190, 'GOLD = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']])
+      ? [[110, 'JOYSTICK = MOVE'], [470, '👊 = ATTACK'], [830, 'ROUND BUTTONS = SKILLS'], [1190, '★ = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']]
       : [[110, 'A/D MOVE·SPACE JUMP'], [470, 'J = ATTACK'], [830, 'Q / E / F = SKILLS'], [1190, 'R = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']];
     tips.push([G.worldW - 170, 'TREASURE →']);
     for (const [x, str] of tips) if (x > cam - 120 && x < cam + W + 120) {

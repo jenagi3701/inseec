@@ -20,12 +20,7 @@ Open `index.html` in any modern browser (or serve the folder with any static ser
 | R | Ultimate (needs a full energy bar) |
 | Esc / P | Pause |
 
-**Touch:** a large virtual joystick (bottom-left; drag in 8 directions, push up to jump) and round icon buttons (bottom-right). Buttons darken with a clockwise cooldown sweep and a seconds counter.
-
-- **Simple buttons (default):** your pirate attacks automatically when an enemy is in reach, and one smart **SKILL** button fires whichever skill fits the moment (heals when you're hurt, guards or escapes when an enemy is close, Sky Walk over gaps, attacks otherwise). Only 4 buttons: Attack, Jump, Skill, Ultimate.
-- **Full buttons:** every skill on its own button, no auto-attack.
-
-Switch styles from the title screen or the pause menu. On-screen controls (Auto / On / Off) also work with a mouse.
+**Touch:** a large virtual joystick (bottom-left; drag in 8 directions, push up to jump) and round icon buttons (bottom-right) for Attack, Jump, Skill 1-3 and Ultimate. Buttons darken with a clockwise cooldown sweep and a seconds counter. Toggle on-screen controls (Auto / On / Off) from the title screen — they also work with a mouse.
 
 ## Maps and strategy
 
@@ -76,11 +71,6 @@ Every defeated enemy makes you stronger:
 - **Power orbs** drop from some enemies (always from heavies and bosses): ❤ +25 HP, ⚡ +40 energy, 💢 Rage (+30% attack), 🛡 Shield (blocks the next 2 hits), 🌀 all skills ready, 👟 Swift Feet. Healing orbs are much more likely when you're low on HP.
 - **Combos:** kills within 3.5 s chain together; every 5th is a **RAMPAGE** (+20 coins and 5 s of Rage).
 - **Pirate Rank:** every 6 kills in a level ranks you up (max ★★★★★): +10 max HP and +5% attack.
-- **Catch your breath:** after 4 s without being hit and with no enemy nearby, you slowly heal.
-
-## Fair fights
-
-Enemies never spawn right next to gaps, water, lava or quicksand; lightning clouds and icicles keep away from enemy spots; falling rocks and sandstorms hold off while you're fighting; and only two regular enemies can wind up an attack at the same time.
 
 ## Saving your journey
 

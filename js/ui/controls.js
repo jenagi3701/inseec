@@ -16,56 +16,18 @@ function layout() {
 }
 window.addEventListener('resize', layout);
 
-// Two button styles:
-//  SIMPLE (default): auto-attack + one smart SKILL button that fires the best ready skill → 4 buttons
-//  FULL: every skill on its own button → 6 buttons
-function simpleControls() { return (save.controlStyle || 'simple') === 'simple'; }
-const BTN_LAYOUTS = {
-  simple: { cx: 62, cy: 48, rad: 74, attack: { a: null, s: 62 }, jump: { a: 196, s: 48 }, skill: { a: 132, s: 52 }, ult: { a: 72, s: 48 } },
-  full: { cx: 64, cy: 46, rad: 72, attack: { a: null, s: 56 }, jump: { a: 200, s: 40 }, s1: { a: 158, s: 38 }, s2: { a: 122, s: 38 }, s3: { a: 89, s: 38 }, ult: { a: 56, s: 40 } },
-};
-function placeButtons() {
-  const Lt = BTN_LAYOUTS[simpleControls() ? 'simple' : 'full'];
+// Round action buttons fan out around the big attack button (units = stage px).
+// Angles keep every button clear of its neighbours and of the screen edge.
+const BTN_LAYOUT = { attack: { a: null, s: 56 }, jump: { a: 200, s: 40 }, s1: { a: 158, s: 38 }, s2: { a: 122, s: 38 }, s3: { a: 89, s: 38 }, ult: { a: 56, s: 40 } };
+(function placeButtons() {
+  const cx = 64, cy = 46, rad = 72;
   document.querySelectorAll('#tbtns .tbtn').forEach(b => {
-    const L = Lt[b.dataset.action];
-    b.classList.toggle('off', !L);
-    if (!L) return;
-    let x = Lt.cx, y = Lt.cy;
-    if (L.a != null) { x = Lt.cx - Math.cos(L.a * Math.PI / 180) * Lt.rad; y = Lt.cy + Math.sin(L.a * Math.PI / 180) * Lt.rad; }
+    const L = BTN_LAYOUT[b.dataset.action];
+    let x = cx, y = cy;
+    if (L.a != null) { x = cx - Math.cos(L.a * Math.PI / 180) * rad; y = cy + Math.sin(L.a * Math.PI / 180) * rad; }
     b.style.setProperty('--s', L.s); b.style.setProperty('--r', (x - L.s / 2).toFixed(1)); b.style.setProperty('--b', (y - L.s / 2).toFixed(1));
   });
-  const label = '🕹 BUTTONS: ' + (simpleControls() ? 'SIMPLE (AUTO-ATTACK)' : 'FULL');
-  for (const id of ['#btnStyle', '#btnStyle2']) { const el = $(id); if (el) el.textContent = label; }
-}
-placeButtons();
-function toggleControlStyle() { save.controlStyle = simpleControls() ? 'full' : 'simple'; persist(); placeButtons(); }
-// auto-attack only with simple on-screen controls
-function autoAttackOn() { return touchOn() && simpleControls(); }
-
-// the smart SKILL button picks the skill that fits the moment
-const SKILL_TAGS = { captain: { s2: 'buff' }, swordsman: { s3: 'guard' }, sniper: { s3: 'escape' }, cook: { s3: 'move' }, doctor: { s1: 'heal', s2: 'buff', s3: 'heal' }, archaeologist: { s3: 'form' }, musician: { s2: 'buff' } };
-function pickSmartSkill() {
-  const D = CH[P.id], tags = SKILL_TAGS[P.id] || {};
-  const foes = G.enemies.filter(e => e.alive && !e.hidden && !e.sub && Math.abs(e.x - P.x) < 180 && Math.abs(e.y - P.y) < 80);
-  const dist = foes.length ? Math.min(...foes.map(e => Math.abs(e.x - P.x))) : 999;
-  const hpK = P.hp / P.maxHp;
-  let best = null, bestScore = 0;
-  ['s1', 's2', 's3'].forEach((s, i) => {
-    if (!D[s] || G.t < P.cd[s]) return;
-    const tag = tags[s] || 'attack';
-    let sc = 0;
-    if (tag === 'heal') sc = hpK < 0.55 ? 100 : hpK < 0.85 ? 20 : 0;
-    else if (tag === 'buff') sc = foes.length ? 40 : 3;
-    else if (tag === 'guard') sc = dist < 60 ? 60 : 0;
-    else if (tag === 'escape') sc = dist < 45 ? 80 : 0;
-    else if (tag === 'move') sc = !P.onGround || !solidAt(P.x + P.face * 30) ? 90 : 2;
-    else if (tag === 'form') sc = foes.length ? 30 : 4;
-    else sc = foes.length ? 55 - i : 6 - i;
-    if (sc > bestScore) { bestScore = sc; best = s; }
-  });
-  return best;
-}
-
+})();
 document.querySelectorAll('#tbtns .tbtn').forEach(b => {
   const a = b.dataset.action;
   const down = e => { e.preventDefault(); b.classList.add('active'); try { b.setPointerCapture(e.pointerId); } catch (_) { /* old browsers */ } press(a); };
@@ -125,8 +87,6 @@ $('#btnLoadCode').addEventListener('click', () => {
 });
 $('#btnHelp').addEventListener('click', () => $('#screen-help').classList.remove('hidden'));
 $('#helpClose').addEventListener('click', () => $('#screen-help').classList.add('hidden'));
-$('#btnStyle').addEventListener('click', toggleControlStyle);
-$('#btnStyle2').addEventListener('click', toggleControlStyle);
 $('#btnTouch').addEventListener('click', () => { const order = ['auto', 'on', 'off']; save.touchMode = order[(order.indexOf(save.touchMode || 'auto') + 1) % 3]; persist(); applyTouchMode(); });
 $('#btnMute').addEventListener('click', () => { save.muted = !save.muted; persist(); $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON'); });
 $('#btnReset').addEventListener('click', () => askConfirm('ERASE ALL PROGRESS?', () => { save = defaultSave(); persist(); goTitle(); }));

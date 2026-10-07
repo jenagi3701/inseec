@@ -157,10 +157,9 @@ function hurtPlayer(dmg, fromX) {
     particles(P.x, P.y - 12, 10, ['#90caf9', '#ffffff'], { spd: 80 });
     return;
   }
-  P.lastHurt = G.t;
   const d = Math.max(1, Math.round(dmg * statMul('def') * G.mods.def));
   P.hp -= d;
-  P.inv = G.t + 1.1;
+  P.inv = G.t + 0.9;
   P.kx = (Math.sign(P.x - fromX) || -P.face) * 140; P.vy = -140; P.onGround = false;
   G.stats.hurt += d;
   popText(P.x, P.y - 28, '-' + d, '#ff5252');
