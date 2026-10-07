@@ -37,17 +37,21 @@ function setupHUD() {
 }
 function updateHUD() {
   if (!G || !G.running) return;
-  if (G.bomb) { updateBombHUD(); return; }
   const per = P.maxHp / 5;
   let hearts = '';
   for (let i = 0; i < 5; i++) hearts += heartSVG(P.hp >= (i + 1) * per - 0.01 ? 'full' : P.hp >= (i + 0.5) * per ? 'half' : 'empty');
   if (hudCache.hearts !== hearts) { hudCache.hearts = hearts; $('#hearts').innerHTML = hearts; }
-  setText('#hpText', 'HP ' + Math.ceil(P.hp) + '/' + P.maxHp);
+  setText('#hpText', 'HP ' + Math.ceil(P.hp) + '/' + P.maxHp + (P.resting ? ' ♥+' : ''));
+  setText('#rank', 'RANK ' + '★'.repeat(G.rank) + '☆'.repeat(RANK_MAX - G.rank) + (G.rank < RANK_MAX ? '  ' + G.rankKills + '/' + RANK_KILLS : ''));
+  const combo = G.combo >= 2 && G.t - G.comboT < 3.5 ? 'x' + G.combo + ' COMBO' : '';
+  setText('#combo', combo);
   setText('#hudCoins', String(G.coinCount));
   setText('#hudScore', G.score.toLocaleString('en-US'));
   setText('#hudKills', String(G.stats.kills));
   const buffs = P.buffs.filter((b, i, a) => a.findIndex(x => x.name === b.name) === i).map(b => `<span class="buff">${b.icon} ${b.name} ${Math.ceil(b.until - G.t)}s</span>`).join('') + (P.form ? '' : '');
-  if (hudCache.buffs !== buffs) { hudCache.buffs = buffs; $('#buffs').innerHTML = buffs; }
+  const shieldTag = P.shieldHits > 0 ? `<span class="buff">🛡 SHIELD x${P.shieldHits}</span>` : '';
+  if (hudCache.buffs !== buffs + shieldTag) { hudCache.buffs = buffs + shieldTag; $('#buffs').innerHTML = buffs + shieldTag; }
+  if (false) { hudCache.buffs = buffs; $('#buffs').innerHTML = buffs; }
   const D = CH[P.id];
   for (const s of ['basic', 's1', 's2', 's3', 'ult']) {
     if (!D[s]) continue;
@@ -77,6 +81,24 @@ function updateHUD() {
       const left = s === 'ult' ? 0 : Math.max(0, P.cd[s] - G.t);
       tb.querySelector('.cdn').textContent = s === 'ult' ? (ready ? '' : Math.floor(P.energy) + '%') : (left > 0.6 ? Math.ceil(left) : '');
     }
+  }
+  // smart SKILL button shows the skill it will fire next
+  const sb = $('#tbtns [data-action="skill"]');
+  if (sb && !sb.classList.contains('off')) {
+    const next = pickSmartSkill();
+    const waits = ['s1', 's2', 's3'].filter(k => D[k]).map(k => [k, Math.max(0, P.cd[k] - G.t)]);
+    const soonest = waits.sort((x, y) => x[1] - y[1])[0];
+    const show = next || (soonest && soonest[0]);
+    const key = 'smart|' + show + '|' + !!next + '|' + (next ? '' : Math.ceil(soonest[1]));
+    if (hudCache.smart !== key) {
+      hudCache.smart = key;
+      sb.querySelectorAll('img').forEach(i => i.remove());
+      sb.insertAdjacentHTML('afterbegin', iconImg(SKILL_ICONS[P.id][show]));
+      sb.classList.toggle('cool', !next); sb.classList.toggle('ready', !!next);
+      sb.querySelector('.cdn').textContent = next ? '' : Math.ceil(soonest[1]);
+      sb.setAttribute('aria-label', D[show].name);
+    }
+    sb.style.setProperty('--cd', next ? 0 : (soonest[1] / D[soonest[0]].cd).toFixed(2));
   }
   const b = G.boss && G.boss.alive ? G.boss : null;
   $('#bossBar').classList.toggle('hidden', !b);

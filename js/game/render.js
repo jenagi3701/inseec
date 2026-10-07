@@ -6,7 +6,6 @@ function render() {
   g = mainCtx;
   g.imageSmoothingEnabled = false;
   if (!G) { renderMenuScene(); return; }
-  if (G.bomb) { renderBomb(); return; }
   const sh = G.shake > 0 ? Math.round(rand(-G.shake, G.shake) * 0.5) : 0;
   const shy = G.shake > 0 ? Math.round(rand(-G.shake, G.shake) * 0.5) : 0;
   const cam = Math.round(G.cam);
@@ -23,8 +22,10 @@ function render() {
   // tutorial signs on level 1
   if (G.level === 1) {
     const tips = isTouch
-      ? [[110, 'JOYSTICK = MOVE'], [470, '👊 = ATTACK'], [830, 'ROUND BUTTONS = SKILLS'], [1190, '★ = ULTIMATE'], [1550, 'COINS UNLOCK CREW!']]
-      : [[110, 'A/D MOVE·SPACE JUMP'], [470, 'J = ATTACK'], [830, 'Q / E / F = SKILLS'], [1190, 'R = ULTIMATE'], [1550, 'COINS UNLOCK CREW!']];
+      ? (simpleControls()
+        ? [[110, 'JOYSTICK = MOVE'], [470, 'YOU ATTACK BY ITSELF!'], [830, 'BLUE = SMART SKILL'], [1190, 'GOLD = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']]
+        : [[110, 'JOYSTICK = MOVE'], [470, 'RED = ATTACK'], [830, 'ROUND BUTTONS = SKILLS'], [1190, 'GOLD = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']])
+      : [[110, 'A/D MOVE·SPACE JUMP'], [470, 'J = ATTACK'], [830, 'Q / E / F = SKILLS'], [1190, 'R = ULTIMATE'], [1550, 'KILLS GIVE POWER ORBS!']];
     tips.push([G.worldW - 170, 'TREASURE →']);
     for (const [x, str] of tips) if (x > cam - 120 && x < cam + W + 120) {
       const wdt = str.length * 8 + 10;
@@ -34,7 +35,7 @@ function render() {
   }
   for (const c of G.cps) if (c.x > cam - 20 && c.x < cam + W + 20) drawCheckpoint(c);
   if (G.chest) { g.save(); g.translate(0, G.chest.drop || 0); drawChest(G.chest); g.restore(); }
-  for (const h of G.hearts) if (h.age < 9 || Math.floor(G.t * 8) % 2) drawHeart(h.x, h.y + Math.sin(G.t * 5) * 1.5);
+  for (const o of G.hearts) drawOrb(o);
   for (const c of G.coins) if (c.x > cam - 10 && c.x < cam + W + 10) drawCoin(c.x, c.y, G.t + c.x * 0.01);
   for (const h of G.hz) if (h.kind === 'fire') drawHazard(h);
   for (const e of G.enemies) {

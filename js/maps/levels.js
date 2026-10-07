@@ -14,7 +14,6 @@ const LEVELS = [
   { map: 'final', pool: { sword: 3, shield: 2, spear: 2, gunner: 2, bomber: 2, heavy: 2, seacreature: 2, flyer: 2, skywarrior: 1 }, boss: 'kraken', bossN: 2, desc: 'FINAL BOSS' },
 ];
 LEVELS.forEach((L, i) => { L.n = i + 1; const M = MAPS[L.map]; L.name = M.name; L.theme = M.theme; L.len = M.len; });
-const BONUS_UNLOCK_LEVEL = 4; // Bomb Island opens once Sky Island (level 3) is cleared
 
 function startLevel(n, charId, resume) {
   const L = LEVELS[n - 1], M = MAPS[L.map];
@@ -28,7 +27,8 @@ function startLevel(n, charId, resume) {
     enemies: [], hbs: [], hz: [], hearts: [], parts: [], texts: [], fx: [], coins: [], timers: [], plats: built.plats, segs: built.segs, env: [],
     cam: 0, shake: 0, flash: 0, weather: 0, score: 0, coinCount: 0, banked: 0, cps: [], sandstorm: 0, sandK: 0,
     stats: { kills: 0, dmg: 0, hurt: 0 },
-    mods: { atk: sm[0], def: sm[1], spd: sm[2] },
+    mods: { atk: sm[0], def: sm[1], spd: sm[2], rank: 1 },
+    rank: 1, rankKills: 0, combo: 0, comboT: -9,
     arena: false, arenaX: L.boss ? built.len - W : 0, boss: null, chest: null, endT: 0,
   };
   P = {
@@ -36,11 +36,11 @@ function startLevel(n, charId, resume) {
     hp: D.hp, maxHp: D.hp, energy: 0, cd: { basic: 0, s1: 0, s2: 0, s3: 0 }, buffs: [],
     inv: 0, sinv: 0, lockUntil: 0, dash: null, act: null, stretch: null, walk: 0, combo: 0, comboT: 0,
     charging: null, form: null, formUntil: 0, transform: 0,
-    safeX: 40, swim: false, sinking: null, sink: 0, plat: null, airJumps: 0, skyWalk: 0, chillUntil: 0, stunUntil: 0, regen: 0, regenUntil: 0,
+    safeX: 40, shieldHits: 0, lastHurt: -99, resting: false, swim: false, sinking: null, sink: 0, plat: null, airJumps: 0, skyWalk: 0, chillUntil: 0, stunUntil: 0, regen: 0, regenUntil: 0,
   };
   for (const [cx, cy] of built.coinSpots) G.coins.push({ x: cx, y: cy, vx: 0, vy: 0, v: 5, age: 0, placed: true });
-  setupHazards(M, built, rng);
   placeEnemies(L, built, rng, n);
+  setupHazards(M, built, rng); // after enemies, so traps can keep their distance
   if (!L.boss) G.chest = { x: G.worldW - 60, open: false };
   // checkpoints: two along the route (always on solid ground), plus one at the boss gate
   for (const k of [0.36, 0.68]) G.cps.push({ x: Math.round(nearestSolidX(G.worldW * k)), done: false });
@@ -88,9 +88,11 @@ function placeEnemies(L, built, rng, n) {
   for (const [t, c] of Object.entries(L.pool)) for (let i = 0; i < c; i++) types.push(t);
   for (let i = types.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [types[i], types[j]] = [types[j], types[i]]; }
   const endX = L.boss ? G.arenaX - 80 : G.worldW - 140;
-  const ok = x => x > 330 && x < endX;
-  const ground = built.slots.ground.concat(built.slots.sand).filter(ok).sort((a, b) => a - b);
-  const water = built.slots.water.filter(ok);
+  // keep fights and traps apart: no enemy spawns within 70px of a gap, water, lava or quicksand
+  const risky = G.segs.filter(sg => !SOLID[sg.kind] || sg.kind === 'quicksand');
+  const ok = x => x > 330 && x < endX && !risky.some(sg => x > sg.x0 - 70 && x < sg.x1 + 70);
+  const ground = built.slots.ground.filter(ok).sort((a, b) => a - b);
+  const water = built.slots.water.filter(x => x > 330 && x < endX);
   const wTypes = types.filter(t => WATER_TYPES[t]).sort((a, b) => (a === 'cannonship') - (b === 'cannonship'));
   const fTypes = types.filter(t => FLY_TYPES[t]);
   const gTypes = types.filter(t => !WATER_TYPES[t] && !FLY_TYPES[t]);

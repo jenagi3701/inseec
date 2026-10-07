@@ -79,7 +79,7 @@ function hitEnemy(e, dmg, opts, src) {
   opts = opts || {};
   if (e.hidden) reveal(e);
   const el = opts.el || (opts.water ? 'water' : CH[P.id].el);
-  let mult = opts.env ? 1 : statMul('atk') * G.mods.atk;
+  let mult = opts.env ? 1 : statMul('atk') * G.mods.atk * (G.mods.rank || 1);
   if (opts.water && P.form === 'mermaid') mult *= 1.8;
   if (P.form === 'white' && !opts.env) mult *= 1.6;
   let tag = '';
@@ -124,11 +124,10 @@ function killEnemy(e) {
   e.alive = false; e.hp = 0;
   G.stats.kills++;
   G.score += e.score;
-  P.energy = Math.min(100, P.energy + 5);
   particles(e.x, e.y - e.h / 2, e.boss ? 60 : 14, e.boss ? ['#ffd23f', '#ff4f6d', '#fff', '#7b3fb3'] : ['#fff', '#ddd', e.type === 'slime' ? '#55d16b' : '#ff9f43'], { spd: e.boss ? 180 : 100 });
   popText(e.x, e.y - e.h - 10, '+' + e.score, '#ffd23f');
   dropCoins(e.x, e.y - e.h / 2, e.coins);
-  if (!e.boss && Math.random() < (e.heavy ? 0.5 : 0.12)) G.hearts.push({ x: e.x, y: e.y - e.h / 2, vy: -150, age: 0 });
+  onKillRewards(e);
   sfx(e.boss ? 'boom' : 'kill');
   if (e.boss) bossDefeated(e);
 }
@@ -152,9 +151,16 @@ function hurtPlayer(dmg, fromX) {
     melee({ ox: 0, oy: 12, w: 70, h: 34, dmg: 45, life: 0.12, opts: { kb: 220, crit: true } });
     return;
   }
+  if (P.shieldHits > 0) {
+    P.shieldHits--; P.inv = G.t + 0.6; sfx('punch');
+    popText(P.x, P.y - 30, 'BLOCKED!', '#90caf9', true);
+    particles(P.x, P.y - 12, 10, ['#90caf9', '#ffffff'], { spd: 80 });
+    return;
+  }
+  P.lastHurt = G.t;
   const d = Math.max(1, Math.round(dmg * statMul('def') * G.mods.def));
   P.hp -= d;
-  P.inv = G.t + 0.9;
+  P.inv = G.t + 1.1;
   P.kx = (Math.sign(P.x - fromX) || -P.face) * 140; P.vy = -140; P.onGround = false;
   G.stats.hurt += d;
   popText(P.x, P.y - 28, '-' + d, '#ff5252');

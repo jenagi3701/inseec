@@ -1,6 +1,6 @@
 # Pixel Pirate Adventure
 
-A 2D pixel-art pirate adventure with **9 playable crew members**, **7 maps that each change how you play**, and a **Bomb Island** bonus mini-game. Plain HTML, CSS and vanilla JavaScript (canvas). No backend, no build step.
+A 2D pixel-art pirate adventure with **9 playable crew members**, **7 maps that each change how you play**, and rewards for every enemy you defeat. Plain HTML, CSS and vanilla JavaScript (canvas). No backend, no build step.
 
 ## Play
 
@@ -14,13 +14,18 @@ Open `index.html` in any modern browser (or serve the folder with any static ser
 |---|---|
 | A / D (or ←/→) | Move |
 | Space / W / ↑ | Jump |
-| S / ↓ | Drop through a platform (move down in Bomb Island) |
-| J | Attack (hold to repeat) — places a bomb in Bomb Island |
+| S / ↓ | Drop through a platform |
+| J | Attack (hold to repeat) |
 | Q / E / F | Skill 1 / 2 / 3 (Sniper: hold Q to charge) |
 | R | Ultimate (needs a full energy bar) |
 | Esc / P | Pause |
 
-**Touch:** a large virtual joystick (bottom-left; drag in 8 directions, push up to jump) and round icon buttons (bottom-right) for Attack, Jump, Skill 1-3 and Ultimate. Buttons darken with a clockwise cooldown sweep and a seconds counter. Toggle on-screen controls (Auto / On / Off) from the title screen — they also work with a mouse.
+**Touch:** a large virtual joystick (bottom-left; drag in 8 directions, push up to jump) and round icon buttons (bottom-right). Buttons darken with a clockwise cooldown sweep and a seconds counter.
+
+- **Simple buttons (default):** your pirate attacks automatically when an enemy is in reach, and one smart **SKILL** button fires whichever skill fits the moment (heals when you're hurt, guards or escapes when an enemy is close, Sky Walk over gaps, attacks otherwise). Only 4 buttons: Attack, Jump, Skill, Ultimate.
+- **Full buttons:** every skill on its own button, no auto-attack.
+
+Switch styles from the title screen or the pause menu. On-screen controls (Auto / On / Off) also work with a mouse.
 
 ## Maps and strategy
 
@@ -63,28 +68,37 @@ Every pirate has an attack, three skills and an ultimate.
 
 Pirate Grunt, Sword Pirate (lunge), Spear Pirate (long reach), Shield Pirate (blocks frontal hits — use explosives, lightning, sound or attack from behind), Gunner, Bomb Thrower, Heavy Brute, Gloomgull, Reef Leaper (leaps out of the sea), Cannon Ship, Desert Raider (buried ambusher), Sky Warrior (diving lancer), Frost Yeti (chilling snowballs), Ember Imp (leaves fire), plus the Dune and Magma Warlord mini bosses, Ironclaw Crab and Admiral Murkfang. Enemies have elemental weaknesses (shown as **WEAK!**) and resistances, and can be knocked into water, gaps or lava.
 
-## Bonus mode: Bomb Island
+## Kill rewards
 
-Unlocks after clearing Sky Island. A top-down grid: drop bombs (2.5 s fuse, cross-shaped blast that stops at walls and chains), break crates, dodge monsters, collect coins and power-ups (bigger blast, extra bomb, speed, shield, invincibility). Defeat every monster to open the hidden exit and move on to the next stage.
+Every defeated enemy makes you stronger:
+
+- **+3 HP and +8 ultimate energy** on every kill.
+- **Power orbs** drop from some enemies (always from heavies and bosses): ❤ +25 HP, ⚡ +40 energy, 💢 Rage (+30% attack), 🛡 Shield (blocks the next 2 hits), 🌀 all skills ready, 👟 Swift Feet. Healing orbs are much more likely when you're low on HP.
+- **Combos:** kills within 3.5 s chain together; every 5th is a **RAMPAGE** (+20 coins and 5 s of Rage).
+- **Pirate Rank:** every 6 kills in a level ranks you up (max ★★★★★): +10 max HP and +5% attack.
+- **Catch your breath:** after 4 s without being hit and with no enemy nearby, you slowly heal.
+
+## Fair fights
+
+Enemies never spawn right next to gaps, water, lava or quicksand; lightning clouds and icicles keep away from enemy spots; falling rocks and sandstorms hold off while you're fighting; and only two regular enemies can wind up an attack at the same time.
 
 ## Saving your journey
 
 - Checkpoint flags in every level save your journey, bank your coins and restore 20% HP.
 - **Continue** from a checkpoint after a wipe, or from the title screen after quitting.
 - The **Journey** screen shows your progress and a **save code** you can paste on another device.
-- Everything (coins, scores, crew, levels, bosses, Bomb Island best, settings) is stored in `localStorage` under `pixelPirateAdventure_v1`.
+- Everything (coins, scores, crew, levels, bosses, settings) is stored in `localStorage` under `pixelPirateAdventure_v1`.
 
 ## Code layout
 
 ```
 index.html, style.css
-js/game/        core constants & save, audio + music, input, drawing helpers, combat, update loop, renderer, main loop
+js/game/        core constants & save, audio + music, input, drawing helpers, combat, kill rewards, update loop, renderer, main loop
 js/characters/  pixel looks, roster (stats, skills, traits)
 js/skills/      shared skill effects (lightning, tornado, healing zones, forms)
 js/enemies/     enemy types & AI, sprites
 js/maps/        map definitions & star ratings, terrain builder, hazards, backgrounds, levels
 js/ui/          HUD, screens, touch controls, pixel icons, map previews
-js/bonus/       Bomb Island
 ```
 
 Scripts are plain classic `<script>` files loaded in order (no modules), so the game also runs from `file://`. All art, icons and music are original and generated in code.

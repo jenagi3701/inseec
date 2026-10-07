@@ -219,7 +219,8 @@ html, body {
 .tbtn.ult::after { background: conic-gradient(transparent calc((1 - var(--cd, 0)) * 360deg), #000c 0); }
 .tbtn.ult.ready { border-color: var(--gold); box-shadow: 0 0 calc(var(--u) * 8) var(--gold); animation: pulse .6s infinite alternate; }
 .tbtn.active { transform: scale(.92); filter: brightness(1.4); }
-.tbtn.hidden { display: none; }
+.tbtn.hidden, .tbtn.off { display: none; }
+.tbtn.smart { background: radial-gradient(circle at 35% 30%, #80deeacc, #01579b99 75%); }
 body.touch-on #skills { display: none; }
 body.touch-on #toast { top: 18%; }
 
@@ -424,10 +425,6 @@ table.keys td:first-child { color: var(--gold); }
   .panel { padding: 12px; }
 }
 
-/* bomb island: keep the corner HUD compact so the grid stays visible */
-body.bomb-mode .hud-box { padding: calc(var(--u) * 2) calc(var(--u) * 3); }
-body.bomb-mode .hud-right, body.bomb-mode .hud-left { max-width: calc(var(--u) * 58); font-size: calc(var(--u) * 6); }
-body.bomb-mode #hearts svg { width: calc(var(--u) * 9); height: calc(var(--u) * 8); }
 
 #rotateHint { display: none; }
 @media (orientation: portrait) {
@@ -436,3 +433,7 @@ body.bomb-mode #hearts svg { width: calc(var(--u) * 9); height: calc(var(--u) * 
     text-align: center; font-size: 11px; color: var(--gold); line-height: 1.6; padding: 0 16px;
   }
 }
+
+/* kill rewards HUD */
+#hud .rank { color: var(--gold); }
+#combo { font-size: calc(var(--u) * 9); color: var(--gold); text-shadow: calc(var(--u)) calc(var(--u)) 0 #000; min-height: 1em; }

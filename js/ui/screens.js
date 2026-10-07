@@ -6,7 +6,7 @@ const SCREENS = ['title', 'levels', 'mapinfo', 'select', 'result', 'pause', 'hel
 function showScreen(name) {
   for (const s of SCREENS) if (s !== 'unlock' && s !== 'confirm') $('#screen-' + s).classList.toggle('hidden', s !== name);
   document.querySelectorAll('.walletCoins').forEach(el => { el.textContent = save.coins.toLocaleString('en-US'); });
-  if (name && name !== 'pause' && name !== 'help') { $('#hud').classList.add('hidden'); $('#touch').classList.add('hidden'); document.body.classList.remove('bomb-mode'); }
+  if (name && name !== 'pause' && name !== 'help') { $('#hud').classList.add('hidden'); $('#touch').classList.add('hidden'); }
 }
 function goTitle() {
   G = null;
@@ -81,15 +81,6 @@ function goLevels() {
     if (!locked) b.addEventListener('click', () => goMapInfo(L.n));
     list.appendChild(b);
   }
-  // bonus mode card
-  const bonusOpen = save.highestLevel >= BONUS_UNLOCK_LEVEL;
-  const bb = document.createElement('button');
-  bb.className = 'level-card bonus' + (bonusOpen ? '' : ' locked');
-  bb.id = 'bombCard';
-  bb.innerHTML = `<canvas width="130" height="70"></canvas><div class="lc-name">💣 BONUS · Bomb Island</div><div class="sub">Top-down arcade mini-game</div><div class="sub">${bonusOpen ? 'BEST STAGE ' + (save.bombBest || 0) : '🔒 Clear Level ' + (BONUS_UNLOCK_LEVEL - 1) + ' (' + LEVELS[BONUS_UNLOCK_LEVEL - 2].name + ')'}</div>`;
-  renderBombPreview(bb.querySelector('canvas'));
-  if (bonusOpen) bb.addEventListener('click', () => startBomb(1));
-  list.appendChild(bb);
   showScreen('levels');
 }
 

@@ -20,11 +20,11 @@ const ENEMY = {
   skywarrior: { w: 16, h: 24, hp: 60, dmg: 15, spd: 50, score: 170, coins: 22, fly: true, weak: ['wind'], label: 'Sky Warrior' },
   icemonster: { w: 18, h: 22, hp: 90, dmg: 14, spd: 26, score: 170, coins: 22, weak: ['fire'], resist: ['water'], label: 'Frost Yeti' },
   firemonster: { w: 12, h: 16, hp: 45, dmg: 12, spd: 45, score: 140, coins: 18, fireproof: true, weak: ['water'], resist: ['fire'], label: 'Ember Imp' },
-  warlord: { w: 30, h: 44, hp: 950, dmg: 20, spd: 34, score: 1500, coins: 200, boss: true, label: 'Warlord' },
+  warlord: { w: 30, h: 44, hp: 850, dmg: 20, spd: 34, score: 1500, coins: 200, boss: true, label: 'Warlord' },
   crab: { w: 60, h: 40, hp: 950, dmg: 20, spd: 40, score: 2000, coins: 250, boss: true, name: 'IRONCLAW CRAB', weak: ['lightning'] },
   kraken: { w: 56, h: 60, hp: 1800, dmg: 24, spd: 30, score: 5000, coins: 500, boss: true, name: 'ADMIRAL MURKFANG' },
 };
-const LV_HP = [1, 1.1, 1.25, 1.35, 1.45, 1.6, 1.75], LV_DMG = [1, 1.05, 1.1, 1.18, 1.25, 1.32, 1.4];
+const LV_HP = [1, 1.1, 1.25, 1.35, 1.45, 1.6, 1.75], LV_DMG = [1, 1.03, 1.06, 1.1, 1.14, 1.18, 1.22];
 let eid = 1;
 function spawnEnemy(type, x, y, lvl, variant) {
   const D = ENEMY[type];
@@ -50,7 +50,7 @@ function spawnEnemy(type, x, y, lvl, variant) {
   if (type === 'warlord') {
     e.variant = variant || 'dune';
     e.name = e.variant === 'magma' ? 'MAGMA WARLORD KILNOR' : 'DUNE WARLORD ZAHRAK';
-    if (e.variant === 'magma') { e.hp = 1150; e.fireproof = true; e.weak = ['water']; e.resist = ['fire']; } else { e.weak = ['water', 'wind']; }
+    if (e.variant === 'magma') { e.hp = 1000; e.fireproof = true; e.weak = ['water']; e.resist = ['fire']; } else { e.weak = ['water', 'wind']; }
   }
   e.maxHp = e.hp;
   G.enemies.push(e);
@@ -392,7 +392,10 @@ function updateEnemy(e, dt) {
   e.flash -= dt;
   if (G.t < e.burnUntil && G.t >= e.burnNext) { e.burnNext = G.t + 0.3; hitEnemy(e, 4, { kb: 0, el: 'fire', colors: ['#ff7a00', '#ffd23f'] }); if (!e.alive) return; }
   const stunned = G.t < e.stunUntil || G.t < e.holdUntil;
+  const before = e.st;
   if (!stunned) AI[e.type](e, dt);
+  // attack tokens: at most two regular enemies can wind up an attack at the same time
+  if (!e.boss && before !== 'wind' && e.st === 'wind' && G.enemies.filter(o => o !== e && o.alive && !o.boss && (o.st === 'wind' || o.st === 'lunge' || o.st === 'thrust' || o.st === 'dive' || o.st === 'swing')).length >= 2) { e.st = 'idle'; e.stT = rand(0.5, 1); e.vx = 0; }
   else { e.vx = 0; if (e.st === 'charge' || e.st === 'lunge' || e.st === 'dive') e.st = 'idle'; }
   // walkers never step off a ledge on purpose
   if (!e.fly && !e.water && !e.boss && e.onGround && e.vx && !solidAt(e.x + Math.sign(e.vx) * (e.w / 2 + 3))) e.vx = 0;

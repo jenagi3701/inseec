@@ -49,14 +49,3 @@ function renderMapPreview(canvasEl, mapId) {
   c.imageSmoothingEnabled = false;
   c.drawImage(previewCache[mapId], 0, 0, canvasEl.width, canvasEl.height);
 }
-function renderBombPreview(canvasEl) {
-  const c = canvasEl.getContext('2d'), s = canvasEl.width / 13;
-  c.imageSmoothingEnabled = false;
-  const grid = ['#############', '#..c.c...c..#', '#.#c#.#c#.#.#', '#c..c...c.c.#', '#.#.#c#.#c#.#', '#..c...c..e.#', '#############'];
-  grid.forEach((row, y) => [...row].forEach((ch, x) => {
-    c.fillStyle = ch === '#' ? '#5d6d7e' : (x + y) % 2 ? '#8fd18f' : '#9ad99a'; c.fillRect(x * s, y * s, s, s);
-    if (ch === 'c') { c.fillStyle = '#a0682f'; c.fillRect(x * s + 1, y * s + 1, s - 2, s - 2); c.fillStyle = '#7a4a22'; c.fillRect(x * s + 1, y * s + s / 2, s - 2, 1); }
-    if (ch === 'e') { c.fillStyle = '#ffd23f'; c.fillRect(x * s + 2, y * s + 2, s - 4, s - 4); }
-  }));
-  c.fillStyle = '#1a1a1a'; c.beginPath(); c.arc(1.5 * s, 1.5 * s, s * 0.35, 0, 7); c.fill();
-}

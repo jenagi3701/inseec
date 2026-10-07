@@ -3,7 +3,6 @@
 // UPDATE
 // =========================================================
 function update(dt) {
-  if (G.bomb) { updateBomb(dt); return; }
   G.t += dt;
   // queued input
   while (input.queue.length) {
@@ -14,9 +13,11 @@ function update(dt) {
       if (a === 'jump' || a === 'up') tryJump();
       else if (a === 'attack') tryBasic();
       else if (a === 's1' || a === 's2' || a === 's3' || a === 'ult') trySkill(a);
-    } else if (P.charging && P.charging.slot === a) releaseCharge();
+      else if (a === 'skill') { const sl = pickSmartSkill(); if (sl) { P.smartSlot = sl; trySkill(sl); } else toast('SKILLS RECHARGING…', 0.6); }
+    } else if (P.charging && (P.charging.slot === a || (a === 'skill' && P.charging.slot === P.smartSlot))) releaseCharge();
   }
   if (!G.over && !G.won && input.held.attack) tryBasic();
+  else if (!G.over && !G.won && autoAttackOn()) autoAttack();
 
   // timers
   if (G.timers.length) {
@@ -63,6 +64,22 @@ function tryJump() {
   if (P.onGround || P.coyote > 0) { P.vy = -jv * (qs ? 0.78 : 1); P.sink = 0; P.onGround = false; P.coyote = 0; P.plat = null; sfx('jump'); particles(P.x, P.y, 4, ['#fff', '#ddd'], { angle: -Math.PI / 2, spread: 1.2, spd: 40 }); }
   else if (P.airJumps > 0) { P.airJumps--; P.vy = -jv * 0.9; sfx('jump'); particles(P.x, P.y, 8, ['#ff7a00', '#ffd23f'], { angle: Math.PI / 2, spread: 0.8, spd: 60 }); act('kick', 0.15, { fire: true }); }
 }
+// simple controls: swing at the nearest visible enemy in reach (only forwards while you're moving)
+function autoAttack() {
+  if (G.t < P.cd.basic || G.t < P.lockUntil || P.charging || P.sinking) return;
+  const reach = CH[P.id].reach || 34, moving = input.held.left || input.held.right;
+  let best = null, bd = 1e9;
+  for (const e of G.enemies) {
+    if (!e.alive || e.hidden || e.sub || !e.active) continue;
+    const dx = e.x - P.x, ad = Math.abs(dx) - e.w / 2;
+    if (ad > reach || Math.abs((e.y - e.h / 2) - (P.y - 12)) > (reach > 60 ? 60 : 30)) continue;
+    if (moving && Math.sign(dx) !== P.face && Math.abs(dx) > 8) continue;
+    if (ad < bd) { bd = ad; best = e; }
+  }
+  if (!best) return;
+  P.face = Math.sign(best.x - P.x) || P.face;
+  tryBasic();
+}
 function tryBasic() {
   if (G.t < P.cd.basic || G.t < P.lockUntil || P.charging) return;
   const D = CH[P.id];
@@ -100,6 +117,11 @@ function updatePlayer(dt) {
   P.buffs = P.buffs.filter(b => G.t < b.until);
   P.energy = Math.min(100, P.energy + dt * 2.2);
   if (P.regenUntil > G.t) P.hp = Math.min(P.maxHp, P.hp + P.regen * dt);
+  // catch your breath: slow healing after 4s without taking damage and with no enemy nearby
+  if (P.hp > 0 && P.hp < P.maxHp && G.t - P.lastHurt > 4 && !G.enemies.some(e => e.alive && e.active && !e.hidden && !e.sub && Math.abs(e.x - P.x) < 160)) {
+    P.hp = Math.min(P.maxHp, P.hp + 5 * dt); P.resting = true;
+    if (Math.random() < 0.06) particles(P.x + rand(-6, 6), P.y - rand(4, 20), 1, ['#8ef59b', '#ffffff'], { grav: -50, spd: 10, life: 0.6 });
+  } else P.resting = false;
   if (P.coyote > 0) P.coyote -= dt;
   const seg = segAt(P.x);
   const locked = G.t < P.lockUntil || G.t < P.stunUntil || !!P.sinking;
@@ -194,9 +216,9 @@ function updatePlayer(dt) {
 
 // pull the player back to the last safe ground after falling in water, a gap or lava
 function rescue(kind) {
-  const pct = kind === 'lava' ? (TRAITS.fireproof(P.id) ? 0.06 : 0.16) : 0.12;
+  const pct = kind === 'lava' ? (TRAITS.fireproof(P.id) ? 0.05 : 0.12) : 0.1;
   const dmg = Math.max(1, Math.round(P.maxHp * pct));
-  P.hp -= dmg; G.stats.hurt += dmg;
+  P.hp -= dmg; G.stats.hurt += dmg; P.lastHurt = G.t;
   if (kind === 'sea') P.energy = Math.max(0, P.energy - 25);
   const msg = kind === 'sea' ? 'RESCUED BY A LIFEBUOY!' : kind === 'lava' ? 'OUCH! LAVA!' : 'CAUGHT BY A CLOUD!';
   P.sinking = null; P.swim = false; P.plat = null;
@@ -287,13 +309,7 @@ function updateCoins(dt) {
     }
   }
   G.coins = G.coins.filter(c => !c.got);
-  for (const h of G.hearts) {
-    h.age += dt; h.vy += GRAV * 0.5 * dt; h.y += h.vy * dt;
-    if (h.y >= GROUND - 5) { h.y = GROUND - 5; h.vy = 0; }
-    if (h.age > 0.3 && Math.abs(P.x - h.x) < 10 && Math.abs(P.y - 10 - h.y) < 16) { h.got = true; heal(15); }
-    if (h.age > 12) h.got = true;
-  }
-  G.hearts = G.hearts.filter(h => !h.got);
+  updateOrbs(dt);
 }
 
 function updateFx(dt) {

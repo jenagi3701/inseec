@@ -4,7 +4,7 @@
 // =========================================================
 const CH = {
   captain: {
-    color: '#ff4f4f', short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96, el: 'blunt', jump: 1,
+    reach: 34, color: '#ff4f4f', short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96, el: 'blunt', jump: 1,
     stats: { atk: 4, def: 3, spd: 4 }, special: 'Elastic body + Freedom Form',
     unlock: { type: 'free' },
     basic: { name: 'Punch', icon: 'fist', cd: 0.26, desc: 'Quick rubber punches. In Freedom Form: giant bouncing fists.', use() {
@@ -63,7 +63,7 @@ const CH = {
     } },
   },
   swordsman: {
-    color: '#3fd15b', short: 'Swordsman', name: 'Kaito Triblade', title: 'Three-Blade Swordsman', emoji: '⚔️', role: 'Close-range damage dealer', hp: 110, spd: 90,
+    reach: 36, color: '#3fd15b', short: 'Swordsman', name: 'Kaito Triblade', title: 'Three-Blade Swordsman', emoji: '⚔️', role: 'Close-range damage dealer', hp: 110, spd: 90,
     el: 'slash', jump: 0.94, stats: { atk: 5, def: 3, spd: 3 }, special: 'Three swords + parry',
     unlock: { type: 'coins', n: 300 },
     basic: { name: 'Slash', cd: 0.3, desc: 'Fast sword slash.', use() {
@@ -102,7 +102,7 @@ const CH = {
     } },
   },
   navigator: {
-    color: '#ff9a2a', short: 'Navigator', name: 'Nimbus Mira', title: 'Weather Navigator', emoji: '🌩', role: 'Ranged / area damage', hp: 90, spd: 94,
+    reach: 160, color: '#ff9a2a', short: 'Navigator', name: 'Nimbus Mira', title: 'Weather Navigator', emoji: '🌩', role: 'Ranged / area damage', hp: 90, spd: 94,
     el: 'wind', jump: 1, stats: { atk: 4, def: 2, spd: 4 }, special: 'Controls wind & lightning',
     unlock: { type: 'level', n: 2 },
     basic: { name: 'Gust', cd: 0.4, desc: 'Small wind projectile.', use() {
@@ -140,7 +140,7 @@ const CH = {
     } },
   },
   sniper: {
-    color: '#ffd23f', short: 'Sniper', name: 'Pip Longshot', title: 'Long-Range Sniper', emoji: '🎯', role: 'Long-range damage', hp: 85, spd: 92,
+    reach: 220, color: '#ffd23f', short: 'Sniper', name: 'Pip Longshot', title: 'Long-Range Sniper', emoji: '🎯', role: 'Long-range damage', hp: 85, spd: 92,
     el: 'pierce', jump: 1, stats: { atk: 4, def: 2, spd: 3 }, special: 'Charged shots + goggles',
     unlock: { type: 'coins', n: 500 },
     basic: { name: 'Shot', cd: 0.45, desc: 'Long-distance bullet.', use() {
@@ -183,7 +183,7 @@ const CH = {
     } },
   },
   cook: {
-    color: '#ffe066', short: 'Cook', name: 'Remy Flambé', title: 'Kick Fighter / Cook', emoji: '🔥', role: 'Fast melee combo', hp: 100, spd: 106,
+    reach: 34, color: '#ffe066', short: 'Cook', name: 'Remy Flambé', title: 'Kick Fighter / Cook', emoji: '🔥', role: 'Fast melee combo', hp: 100, spd: 106,
     el: 'fire', jump: 1.05, stats: { atk: 4, def: 3, spd: 5 }, special: 'Fire kicks + Sky Walk',
     unlock: { type: 'level', n: 3 },
     basic: { name: 'Kick Combo', cd: 0.22, desc: 'Fast 3-hit kick combo (3rd kick knocks back).', use() {
@@ -230,7 +230,7 @@ const CH = {
     } },
   },
   doctor: {
-    color: '#3f8cff', short: 'Doctor', name: 'Doc Bramble', title: 'Blue-Nosed Reindeer Doctor', emoji: '🦌', role: 'Support / healer', hp: 95, spd: 90, el: 'blunt', jump: 1.06,
+    reach: 150, color: '#3f8cff', short: 'Doctor', name: 'Doc Bramble', title: 'Blue-Nosed Reindeer Doctor', emoji: '🦌', role: 'Support / healer', hp: 95, spd: 90, el: 'blunt', jump: 1.06,
     stats: { atk: 2, def: 4, spd: 3 }, special: 'Healing zones + Emergency Mode',
     unlock: { type: 'boss', n: 1 },
     basic: { name: 'Pill Toss', icon: 'pill', cd: 0.42, desc: 'Throw a small medical capsule.', use() {
@@ -268,7 +268,7 @@ const CH = {
     } },
   },
   archaeologist: {
-    color: '#a77bff', short: 'Archaeologist', name: 'Iris Tidewell', title: 'Mystical Archaeologist', emoji: '🌊', role: 'Crowd control / area damage', hp: 95, spd: 92,
+    reach: 150, color: '#a77bff', short: 'Archaeologist', name: 'Iris Tidewell', title: 'Mystical Archaeologist', emoji: '🌊', role: 'Crowd control / area damage', hp: 95, spd: 92,
     el: 'blunt', jump: 1, stats: { atk: 4, def: 3, spd: 3 }, special: 'Many arms + Mermaid Form',
     unlock: { type: 'level', n: 4 },
     basic: { name: 'Spirit Hand', cd: 0.38, desc: 'A magic hand sprouts beneath an enemy. In Mermaid Form: water jet.', use() {
@@ -320,7 +320,7 @@ const CH = {
     } },
   },
   shipwright: {
-    color: '#2ec5ff', short: 'Shipwright', name: 'Bolt Ironkeel', title: 'Cyborg Shipwright', emoji: '🤖', role: 'Heavy ranged damage', hp: 130, spd: 82,
+    reach: 130, color: '#2ec5ff', short: 'Shipwright', name: 'Bolt Ironkeel', title: 'Cyborg Shipwright', emoji: '🤖', role: 'Heavy ranged damage', hp: 130, spd: 82,
     el: 'explosive', jump: 0.88, stats: { atk: 5, def: 5, spd: 2 }, special: 'Cannons + steel barrier',
     unlock: { type: 'coins', n: 800 },
     basic: { name: 'Mech Punch / Cannon', cd: 0.45, desc: 'Mechanical punch up close, small cannon shot at range.', use() {
@@ -369,7 +369,7 @@ const CH = {
     } },
   },
   musician: {
-    color: '#d07bff', short: 'Musician', name: 'Maestro Vale', title: 'Musical Swordsman', emoji: '🎵', role: 'Support + sword fighter', hp: 100, spd: 96,
+    reach: 36, color: '#d07bff', short: 'Musician', name: 'Maestro Vale', title: 'Musical Swordsman', emoji: '🎵', role: 'Support + sword fighter', hp: 100, spd: 96,
     el: 'sound', jump: 1, stats: { atk: 3, def: 3, spd: 4 }, special: 'Music buffs + stuns',
     unlock: { type: 'boss', n: 2 },
     basic: { name: 'Rapier', cd: 0.3, desc: 'Elegant sword thrust.', use() {

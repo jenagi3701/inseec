@@ -20,10 +20,12 @@
         <div class="hud-box hud-left">
           <div id="hearts"></div>
           <div id="hpText" class="tiny"></div>
+          <div id="rank" class="tiny rank"></div>
           <div id="buffs"></div>
         </div>
         <div class="hud-center">
           <div id="levelName" class="tiny"></div>
+          <div id="combo" class="combo"></div>
           <div id="bossBar" class="hidden">
             <div id="bossName" class="tiny"></div>
             <div class="bar boss"><div id="bossFill"></div></div>
@@ -50,6 +52,7 @@
         <button class="tbtn" data-action="s1" data-slot="s1" aria-label="Skill 1"><span class="cdn"></span></button>
         <button class="tbtn" data-action="s2" data-slot="s2" aria-label="Skill 2"><span class="cdn"></span></button>
         <button class="tbtn" data-action="s3" data-slot="s3" aria-label="Skill 3"><span class="cdn"></span></button>
+        <button class="tbtn smart" data-action="skill" aria-label="Skill"><span class="cdn"></span></button>
         <button class="tbtn ult" data-action="ult" data-slot="ult" aria-label="Ultimate"><span class="cdn"></span></button>
       </div>
     </div>
@@ -69,6 +72,7 @@
         <button class="btn" id="btnHelp">? CONTROLS</button>
         <button class="btn" id="btnMute">♪ SOUND: ON</button>
         <button class="btn" id="btnTouch">🎮 TOUCH CONTROLS: AUTO</button>
+        <button class="btn" id="btnStyle">🕹 BUTTONS: SIMPLE</button>
         <button class="btn danger" id="btnReset">RESET SAVE</button>
       </div>
     </div>
@@ -139,6 +143,7 @@
       <h2>PAUSED</h2>
       <div class="btn-col">
         <button class="btn primary" id="btnResume">▶ RESUME</button>
+        <button class="btn" id="btnStyle2">🕹 BUTTONS: SIMPLE</button>
         <button class="btn" id="btnRestart">↻ RESTART LEVEL</button>
         <button class="btn danger" id="btnQuit">⚑ QUIT (KEEPS LAST CHECKPOINT)</button>
       </div>
@@ -221,13 +226,13 @@
 <script src="js/maps/backgrounds.js"></script>
 <script src="js/maps/hazards.js"></script>
 <script src="js/game/combat.js"></script>
+<script src="js/game/rewards.js"></script>
 <script src="js/characters/roster.js"></script>
 <script src="js/skills/effects.js"></script>
 <script src="js/enemies/types.js"></script>
 <script src="js/maps/levels.js"></script>
 <script src="js/game/update.js"></script>
 <script src="js/game/render.js"></script>
-<script src="js/bonus/bomb.js"></script>
 <script src="js/ui/icons.js"></script>
 <script src="js/ui/previews.js"></script>
 <script src="js/ui/hud.js"></script>

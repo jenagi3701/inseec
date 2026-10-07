@@ -7,6 +7,8 @@
 
 function setupHazards(map, built, rng) {
   G.env = [];
+  // traps stay away from where enemies stand, so you rarely face both at once
+  const nearFoe = (x, r) => G.enemies.some(e => !e.fly && !e.water && Math.abs(e.x - x) < r);
   G.sandstorm = 0; G.sandK = 0;
   for (const kind of map.hazards) {
     if (kind === 'wind') {
@@ -14,9 +16,9 @@ function setupHazards(map, built, rng) {
       let dir = 1;
       for (let x = 500; x < built.len - 500; x += 620) { G.env.push({ kind: 'wind', x0: x, x1: x + 220, dir, phase: rng() * 6 }); dir = -dir; }
     } else if (kind === 'thunder') {
-      for (let x = 650; x < built.len - (G.L.boss ? W + 120 : 300); x += 560) G.env.push({ kind: 'thunder', x, t0: rng() * 3, cycle: 4.2 });
+      for (let x = 650; x < built.len - (G.L.boss ? W + 120 : 300); x += 560) if (!nearFoe(x, 110)) G.env.push({ kind: 'thunder', x, t0: rng() * 3, cycle: 4.6 });
     } else if (kind === 'icicles') {
-      for (let x = 420; x < built.len - 300; x += 230) G.env.push({ kind: 'icicle', x: x + Math.round(rng() * 60), y: 122, state: 'hang', t: 0 });
+      for (let x = 420; x < built.len - 300; x += 230) if (!nearFoe(x, 90)) G.env.push({ kind: 'icicle', x: x + Math.round(rng() * 60), y: 122, state: 'hang', t: 0 });
     } else if (kind === 'rocks') {
       G.env.push({ kind: 'rockfall', next: 2 });
     } else if (kind === 'sandstorm') {
@@ -25,6 +27,7 @@ function setupHazards(map, built, rng) {
   }
 }
 
+function fighting() { return G.enemies.some(e => e.alive && e.active && !e.hidden && !e.sub && Math.abs(e.x - P.x) < 150); }
 function inWind(x) {
   for (const h of G.env) if (h.kind === 'wind' && x > h.x0 && x < h.x1 && windOn(h)) return h.dir;
   return 0;
@@ -56,7 +59,8 @@ function updateEnv(dt) {
       }
       case 'rockfall': {
         h.next -= dt;
-        if (h.next <= 0 && !G.arena) {
+        if (h.next <= 0 && !G.arena && fighting()) h.next = 1; // no rocks while you're in a fight
+        else if (h.next <= 0 && !G.arena) {
           h.next = rand(2.4, 3.6);
           const x = clamp(P.x + rand(-40, 130) * (P.face || 1), G.cam + 10, G.cam + W - 10);
           addHazard({ x, y: CAMY - 10, vy: 0, grav: 260, w: 10, h: 10, dmg: 14, kind: 'rock', life: 4, delay: 0, shadow: true, ground: true, fire: true });
@@ -66,6 +70,7 @@ function updateEnv(dt) {
       case 'sandstorm': {
         h.next -= dt;
         if (G.sandstorm > 0) { G.sandstorm -= dt; if (G.sandstorm <= 0) { h.next = rand(10, 14); toast('THE STORM PASSES', 1.2); } }
+        else if (h.next <= 0 && fighting()) h.next = 2;
         else if (h.next <= 0) { G.sandstorm = 7; toast('🌫 SANDSTORM!', 1.4); sfx('wind'); }
         G.sandK += ((G.sandstorm > 0 ? 1 : 0) - G.sandK) * Math.min(1, dt * 2);
         break;
