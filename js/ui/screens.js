@@ -2,16 +2,17 @@
 // =========================================================
 // SCREENS / FLOW
 // =========================================================
-const SCREENS = ['title', 'levels', 'select', 'result', 'pause', 'help', 'unlock', 'confirm', 'journey'];
+const SCREENS = ['title', 'levels', 'mapinfo', 'select', 'result', 'pause', 'help', 'unlock', 'confirm', 'journey'];
 function showScreen(name) {
   for (const s of SCREENS) if (s !== 'unlock' && s !== 'confirm') $('#screen-' + s).classList.toggle('hidden', s !== name);
   document.querySelectorAll('.walletCoins').forEach(el => { el.textContent = save.coins.toLocaleString('en-US'); });
-  if (name && name !== 'pause' && name !== 'help') { $('#hud').classList.add('hidden'); $('#touch').classList.add('hidden'); }
+  if (name && name !== 'pause' && name !== 'help') { $('#hud').classList.add('hidden'); $('#touch').classList.add('hidden'); document.body.classList.remove('bomb-mode'); }
 }
 function goTitle() {
   G = null;
   $('#titleBest').textContent = save.bestScore.toLocaleString('en-US');
   $('#btnMute').textContent = '♪ SOUND: ' + (save.muted ? 'OFF' : 'ON');
+  applyTouchMode();
   const J = save.journey, c = $('#btnContinue');
   c.classList.toggle('hidden', !J);
   if (J) c.textContent = '▶ CONTINUE · LV ' + J.level + (J.cp > 0 ? ' ⚑' + J.cp : '');
@@ -23,7 +24,7 @@ function continueJourney() {
   const J = save.journey;
   if (!J) return goLevels();
   if (J.cp > 0 && isUnlocked(J.char)) startLevel(J.level, J.char, true);
-  else { selChar = isUnlocked(J.char) ? J.char : 'captain'; goSelect(Math.min(J.level, maxPlayable())); }
+  else { selChar = isUnlocked(J.char) ? J.char : 'captain'; goMapInfo(Math.min(J.level, maxPlayable())); }
 }
 
 // ---- journey log + transferable save code ----
@@ -38,15 +39,15 @@ function parseSaveCode(code) {
   const n = (v, lo, hi) => (Number.isFinite(v) ? clamp(Math.floor(v), lo, hi) : lo);
   const s2 = defaultSave();
   s2.coins = n(o.coins, 0, 1e9); s2.totalScore = n(o.totalScore, 0, 1e12); s2.bestScore = n(o.bestScore, 0, 1e12);
-  s2.highestLevel = n(o.highestLevel, 1, 6);
+  s2.highestLevel = n(o.highestLevel, 1, LEVELS.length + 1);
   s2.unlocked = ['captain'].concat((Array.isArray(o.unlocked) ? o.unlocked : []).filter(id => CH[id] && id !== 'captain'));
   s2.bosses = (Array.isArray(o.bosses) ? o.bosses : []).filter(b => b === 1 || b === 2);
-  s2.cleared = (Array.isArray(o.cleared) ? o.cleared : []).filter(l => l >= 1 && l <= 5);
-  if (o.levelBest && typeof o.levelBest === 'object') for (const k of ['1', '2', '3', '4', '5']) if (Number.isFinite(o.levelBest[k])) s2.levelBest[k] = n(o.levelBest[k], 0, 1e12);
+  s2.cleared = (Array.isArray(o.cleared) ? o.cleared : []).filter(l => l >= 1 && l <= LEVELS.length);
+  if (o.levelBest && typeof o.levelBest === 'object') for (const k of LEVELS.map(l => String(l.n))) if (Number.isFinite(o.levelBest[k])) s2.levelBest[k] = n(o.levelBest[k], 0, 1e12);
   s2.selected = CH[o.selected] ? o.selected : 'captain';
   s2.muted = !!o.muted;
   const J = o.journey;
-  if (J && typeof J === 'object' && J.level >= 1 && J.level <= 5 && CH[J.char]) s2.journey = { level: n(J.level, 1, 5), char: J.char, cp: n(J.cp, 0, 3), cpx: n(J.cpx, 0, 5000), score: n(J.score, 0, 1e9), coins: n(J.coins, 0, 1e9), kills: n(J.kills, 0, 999) };
+  if (J && typeof J === 'object' && J.level >= 1 && J.level <= LEVELS.length && CH[J.char]) s2.journey = { level: n(J.level, 1, LEVELS.length), char: J.char, cp: n(J.cp, 0, 3), cpx: n(J.cpx, 0, 5000), score: n(J.score, 0, 1e9), coins: n(J.coins, 0, 1e9), kills: n(J.kills, 0, 999) };
   return s2;
 }
 function goJourney() {
@@ -63,22 +64,48 @@ function goJourney() {
   showScreen('journey');
 }
 
-function maxPlayable() { return Math.min(5, save.highestLevel); }
+function maxPlayable() { return Math.min(LEVELS.length, save.highestLevel); }
 function goLevels() {
   G = null;
   const list = $('#levelList');
   list.innerHTML = '';
   for (const L of LEVELS) {
+    const M = MAPS[L.map];
     const locked = L.n > maxPlayable();
     const cleared = save.cleared.includes(L.n);
     const b = document.createElement('button');
     b.className = 'level-card' + (locked ? ' locked' : '') + (cleared ? ' cleared' : '');
     b.dataset.level = L.n;
-    b.innerHTML = `<div class="num">${L.n}</div><div>${L.name}</div><div class="sub">${L.desc}${L.boss ? ' ☠' : ''}</div><div class="sub">${locked ? '🔒 Clear Level ' + (L.n - 1) : cleared ? '✔ BEST ' + (save.levelBest[L.n] || 0).toLocaleString('en-US') : 'NEW!'}</div>`;
-    if (!locked) b.addEventListener('click', () => goSelect(L.n));
+    b.innerHTML = `<canvas width="160" height="90"></canvas><div class="lc-name"><span class="num">${L.n}</span> ${M.icon} ${L.name}</div><div class="sub stars">${starStr(M.difficulty)}</div><div class="sub">${L.desc}</div><div class="sub">${locked ? '🔒 Clear Level ' + (L.n - 1) : cleared ? '✔ BEST ' + (save.levelBest[L.n] || 0).toLocaleString('en-US') : 'NEW!'}</div>`;
+    renderMapPreview(b.querySelector('canvas'), L.map);
+    if (!locked) b.addEventListener('click', () => goMapInfo(L.n));
     list.appendChild(b);
   }
+  // bonus mode card
+  const bonusOpen = save.highestLevel >= BONUS_UNLOCK_LEVEL;
+  const bb = document.createElement('button');
+  bb.className = 'level-card bonus' + (bonusOpen ? '' : ' locked');
+  bb.id = 'bombCard';
+  bb.innerHTML = `<canvas width="130" height="70"></canvas><div class="lc-name">💣 BONUS · Bomb Island</div><div class="sub">Top-down arcade mini-game</div><div class="sub">${bonusOpen ? 'BEST STAGE ' + (save.bombBest || 0) : '🔒 Clear Level ' + (BONUS_UNLOCK_LEVEL - 1) + ' (' + LEVELS[BONUS_UNLOCK_LEVEL - 2].name + ')'}</div>`;
+  renderBombPreview(bb.querySelector('canvas'));
+  if (bonusOpen) bb.addEventListener('click', () => startBomb(1));
+  list.appendChild(bb);
   showScreen('levels');
+}
+
+function goMapInfo(n) {
+  G = null;
+  const L = LEVELS[n - 1], M = MAPS[L.map];
+  selLevel = n;
+  $('#miTitle').textContent = 'LEVEL ' + n + ' · ' + M.icon + ' ' + M.name.toUpperCase();
+  renderMapPreview($('#miCanvas'), L.map);
+  $('#miBlurb').textContent = M.blurb + (L.boss ? (L.bossN ? ' A boss guards the end!' : ' A mini boss guards the end!') : '');
+  $('#miDiff').textContent = starStr(M.difficulty);
+  $('#miAdv').innerHTML = M.advText.map(t => `<li>${t}</li>`).join('');
+  $('#miHaz').innerHTML = M.hazardText.map(t => `<li>${t}</li>`).join('');
+  $('#miRec').innerHTML = recommendedFor(L.map).map(id => `<div class="rec ${isUnlocked(id) ? '' : 'locked'}"><canvas width="32" height="32"></canvas><span>${CH[id].emoji} ${CH[id].short}<br><i class="stars">${starStr(stars(id, L.map))}</i>${MAP_NOTES[id] && MAP_NOTES[id][L.map] ? '<br><small>' + MAP_NOTES[id][L.map] + '</small>' : ''}</span></div>`).join('');
+  $('#miRec').querySelectorAll('canvas').forEach((cv, i) => { const id = recommendedFor(L.map)[i]; portrait(cv, id, !isUnlocked(id)); });
+  showScreen('mapinfo');
 }
 
 let selLevel = 1, selChar = 'captain';
@@ -91,7 +118,7 @@ function reqText(u) {
 function reqLong(u) {
   if (u.type === 'coins') return 'Unlock for 🪙 ' + u.n + ' coins';
   if (u.type === 'level') return 'Reach Level ' + u.n + ' (clear Level ' + (u.n - 1) + ')';
-  if (u.type === 'boss') return 'Defeat Boss ' + u.n + (u.n === 1 ? ' (Level 3)' : ' (Level 5)');
+  if (u.type === 'boss') { const L = LEVELS.find(l => l.bossN === u.n); return 'Defeat Boss ' + u.n + ' (Level ' + L.n + ' · ' + L.name + ')'; }
   return '';
 }
 function isUnlocked(id) { return save.unlocked.includes(id); }
@@ -114,33 +141,46 @@ function goSelect(level) {
   G = null;
   selLevel = level;
   if (!isUnlocked(selChar)) selChar = isUnlocked(save.selected) ? save.selected : 'captain';
-  $('#selectTitle').textContent = 'LEVEL ' + level + ' · ' + LEVELS[level - 1].name.toUpperCase() + ' — CHOOSE YOUR PIRATE';
+  const M = MAPS[LEVELS[level - 1].map];
+  $('#selectTitle').textContent = 'SELECT YOUR PIRATE · ' + M.icon + ' ' + M.name.toUpperCase();
   renderSelect();
   showScreen('select');
 }
+function statPips(n) { let h = ''; for (let i = 1; i <= 5; i++) h += `<i class="${i <= n ? 'on' : ''}"></i>`; return `<span class="pips">${h}</span>`; }
 function renderSelect() {
+  const mapId = LEVELS[selLevel - 1].map;
   const grid = $('#charGrid');
   grid.innerHTML = '';
   for (const id of CH_ORDER) {
-    const D = CH[id], un = isUnlocked(id);
+    const D = CH[id], un = isUnlocked(id), st = stars(id, mapId);
     const b = document.createElement('button');
-    b.className = 'char-card' + (un ? '' : ' locked') + (id === selChar ? ' sel' : '');
+    b.className = 'char-card' + (un ? '' : ' locked') + (id === selChar ? ' sel' : '') + (st >= 4 ? ' good' : st <= 2 ? ' bad' : '');
     b.dataset.char = id;
-    b.innerHTML = `<canvas width="32" height="32"></canvas><div class="cname">${D.emoji} ${D.short}</div>` +
-      (un ? '<div class="ok">🔓 READY</div>' : `<div class="lock">🔒 ${reqText(D.unlock)}</div>`);
+    b.innerHTML = `<canvas width="32" height="32"></canvas><div class="cname">${D.emoji} ${D.short}</div><div class="mstars s${st}">${starStr(st)}</div>` +
+      (un ? '' : `<div class="lock">🔒 ${reqText(D.unlock)}</div>`);
     portrait(b.querySelector('canvas'), id, !un);
     b.addEventListener('click', () => { selChar = id; renderSelect(); });
     grid.appendChild(b);
   }
-  const D = CH[selChar], un = isUnlocked(selChar);
-  const sk = s => D[s] ? `<div class="sk"><b>[${{ basic: 'J', s1: 'Q', s2: 'E', s3: 'F', ult: 'R' }[s]}] ${D[s].name}</b>${D[s].cd ? ' · ' + D[s].cd + 's' : s === 'ult' ? ' · energy' : ''}<br><span>${D[s].desc}</span></div>` : '';
+  const D = CH[selChar], un = isUnlocked(selChar), st = stars(selChar, mapId), M = MAPS[mapId];
+  const strong = MAP_ORDER.filter(m => stars(selChar, m) >= 4).map(m => MAPS[m].icon + ' ' + MAPS[m].name).join(', ');
+  const weak = MAP_ORDER.filter(m => stars(selChar, m) <= 2).map(m => MAPS[m].icon + ' ' + MAPS[m].name).join(', ');
+  const sm = STAR_MODS[st];
+  const fx2 = v => (v >= 1 ? '+' : '') + Math.round((v - 1) * 100) + '%';
+  const note = MAP_NOTES[selChar] && MAP_NOTES[selChar][mapId];
+  const sk = s => D[s] ? `<div class="sk">${iconImg(SKILL_ICONS[selChar][s], 'skicon')}<div><b>[${{ basic: 'J', s1: 'Q', s2: 'E', s3: 'F', ult: 'R' }[s]}] ${D[s].name}</b>${D[s].cd ? ' · ' + D[s].cd + 's' : s === 'ult' ? ' · energy' : ''}<br><span>${D[s].desc}</span></div></div>` : '';
   let action = '';
   if (!un) {
     const u = D.unlock;
     action = `<div class="req">🔒 ${reqLong(u)}</div>`;
     if (u.type === 'coins') action += `<button class="btn primary" id="btnBuy" ${save.coins >= u.n ? '' : 'disabled'}>UNLOCK 🪙 ${u.n}</button>` + (save.coins < u.n ? `<div class="tiny">Need ${u.n - save.coins} more coins</div>` : '');
   }
-  $('#charInfo').innerHTML = `<h3>${D.emoji} ${D.name}</h3><div class="role">${D.title}<br>${D.role} · HP ${D.hp}</div>${sk('basic')}${sk('s1')}${sk('s2')}${sk('s3')}${sk('ult')}${action}`;
+  $('#charInfo').innerHTML = `<h3>${D.emoji} ${D.name}</h3><div class="role">${D.title}<br>ROLE: ${D.role} · HP ${D.hp}</div>
+    <div class="statgrid"><span>ATTACK</span>${statPips(D.stats.atk)}<span>DEFENSE</span>${statPips(D.stats.def)}<span>SPEED</span>${statPips(D.stats.spd)}</div>
+    <div class="special">★ SPECIAL: ${D.special}</div>
+    <div class="mapfit s${st}"><b>${M.icon} ${M.name}: ${starStr(st)}</b><br>ATK ${fx2(sm[0])} · DMG TAKEN ${fx2(sm[1])} · SPEED ${fx2(sm[2])}${note ? '<br>» ' + note : ''}${SEA_WEAK.has(selChar) && (mapId === 'ocean' || mapId === 'final') ? '<br>⚠ Cursed fruit: sinks in deep water!' : ''}</div>
+    <div class="strongweak"><div><b class="good">STRONG</b> ${strong || '—'}</div><div><b class="bad">WEAK</b> ${weak || '—'}</div></div>
+    ${sk('basic')}${sk('s1')}${sk('s2')}${sk('s3')}${sk('ult')}${action}`;
   const buy = $('#btnBuy');
   if (buy) buy.addEventListener('click', () => buyChar(selChar));
   $('#btnSail').disabled = !un;
@@ -200,14 +240,14 @@ function finishLevel(win) {
     if (!save.cleared.includes(n)) save.cleared.push(n);
     save.highestLevel = Math.max(save.highestLevel, n + 1);
     if (G.score > (save.levelBest[n] || 0)) { save.levelBest[n] = G.score; newBest = true; }
-    save.journey = n < 5 ? { level: n + 1, char: P.id, cp: 0, cpx: 0, score: 0, coins: 0, kills: 0 } : null;
+    save.journey = n < LEVELS.length ? { level: n + 1, char: P.id, cp: 0, cpx: 0, score: 0, coins: 0, kills: 0 } : null;
   }
   save.bestScore = Math.max(save.bestScore, G.score);
   persist();
   const fresh = win ? checkUnlocks() : [];
   $('#hud').classList.add('hidden');
   $('#touch').classList.add('hidden');
-  const final = win && n === 5;
+  const final = win && n === LEVELS.length;
   $('#resultTitle').textContent = win ? (final ? '🏆 LEGEND OF THE SEAS! 🏆' : 'LEVEL COMPLETE!') : '☠ SHIPWRECKED! ☠';
   $('#resultStats').innerHTML =
     `<div class="big">⭐ SCORE: ${G.score.toLocaleString('en-US')}</div>` +
@@ -219,7 +259,7 @@ function finishLevel(win) {
   const btns = $('#resultButtons');
   btns.innerHTML = '';
   const add = (label, cls, fn, id) => { const b = document.createElement('button'); b.className = 'btn ' + cls; b.textContent = label; if (id) b.id = id; b.addEventListener('click', fn); btns.appendChild(b); };
-  if (win && !final) add('[ NEXT LEVEL ]', 'primary', () => goSelect(n + 1), 'btnNext');
+  if (win && !final) add('[ NEXT LEVEL ]', 'primary', () => goMapInfo(n + 1), 'btnNext');
   if (final) add('[ PLAY AGAIN ]', 'primary', () => goLevels(), 'btnAgain');
   const J = save.journey;
   if (!win && J && J.level === n && J.cp > 0) add('⚑ CONTINUE FROM CHECKPOINT ' + J.cp, 'primary', () => startLevel(n, P.id, true), 'btnCheckpoint');

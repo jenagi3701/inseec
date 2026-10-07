@@ -5,7 +5,7 @@
 const input = { held: {}, queue: [] };
 const KEYMAP = {
   KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right',
-  Space: 'jump', KeyW: 'jump', ArrowUp: 'jump',
+  Space: 'jump', KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down',
   KeyJ: 'attack', KeyQ: 's1', KeyE: 's2', KeyF: 's3', KeyR: 'ult',
   Escape: 'pause', KeyP: 'pause',
 };

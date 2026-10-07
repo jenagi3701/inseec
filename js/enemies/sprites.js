@@ -3,10 +3,12 @@
 // enemy sprites
 // ---------------------------------------------------------
 function drawEnemy(e) {
-  const hw = e.boss ? 50 : 22, up = e.h + (e.boss ? 14 : 10);
-  if (!e.fly) shadow(e.x, GROUND, Math.max(10, e.w));
-  outlined(hw, up, (ax, ay) => drawEnemyBody(e, ax, ay), e.x, e.y);
-  drawEnemyStatus(e);
+  const hw = e.boss ? 52 : 40, up = e.h + (e.boss ? 18 : 18);
+  if (!e.fly && !e.water && !e.hidden && solidAt(e.x)) shadow(e.x, GROUND, Math.max(10, Math.min(e.w, 30)));
+  const art = ENEMY_ART[e.type];
+  const C = c => (e.flash > 0 ? '#ffffff' : c);
+  outlined(hw, up, (ax, ay) => (art ? art(e, ax, ay, e.face || 1, G ? G.t : 0, C) : drawEnemyBody(e, ax, ay)), e.x, e.y);
+  if (!e.hidden && !e.sub) drawEnemyStatus(e);
 }
 function drawEnemyBody(e, ox, fy) {
   const f = e.face || 1;
@@ -23,7 +25,7 @@ function drawEnemyBody(e, ox, fy) {
   } else if (e.type === 'grunt' || e.type === 'gunner') {
     const ph = Math.floor(t * 8 + e.id) % 2;
     const p = painter(f, ox, fy - 24);
-    const skin = e.type === 'gunner' ? '#8aa35a' : '#4aa3a2';
+    const skin = e.skin || (e.type === 'gunner' ? '#8aa35a' : '#4aa3a2');
     p(-3, 18, 3, 5 + ph, C('#5a3b22')); p(1, 18, 3, 6 - ph, C('#5a3b22')); p(-3, 23, 3, 1, '#222'); p(1, 23, 3, 1, '#222');
     p(-4, 12, 8, 6, C('#e6e6e6')); p(-4, 13, 8, 1, C('#3a4a8a')); p(-4, 15, 8, 1, C('#3a4a8a')); p(-4, 17, 8, 1, C('#3b2414'));
     p(-5, 3, 9, 9, C(skin)); p(-2, 1, 3, 2, C('#2f7a79')); p(4, 8, 2, 2, C(skin));

@@ -40,19 +40,16 @@
       <div id="toast"></div>
     </div>
 
-    <!-- touch controls -->
+    <!-- touch controls: joystick (left) + round action buttons (right) -->
     <div id="touch" class="hidden">
-      <div class="pad-left">
-        <button class="tbtn" data-action="left">◀</button>
-        <button class="tbtn" data-action="right">▶</button>
-      </div>
-      <div class="pad-right">
-        <button class="tbtn small" data-action="s1">S1</button>
-        <button class="tbtn small" data-action="s2">S2</button>
-        <button class="tbtn small hidden" data-action="s3" id="touchS3">S3</button>
-        <button class="tbtn small ult" data-action="ult">ULT</button>
-        <button class="tbtn" data-action="jump">JUMP</button>
-        <button class="tbtn atk" data-action="attack">ATK</button>
+      <div id="joy" aria-label="Movement joystick"><div id="joyRing"></div><div id="joyKnob"></div></div>
+      <div id="tbtns">
+        <button class="tbtn" data-action="attack" data-slot="basic" aria-label="Attack"><span class="cdn"></span></button>
+        <button class="tbtn" data-action="jump" aria-label="Jump"><span class="cdn"></span></button>
+        <button class="tbtn" data-action="s1" data-slot="s1" aria-label="Skill 1"><span class="cdn"></span></button>
+        <button class="tbtn" data-action="s2" data-slot="s2" aria-label="Skill 2"><span class="cdn"></span></button>
+        <button class="tbtn" data-action="s3" data-slot="s3" aria-label="Skill 3"><span class="cdn"></span></button>
+        <button class="tbtn ult" data-action="ult" data-slot="ult" aria-label="Ultimate"><span class="cdn"></span></button>
       </div>
     </div>
   </div>
@@ -70,6 +67,7 @@
         <button class="btn" id="btnJourney">📜 JOURNEY</button>
         <button class="btn" id="btnHelp">? CONTROLS</button>
         <button class="btn" id="btnMute">♪ SOUND: ON</button>
+        <button class="btn" id="btnTouch">🎮 TOUCH CONTROLS: AUTO</button>
         <button class="btn danger" id="btnReset">RESET SAVE</button>
       </div>
     </div>
@@ -78,10 +76,34 @@
   <!-- LEVEL SELECT -->
   <section id="screen-levels" class="screen hidden">
     <div class="panel wide">
-      <h2>CHOOSE YOUR VOYAGE</h2>
+      <h2>⚓ VOYAGE MAP</h2>
+      <p class="tag">Every island plays differently. Pick the right pirate for each one!</p>
       <div class="wallet">🪙 <span class="walletCoins">0</span></div>
       <div id="levelList" class="level-list"></div>
       <div class="btn-row"><button class="btn" data-go="title">◀ BACK</button></div>
+    </div>
+  </section>
+
+  <!-- MAP PREVIEW -->
+  <section id="screen-mapinfo" class="screen hidden">
+    <div class="panel wide mapinfo">
+      <h2 id="miTitle">MAP</h2>
+      <div class="mi-wrap">
+        <canvas id="miCanvas" width="320" height="180"></canvas>
+        <div class="mi-side">
+          <p id="miBlurb" class="mi-blurb"></p>
+          <div class="mi-row"><b>DIFFICULTY</b><span id="miDiff" class="stars"></span></div>
+          <div class="mi-cols">
+            <div><b class="good">✔ ADVANTAGES</b><ul id="miAdv"></ul></div>
+            <div><b class="bad">⚠ HAZARDS</b><ul id="miHaz"></ul></div>
+          </div>
+          <div><b>RECOMMENDED</b><div id="miRec" class="mi-rec"></div></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="miBack">◀ MAP</button>
+        <button class="btn primary" id="miEnter">⚓ ENTER MAP</button>
+      </div>
     </div>
   </section>
 
@@ -192,7 +214,11 @@
 <script src="js/game/draw.js"></script>
 <script src="js/characters/looks.js"></script>
 <script src="js/enemies/sprites.js"></script>
+<script src="js/enemies/art.js"></script>
+<script src="js/maps/mapdefs.js"></script>
+<script src="js/maps/terrain.js"></script>
 <script src="js/maps/backgrounds.js"></script>
+<script src="js/maps/hazards.js"></script>
 <script src="js/game/combat.js"></script>
 <script src="js/characters/roster.js"></script>
 <script src="js/skills/effects.js"></script>
@@ -200,6 +226,9 @@
 <script src="js/maps/levels.js"></script>
 <script src="js/game/update.js"></script>
 <script src="js/game/render.js"></script>
+<script src="js/bonus/bomb.js"></script>
+<script src="js/ui/icons.js"></script>
+<script src="js/ui/previews.js"></script>
 <script src="js/ui/hud.js"></script>
 <script src="js/ui/screens.js"></script>
 <script src="js/ui/controls.js"></script>

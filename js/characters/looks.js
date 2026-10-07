@@ -12,6 +12,17 @@ const LOOK = {
       U(1, 9, 2, 1, '#9b3a2a');
     },
   },
+  // Freedom Form: white hair, white clothes with gold trim, glowing skin, huge grin
+  captainWhite: {
+    skin: '#fff3e0', shirt: '#ffffff', pants: '#eceff1', shoes: '#ffe082',
+    torso(U) { U(-1, 12, 2, 5, '#fff3e0'); U(-4, 12, 1, 6, '#ffd23f'); U(3, 12, 1, 6, '#ffd23f'); U(-4, 17, 8, 1, '#ffd23f'); },
+    head(U, pose) {
+      const w = Math.floor((pose.t || 0) * 10) % 2;
+      U(-5, 2 - w, 10, 3, '#ffffff'); U(-6, 4, 2, 4, '#ffffff'); U(-3, 1 - w, 2, 1, '#ffffff'); U(1, 0 + w, 2, 2, '#ffffff'); U(4, 3, 2, 2, '#ffffff');
+      U(-7, 3, 14, 1, '#fff59d'); U(-4, 0, 8, 3, '#fffde7'); U(-4, 2, 8, 1, '#ffd23f');
+      U(0, 9, 5, 2, '#ffffff'); U(0, 11, 4, 1, '#c62828'); U(2, 6, 2, 2, '#ffd23f');
+    },
+  },
   swordsman: {
     skin: '#e6b48a', shirt: '#eeeeee', pants: '#24243a', shoes: '#111',
     torso(U) { U(-4, 16, 8, 2, '#2e8b3e'); U(-4, 15, 8, 1, '#3fae4b'); },
@@ -53,14 +64,25 @@ const LOOK = {
     torso(U) { U(-1, 12, 3, 1, '#5b8cff'); U(0, 13, 1, 4, '#ffcc00'); U(-4, 17, 8, 1, '#111'); },
     head(U) { U(-4, 3, 8, 2, '#ffe066'); U(-4, 5, 1, 3, '#ffe066'); U(1, 4, 3, 5, '#ffe066'); U(0, 4, 1, 2, '#ffe066'); U(-1, 7, 1, 1, '#111'); U(-1, 6, 2, 1, '#b8860b'); },
   },
+  // Doc Bramble — an original blue-nosed reindeer doctor: navy sailor jacket,
+  // orange neckerchief, white cross headband and an oversized medical backpack.
   doctor: {
-    skin: '#f7d7b5', shirt: '#f4f7ff', pants: '#3a3f5c', shoes: '#222',
-    torso(U) { U(-5, 12, 10, 8, '#f4f7ff'); U(-1, 12, 2, 8, '#d6e2f5'); U(2, 14, 2, 2, '#e23b3b'); U(-5, 19, 10, 1, '#c8d3e8'); },
-    back(U) { U(-8, 14, 4, 4, '#8b4513'); U(-7, 15, 2, 1, '#fff'); },
-    head(U) {
-      U(-4, 3, 8, 2, '#7a4b2a'); U(-4, 5, 1, 2, '#7a4b2a');
-      U(-5, 0, 10, 3, '#3fd0c9'); U(-6, 2, 12, 1, '#2aa8a1'); U(-1, 0, 2, 3, '#fff'); U(-2, 1, 4, 1, '#fff'); U(-1, 1, 2, 1, '#e23b3b');
-      U(1, 7, 3, 1, '#333'); U(1, 8, 1, 1, '#333'); U(3, 8, 1, 1, '#333');
+    skin: '#a8743f', shirt: '#283593', pants: '#6d4c41', shoes: '#3e2723', sleeve: '#283593', hand: '#5d4037',
+    torso(U) { U(-4, 12, 8, 2, '#ff8f00'); U(-1, 14, 2, 1, '#ff8f00'); U(2, 15, 1, 1, '#ffd23f'); U(2, 17, 1, 1, '#ffd23f'); U(-4, 17, 8, 1, '#1a237e'); },
+    back(U, pose) {
+      U(-10, 10, 6, 9, '#eceff1'); U(-10, 10, 6, 1, '#b0bec5'); U(-8, 13, 2, 4, '#e53935'); U(-9, 14, 4, 2, '#e53935');
+      if (pose.emergency) U(-9, 7, 4, 3, Math.floor((pose.t || 0) * 8) % 2 ? '#ff1744' : '#2979ff');
+    },
+    head(U, pose) {
+      U(-6, 5, 2, 3, '#a8743f'); U(-5, 6, 1, 1, '#f8bbd0');                                  // ear
+      U(-3, 0, 1, 4, '#e6cfa1'); U(-4, 1, 1, 1, '#e6cfa1'); U(-2, -1, 1, 1, '#e6cfa1');       // antlers
+      U(1, 0, 1, 4, '#e6cfa1'); U(2, 1, 1, 1, '#e6cfa1'); U(0, -1, 1, 1, '#e6cfa1');
+      U(-4, 4, 8, 1, '#ffffff'); U(0, 4, 1, 1, '#e53935');                                    // cross headband
+      U(3, 8, 3, 3, '#e8c9a0');                                                               // muzzle
+      U(5, 8, 2, 2, '#3f8cff'); U(5, 8, 1, 1, '#bbdefb');                                     // blue nose
+      U(1, 6, 2, 2, '#111'); U(1, 6, 1, 1, '#ffffff');                                        // big eye
+      U(3, 11, 2, 1, '#5d4037');
+      if (pose.emergency) { U(-4, 5, 8, 2, '#263238'); U(0, 5, 2, 2, '#80deea'); }            // emergency goggles
     },
   },
   archaeologist: {
@@ -94,8 +116,10 @@ const LOOK = {
 
 function drawHero(id, x, fy, face, pose) {
   pose = pose || {};
-  const L = LOOK[id];
-  const ox = Math.round(x), oy = Math.round(fy) - 24;
+  const L = (pose.white && id === 'captain') ? LOOK.captainWhite : LOOK[id];
+  // Freedom Form bounces like a cartoon
+  const hop = pose.white ? Math.round(Math.abs(Math.sin((pose.t || 0) * 9)) * -2) : 0;
+  const ox = Math.round(x), oy = Math.round(fy) - 24 + hop;
   const P_ = painter(face, ox, oy);
   const ph = pose.walk != null ? Math.floor(pose.walk) % 4 : -1;
   const bob = ph === 1 || ph === 3 ? 1 : 0;
@@ -145,6 +169,9 @@ function drawHero(id, x, fy, face, pose) {
     U(3, 6, 2, 6, sleeve); U(3, 4, 2, 2, hand);
   } else if (act === 'rocket') {
     U(3, 12, 2, 2, '#555');
+  } else if (pose.swim) {
+    const st = Math.floor((pose.t || 0) * 6) % 2;
+    U(3, st ? 9 : 12, 6, 2, sleeve); U(9, st ? 8 : 11, 2, 2, hand);
   } else if (act !== 'spin') {
     U(3, 12, 2, 5, sleeve); U(3, 17, 2, 1, hand);
   }

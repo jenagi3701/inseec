@@ -70,21 +70,37 @@ function melee(o) { return addHB(Object.assign({ life: 0.1 }, o, { follow: { ox:
 function shoot(o) {
   const h = addHB(Object.assign({ life: 1.2, pierce: 1 }, o));
   h.x = P.x + P.face * (o.ox || 10); h.y = P.y - (o.oy || 12); h.vx = (o.vx || 200) * P.face; h.face = P.face;
+  if (G.sandstorm > 0 && !TRAITS.sandSight(P.id)) h.life *= 0.6; // sand cuts range
   return h;
 }
 
 function hitEnemy(e, dmg, opts, src) {
-  if (!e.alive) return;
+  if (!e.alive || e.sub) return;
   opts = opts || {};
-  let mult = statMul('atk');
+  if (e.hidden) reveal(e);
+  const el = opts.el || (opts.water ? 'water' : CH[P.id].el);
+  let mult = opts.env ? 1 : statMul('atk') * G.mods.atk;
   if (opts.water && P.form === 'mermaid') mult *= 1.8;
-  const d = Math.max(1, Math.round(dmg * mult * rand(0.9, 1.1)));
-  e.hp -= d; e.flash = 0.1; e.active = true;
-  popText(e.x + rand(-4, 4), e.y - e.h - 4, String(d), opts.crit ? '#ffd23f' : '#ffffff');
+  if (P.form === 'white' && !opts.env) mult *= 1.6;
+  let tag = '';
+  if (e.weak.includes(el)) { mult *= 1.5; tag = 'WEAK!'; }
+  else if (e.resist.includes(el)) { mult *= 0.6; tag = 'RESIST'; }
+  if (el === 'fire' && e.fireproof) { mult *= 0.3; tag = 'RESIST'; }
   const sx = src ? (src.follow ? P.x : src.x) : P.x;
   const dir = opts.dir || (Math.sign(e.x - sx) || P.face);
-  if (!e.boss) {
-    const kb = opts.kb != null ? opts.kb : 60;
+  // shield pirates block hits from the front unless the attack can bypass the shield
+  if (e.type === 'shield' && !e.broken && !opts.env && !opts.crit && dir === -e.face && !e.weak.includes(el) && !(G.t < e.stunUntil)) {
+    mult *= 0.15; tag = 'BLOCK'; sfx('punch'); P.kx = -dir * 90;
+    particles(e.x + e.face * 8, e.y - 14, 6, ['#eceff1', '#ffd23f'], { spd: 80 });
+  } else if (e.type === 'shield' && !e.broken && (el === 'explosive' || opts.crit)) { e.broken = true; tag = 'SHIELD BROKEN!'; }
+  const d = Math.max(1, Math.round(dmg * mult * rand(0.9, 1.1)));
+  e.hp -= d; e.flash = 0.1; e.active = true;
+  popText(e.x + rand(-4, 4), e.y - e.h - 4, String(d), opts.crit ? '#ffd23f' : tag === 'WEAK!' ? '#ffeb3b' : '#ffffff');
+  if (tag && (tag !== 'BLOCK' || !e.lastTag || G.t - e.lastTag > 0.6)) { e.lastTag = G.t; popText(e.x, e.y - e.h - 14, tag, tag === 'WEAK!' ? '#ffeb3b' : tag === 'BLOCK' ? '#b0bec5' : tag === 'RESIST' ? '#90a4ae' : '#ff9f43'); }
+  if (!e.boss && !e.water) {
+    let kb = opts.kb != null ? opts.kb : 60;
+    if (P.form === 'white') kb = kb * 1.8 + 60;
+    if (tag === 'BLOCK') kb = 0;
     e.kx = dir * kb * (1 - e.kbRes);
     if (opts.launch && !e.heavy) { e.vy = -opts.launch; e.onGround = false; }
     else if (opts.juggle && !e.onGround && !e.heavy) e.vy = -110;
@@ -128,7 +144,15 @@ function dropCoins(x, y, value) {
 
 function hurtPlayer(dmg, fromX) {
   if (G.over || G.won || G.t < P.inv || G.t < P.sinv) return;
-  const d = Math.max(1, Math.round(dmg * statMul('def')));
+  if (G.t < P.guardUntil) {
+    // Iron Guard: block and counter
+    P.guardUntil = 0; P.inv = G.t + 0.4; sfx('slash'); shake(3);
+    popText(P.x, P.y - 30, 'COUNTER!', '#e0f7fa', true);
+    slashFx(P.x + P.face * 14, P.y - 12, 24, '#ffffff', 1); slashFx(P.x - P.face * 14, P.y - 12, 24, '#ff6b6b', -1);
+    melee({ ox: 0, oy: 12, w: 70, h: 34, dmg: 45, life: 0.12, opts: { kb: 220, crit: true } });
+    return;
+  }
+  const d = Math.max(1, Math.round(dmg * statMul('def') * G.mods.def));
   P.hp -= d;
   P.inv = G.t + 0.9;
   P.kx = (Math.sign(P.x - fromX) || -P.face) * 140; P.vy = -140; P.onGround = false;
@@ -137,6 +161,12 @@ function hurtPlayer(dmg, fromX) {
   shake(4); sfx('hurt');
   particles(P.x, P.y - 12, 8, ['#ff5252', '#fff'], { spd: 80 });
   if (P.hp <= 0) { P.hp = 0; gameOver(); }
+}
+// chill slows the player unless they are cold-proof
+function chillPlayer(dur) {
+  if (TRAITS.noChill(P.id)) return;
+  P.chillUntil = G.t + dur;
+  particles(P.x, P.y - 12, 8, ['#e1f5fe', '#81d4fa'], { spd: 40 });
 }
 
 // ---- enemy hazards (projectiles / slams) ----

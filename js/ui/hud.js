@@ -21,14 +21,23 @@ function setupHUD() {
   slots.push(['ult', 'R', 'ULTIMATE']);
   $('#skills').innerHTML = slots.map(([s, k, label]) => {
     const sk = D[s];
-    return `<div class="skill ${s === 'ult' ? 'ult' : ''}" id="sk-${s}" title="[${k}] ${label}"><div class="row1"><span class="key">[${k}] ${label}</span></div><div class="row1 sname">${sk.name}</div><span class="state"></span><div class="cbar"><i></i></div></div>`;
+    return `<div class="skill ${s === 'ult' ? 'ult' : ''}" id="sk-${s}" title="[${k}] ${label}">${iconImg(SKILL_ICONS[P.id][s], 'sicon')}<div class="row1"><span class="key">[${k}] ${label}</span></div><div class="row1 sname">${sk.name}</div><span class="state"></span><div class="cbar"><i></i></div></div>`;
   }).join('');
-  $('#touchS3').classList.toggle('hidden', !D.s3);
-  $('#levelName').textContent = 'LEVEL ' + G.level + ' · ' + G.L.name.toUpperCase() + ' · ' + D.emoji + ' ' + D.name.toUpperCase();
+  // round touch buttons show the skill's pixel icon
+  document.querySelectorAll('#tbtns .tbtn').forEach(b => {
+    const slot = b.dataset.slot, name = slot ? SKILL_ICONS[P.id][slot] : 'jump';
+    b.querySelectorAll('img').forEach(i => i.remove());
+    b.insertAdjacentHTML('afterbegin', iconImg(name));
+    b.classList.toggle('hidden', !!slot && !D[slot]);
+    if (slot && D[slot]) b.setAttribute('aria-label', D[slot].name);
+  });
+  const st = stars(P.id, G.mapId);
+  $('#levelName').textContent = 'LEVEL ' + G.level + ' · ' + G.M.icon + ' ' + G.L.name.toUpperCase() + ' · ' + D.emoji + ' ' + D.name.toUpperCase() + ' ' + starStr(st);
   for (const k in hudCache) delete hudCache[k];
 }
 function updateHUD() {
   if (!G || !G.running) return;
+  if (G.bomb) { updateBombHUD(); return; }
   const per = P.maxHp / 5;
   let hearts = '';
   for (let i = 0; i < 5; i++) hearts += heartSVG(P.hp >= (i + 1) * per - 0.01 ? 'full' : P.hp >= (i + 0.5) * per ? 'half' : 'empty');
@@ -62,7 +71,12 @@ function updateHUD() {
     el.querySelector('.state').textContent = state;
     el.querySelector('.cbar i').style.width = pct + '%';
     const tb = document.querySelector('#touch [data-action="' + (s === 'basic' ? 'attack' : s) + '"]');
-    if (tb) { tb.style.setProperty('--cd', ready ? 0 : (1 - pct / 100).toFixed(2)); tb.classList.toggle('ready', ready); }
+    if (tb) {
+      tb.style.setProperty('--cd', ready ? 0 : (1 - pct / 100).toFixed(2));
+      tb.classList.toggle('ready', ready); tb.classList.toggle('cool', !ready);
+      const left = s === 'ult' ? 0 : Math.max(0, P.cd[s] - G.t);
+      tb.querySelector('.cdn').textContent = s === 'ult' ? (ready ? '' : Math.floor(P.energy) + '%') : (left > 0.6 ? Math.ceil(left) : '');
+    }
   }
   const b = G.boss && G.boss.alive ? G.boss : null;
   $('#bossBar').classList.toggle('hidden', !b);

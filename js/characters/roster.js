@@ -4,35 +4,67 @@
 // =========================================================
 const CH = {
   captain: {
-    color: '#ff4f4f', short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96,
+    color: '#ff4f4f', short: 'Captain', name: 'Captain Lumo', title: 'Rubber Pirate Captain', emoji: '🧑', role: 'Close-range fighter', hp: 100, spd: 96, el: 'blunt', jump: 1,
+    stats: { atk: 4, def: 3, spd: 4 }, special: 'Elastic body + Freedom Form',
     unlock: { type: 'free' },
-    basic: { name: 'Punch', cd: 0.26, desc: 'Quick rubber punches.', use() {
+    basic: { name: 'Punch', icon: 'fist', cd: 0.26, desc: 'Quick rubber punches. In Freedom Form: giant bouncing fists.', use() {
+      if (P.form === 'white') {
+        // cartoon-giant punches that bounce enemies around
+        P.stretch = { start: G.t, dur: 0.22, max: 34, windup: 0, fist: 12 };
+        sfx('punch'); shake(2);
+        melee({ ox: 24, oy: 14, w: 40, h: 30, dmg: 22, life: 0.14, opts: { kb: 220, launch: 160, crit: true, colors: ['#ffffff', '#fff59d', '#ffd23f'] } });
+        fx({ x: P.x + P.face * 40, y: P.y - 14, life: 0.25, draw(f) { const k = f.age / f.life; g.strokeStyle = 'rgba(255,255,255,' + (1 - k) + ')'; g.lineWidth = 2; g.beginPath(); g.arc(f.x, f.y, 6 + k * 20, 0, Math.PI * 2); g.stroke(); } });
+        return;
+      }
       act('punch', 0.12); sfx('punch');
       melee({ ox: 12, oy: 12, w: 18, h: 12, dmg: 12, opts: { kb: 80 } });
     } },
-    s1: { name: 'Rubber Punch', cd: 3, desc: 'Stretch an arm far forward to smash a distant enemy.', use() {
-      const dur = 0.38; P.stretch = { start: G.t, dur, max: 150, windup: 0, fist: 4 };
+    s1: { name: 'Elastic Punch', icon: 'stretch', cd: 2.6, desc: 'A fast long-range stretch punch.', use() {
+      const white = P.form === 'white', dur = 0.3; P.stretch = { start: G.t, dur, max: white ? 200 : 150, windup: 0, fist: white ? 12 : 4 };
       lock(dur); sfx('skill');
-      addHB({ follow: { ox: 0, oy: 12 }, w: 12, h: 12, life: dur * 0.6, dmg: 32, pierce: 1, opts: { kb: 200 },
+      addHB({ follow: { ox: 0, oy: 12 }, w: white ? 22 : 12, h: white ? 22 : 12, life: dur * 0.6, dmg: 32, pierce: white ? 99 : 1, opts: { kb: 200 },
         update(h) { h.x = P.x + P.face * (10 + stretchLen()); } });
     } },
-    s2: { name: 'Power Mode', cd: 14, desc: 'Transform! +ATK, +attack speed, +move speed for 7s.', use() {
+    s2: { name: 'Power Mode', icon: 'power', cd: 14, desc: 'Steam bursts out! +ATK, +attack speed, +move speed for 7s.', use() {
       lock(0.55); sinv(0.55); act('cast', 0.55); sfx('ult');
       P.transform = G.t + 0.55;
       for (let i = 0; i < 4; i++) sched(i * 0.12, () => { particles(P.x, P.y - 12, 10, ['#ff9c8c', '#ffffff', '#ffd1dc'], { grav: -80, spd: 60 }); shake(1); });
       sched(0.55, () => { addBuff('POWER', { atk: 1.5, aspd: 1.7, spd: 1.35 }, 7, '💢'); toast('POWER MODE!'); });
     } },
-    ult: { name: 'Giant Rubber Strike', desc: 'Inflate a GIANT fist and launch a devastating long-range punch.', use() {
-      const dur = 1.0; P.stretch = { start: G.t, dur, max: 290, windup: 0.35, fist: 22, giant: true };
-      lock(dur); sinv(dur); sfx('ult');
-      addHB({ follow: { ox: 0, oy: 14 }, w: 40, h: 40, delay: 0.35, life: 0.75, dmg: 150, opts: { kb: 320, stun: 0.6, crit: true },
-        update(h) { h.x = P.x + P.face * (14 + stretchLen() + 10); } });
-      sched(0.38, () => shake(10));
-      sched(0.5, () => shake(8));
+    s3: { name: "King's Pressure", icon: 'haki', cd: 12, desc: 'A wave of willpower. Weak foes faint (stunned), strong foes take damage and flinch.', use() {
+      lock(0.45); sinv(0.45); act('cast', 0.45); sfx('ult'); shake(3);
+      G.flash = 0.04;
+      const R0 = 120;
+      fx({ x: P.x, y: P.y - 14, life: 0.7, draw(f) {
+        const k = f.age / f.life, r = 10 + k * R0;
+        g.globalAlpha = 1 - k; g.lineWidth = 4; g.strokeStyle = '#1a0010'; g.beginPath(); g.arc(f.x, f.y, r, 0, Math.PI * 2); g.stroke();
+        g.lineWidth = 2; g.strokeStyle = '#d50000'; g.beginPath(); g.arc(f.x, f.y, r - 3, 0, Math.PI * 2); g.stroke();
+        for (let i = 0; i < 6; i++) { const a = i * 1.05 + f.age * 3; g.beginPath(); let px = f.x + Math.cos(a) * 8, py = f.y + Math.sin(a) * 8; g.moveTo(px, py); for (let s2 = 1; s2 < 5; s2++) { px = f.x + Math.cos(a + rand(-0.2, 0.2)) * r * s2 / 4; py = f.y + Math.sin(a + rand(-0.2, 0.2)) * r * s2 / 4; g.lineTo(px, py); } g.strokeStyle = i % 2 ? '#d50000' : '#1a0010'; g.stroke(); }
+        g.globalAlpha = 1;
+      } });
+      for (const e of G.enemies) {
+        if (!e.alive || e.sub || Math.hypot(e.x - P.x, (e.y - e.h / 2) - (P.y - 12)) > R0) continue;
+        e.active = true;
+        const weak = !e.boss && !e.heavy && e.maxHp < 100;
+        if (weak) { hitEnemy(e, 10, { stun: 2.8, kb: 40, env: false, colors: ['#d50000', '#1a0010'] }); popText(e.x, e.y - e.h - 16, 'FAINTED', '#ff8a80'); }
+        else hitEnemy(e, 42, { stun: 0.7, kb: 120, colors: ['#d50000', '#1a0010'] });
+      }
+    } },
+    ult: { name: 'Freedom Form', icon: 'white', desc: 'Transform into a white-haired, laughing, rubbery force of nature for 10s: huge damage, speed and knockback.', use() {
+      lock(0.9); sinv(1.1); act('cast', 0.9); sfx('ult');
+      P.transform = G.t + 0.9;
+      for (let i = 0; i < 6; i++) sched(i * 0.13, () => { particles(P.x, P.y - 14, 14, ['#ffffff', '#fffde7', '#fff59d'], { spd: 120, grav: -40 }); shake(2); sfx('melody'); });
+      sched(0.9, () => {
+        P.form = 'white'; P.formUntil = G.t + 10;
+        G.flash = 0.2; shake(10); toast('FREEDOM FORM!', 1.6);
+        melee({ ox: 0, oy: 14, w: 120, h: 70, dmg: 60, life: 0.15, opts: { kb: 300, launch: 220, crit: true, colors: ['#ffffff', '#fff59d'] } });
+        fx({ x: P.x, y: P.y - 14, life: 0.6, draw(f) { const k = f.age / f.life; g.globalAlpha = 1 - k; circle(f.x, f.y, Math.round(10 + k * 90), '#ffffff'); g.globalAlpha = 1; } });
+      });
     } },
   },
   swordsman: {
     color: '#3fd15b', short: 'Swordsman', name: 'Kaito Triblade', title: 'Three-Blade Swordsman', emoji: '⚔️', role: 'Close-range damage dealer', hp: 110, spd: 90,
+    el: 'slash', jump: 0.94, stats: { atk: 5, def: 3, spd: 3 }, special: 'Three swords + parry',
     unlock: { type: 'coins', n: 300 },
     basic: { name: 'Slash', cd: 0.3, desc: 'Fast sword slash.', use() {
       act('slash', 0.14); sfx('slash');
@@ -56,6 +88,10 @@ const CH = {
       addHB({ follow: { ox: 2, oy: 12 }, w: 38, h: 28, life: 0.6, tick: 0.1, dmg: 10, opts: { kb: 50 },
         draw(h) { const a = G.t * 30; for (let i = 0; i < 3; i++) { const an = a + i * 2.1; R(h.x + Math.cos(an) * 16 - 2, h.y + Math.sin(an) * 9 - 1, 5, 2, ['#fff', '#ff6b6b', '#90caf9'][i]); } } });
     } },
+    s3: { name: 'Iron Guard', icon: 'guard', cd: 7, desc: 'Raise all three blades for 1.2s. Blocks any hit and answers with a counter-slash.', use() {
+      act('slash', 1.2); P.guardUntil = G.t + 1.2; sfx('skill');
+      fx({ x: P.x, y: P.y, life: 1.2, draw(f) { g.globalAlpha = 0.5 + Math.sin(G.t * 20) * 0.2; g.strokeStyle = '#e0f7fa'; g.lineWidth = 2; g.strokeRect(P.x + P.face * 6 - 2, P.y - 26, 5, 24); g.globalAlpha = 1; } });
+    } },
     ult: { name: 'Triple Sword Storm', desc: 'A blinding multi-hit combo across a huge area.', use() {
       lock(1.4); sinv(1.4); sfx('ult');
       act('slash', 1.4);
@@ -67,6 +103,7 @@ const CH = {
   },
   navigator: {
     color: '#ff9a2a', short: 'Navigator', name: 'Nimbus Mira', title: 'Weather Navigator', emoji: '🌩', role: 'Ranged / area damage', hp: 90, spd: 94,
+    el: 'wind', jump: 1, stats: { atk: 4, def: 2, spd: 4 }, special: 'Controls wind & lightning',
     unlock: { type: 'level', n: 2 },
     basic: { name: 'Gust', cd: 0.4, desc: 'Small wind projectile.', use() {
       act('cast', 0.15); sfx('wind');
@@ -83,6 +120,12 @@ const CH = {
       act('cast', 0.3); sfx('wind');
       tornado(P.x + P.face * 20, P.face * 90, 2.4);
     } },
+    s3: { name: 'Thunder Cloud', icon: 'cloud', cd: 9, desc: 'A storm cloud drifts ahead and zaps enemies below it.', use() {
+      act('cast', 0.3); sfx('zap');
+      const cx = P.x + P.face * 30, dir = P.face;
+      const c = fx({ x: cx, y: 130, life: 3.6, draw(f) { R(f.x - 18, f.y, 36, 9, '#5c6378'); R(f.x - 11, f.y - 5, 22, 6, '#6f7790'); if (Math.floor(G.t * 10) % 3 === 0) R(f.x - 2, f.y + 9, 4, 4, '#fff59d'); } });
+      for (let i = 0; i < 6; i++) sched(0.4 + i * 0.55, () => { c.x += dir * 22; lightning(c.x, 22, 0.6); });
+    } },
     ult: { name: 'Weather Chaos', desc: 'Lightning, wind and rain all at once over the whole screen.', use() {
       act('cast', 1.0); lock(0.6); sinv(0.8); sfx('ult');
       G.weather = G.t + 4;
@@ -98,6 +141,7 @@ const CH = {
   },
   sniper: {
     color: '#ffd23f', short: 'Sniper', name: 'Pip Longshot', title: 'Long-Range Sniper', emoji: '🎯', role: 'Long-range damage', hp: 85, spd: 92,
+    el: 'pierce', jump: 1, stats: { atk: 4, def: 2, spd: 3 }, special: 'Charged shots + goggles',
     unlock: { type: 'coins', n: 500 },
     basic: { name: 'Shot', cd: 0.45, desc: 'Long-distance bullet.', use() {
       act('shoot', 0.15); sfx('shoot');
@@ -122,6 +166,12 @@ const CH = {
         onHit(hb) { retarget(hb); } });
       h.vy = 110;
     } },
+    s3: { name: 'Smoke Bomb', icon: 'smoke', cd: 8, desc: 'Vanish in smoke: nearby enemies are dazed and you flip backwards to safety.', use() {
+      sfx('boom'); sinv(0.6);
+      for (const e of G.enemies) if (e.alive && Math.abs(e.x - P.x) < 80 && Math.abs(e.y - P.y) < 60) hitEnemy(e, 8, { stun: 2.2, kb: 60, el: 'explosive', colors: ['#cfd8dc', '#fff'] });
+      for (let i = 0; i < 26; i++) G.parts.push({ x: P.x + rand(-20, 20), y: P.y - rand(0, 24), vx: rand(-40, 40), vy: rand(-30, 10), life: rand(0.8, 1.4), age: 0, c: pick(['#cfd8dc', '#b0bec5', '#eceff1']), s: 4, grav: -10 });
+      P.dash = { vx: -P.face * 220, until: G.t + 0.25 }; P.vy = -230; P.onGround = false;
+    } },
     ult: { name: 'Mega Shot', desc: 'Charge a colossal shot that pierces across the entire screen.', use() {
       lock(0.9); sinv(0.9); act('shoot', 0.9, { charge: true }); sfx('ult');
       for (let i = 0; i < 6; i++) sched(i * 0.06, () => particles(P.x + P.face * 18, P.y - 12, 6, ['#ffd23f', '#fff', '#ff7a00'], { spd: 50, grav: 0 }));
@@ -134,6 +184,7 @@ const CH = {
   },
   cook: {
     color: '#ffe066', short: 'Cook', name: 'Remy Flambé', title: 'Kick Fighter / Cook', emoji: '🔥', role: 'Fast melee combo', hp: 100, spd: 106,
+    el: 'fire', jump: 1.05, stats: { atk: 4, def: 3, spd: 5 }, special: 'Fire kicks + Sky Walk',
     unlock: { type: 'level', n: 3 },
     basic: { name: 'Kick Combo', cd: 0.22, desc: 'Fast 3-hit kick combo (3rd kick knocks back).', use() {
       if (G.t - P.comboT > 0.6) P.combo = 0;
@@ -156,6 +207,12 @@ const CH = {
       for (let i = 0; i < 4; i++) sched(0.15 + i * 0.09, () => { act('kick', 0.08); sfx('punch'); melee({ ox: 10, oy: 16, w: 36, h: 40, dmg: 10, opts: { juggle: true, kb: 10 } }); particles(P.x + P.face * 12, P.y - 14, 4, ['#fff', '#ffd23f'], { spd: 70 }); });
       sched(0.55, () => { act('kick', 0.15); melee({ ox: 10, oy: 10, w: 40, h: 46, dmg: 24, opts: { spike: true, kb: 120 } }); shake(4); sfx('boom'); });
     } },
+    s3: { name: 'Sky Walk', icon: 'wing', cd: 10, desc: 'Kick the air itself: two extra mid-air jumps for 6s. Crosses any gap.', use() {
+      sfx('jump'); P.skyWalk = G.t + 6; P.airJumps = 2; toast('SKY WALK!', 1);
+      if (P.onGround) { P.vy = -340; P.onGround = false; P.plat = null; }
+      particles(P.x, P.y, 14, ['#ff7a00', '#ffd23f', '#fff'], { angle: Math.PI / 2, spread: 1, spd: 80 });
+      addBuff('SKY WALK', { spd: 1.0 }, 6, '👟');
+    } },
     ult: { name: 'Flame Leg Storm', desc: 'Dash across the screen unleashing a storm of fiery kicks.', use() {
       lock(1.2); sinv(1.3); sfx('ult');
       P.dash = { vx: P.face * 330, until: G.t + 1.1 };
@@ -173,35 +230,46 @@ const CH = {
     } },
   },
   doctor: {
-    color: '#3fd0c9', short: 'Doctor', name: 'Doc Tansy', title: 'Pirate Doctor', emoji: '💊', role: 'Support / healing', hp: 95, spd: 88,
+    color: '#3f8cff', short: 'Doctor', name: 'Doc Bramble', title: 'Blue-Nosed Reindeer Doctor', emoji: '🦌', role: 'Support / healer', hp: 95, spd: 90, el: 'blunt', jump: 1.06,
+    stats: { atk: 2, def: 4, spd: 3 }, special: 'Healing zones + Emergency Mode',
     unlock: { type: 'boss', n: 1 },
-    basic: { name: 'Pill Toss', cd: 0.42, desc: 'Throw a small medical capsule.', use() {
+    basic: { name: 'Pill Toss', icon: 'pill', cd: 0.42, desc: 'Throw a small medical capsule.', use() {
       act('shoot', 0.14); sfx('shoot');
-      const h = shoot({ vx: 250, w: 6, h: 4, life: 1.1, dmg: 13, ox: 10, oy: 14, grav: 260, solid: true, opts: { kb: 60 },
+      const h = shoot({ vx: 250, w: 6, h: 4, life: 1.1, dmg: 13, ox: 10, oy: 12, grav: 260, solid: true, opts: { kb: 60 },
         draw: hb => { R(hb.x - 3, hb.y - 2, 3, 4, '#e23b3b'); R(hb.x, hb.y - 2, 3, 4, '#ffffff'); } });
       h.vy = -90;
     } },
-    s1: { name: 'Heal', cd: 8, desc: 'Restore 35 HP.', use() {
-      act('cast', 0.3); lock(0.25); heal(35);
+    s1: { name: 'Heal', icon: 'heart', cd: 8, desc: 'Restore 35 HP.', use() {
+      act('cast', 0.3); lock(0.25); heal(P.form === 'emergency' ? 50 : 35);
       fx({ x: P.x, y: P.y - 12, life: 0.6, draw(f) { const r = 8 + f.age * 40; g.strokeStyle = 'rgba(142,245,155,' + (1 - f.age / f.life) + ')'; g.lineWidth = 2; g.strokeRect(P.x - r, P.y - 12 - r, r * 2, r * 2); } });
     } },
-    s2: { name: 'Power Buff', cd: 14, desc: '+ATK, +DEF, +SPEED for 8s.', use() {
+    s2: { name: 'Team Buff', icon: 'buff', cd: 14, desc: '+ATK, +DEF, +SPEED for 8s.', use() {
       act('cast', 0.3); sfx('skill');
-      addBuff('BOOST', { atk: 1.35, def: 0.7, spd: 1.25 }, 8, '💉');
-      particles(P.x, P.y - 12, 20, ['#ffd23f', '#ff4f6d', '#fff'], { grav: -80, spd: 60 });
-      toast('POWER BUFF!');
+      addBuff('TEAM BUFF', { atk: 1.35, def: 0.7, spd: 1.25 }, 8, '💉');
+      particles(P.x, P.y - 12, 20, ['#ffd23f', '#3f8cff', '#fff'], { grav: -80, spd: 60 });
+      toast('TEAM BUFF!');
     } },
-    ult: { name: 'Full Recovery', desc: 'Massive heal + strong defense boost. The healing wave also repels enemies.', use() {
-      act('cast', 0.8); lock(0.6); sinv(0.8); sfx('ult');
-      heal(90);
-      addBuff('ARMOR', { def: 0.45 }, 8, '🛡');
-      melee({ ox: 0, oy: 12, w: 160, h: 70, dmg: 22, life: 0.2, opts: { kb: 260, colors: ['#8ef59b', '#fff'] } });
-      fx({ x: P.x, y: P.y - 12, life: 0.8, draw(f) { const r = 10 + f.age * 140; g.strokeStyle = 'rgba(142,245,155,' + (1 - f.age / f.life) + ')'; g.lineWidth = 3; g.beginPath(); g.arc(f.x, f.y, r, 0, Math.PI * 2); g.stroke(); } });
-      toast('FULL RECOVERY!');
+    s3: { name: 'Medical Burst', icon: 'cross', cd: 11, desc: 'Plant a healing field: heals you while you stand in it and stings enemies.', use() {
+      act('cast', 0.35); sfx('heal');
+      healZone(P.x, 52, 5, 7, false);
+    } },
+    ult: { name: 'Emergency Mode', icon: 'siren', desc: 'Sirens on! A huge healing field, strong defense and regeneration for 8s.', use() {
+      act('cast', 0.8); lock(0.6); sinv(0.9); sfx('ult');
+      P.transform = G.t + 0.6;
+      sched(0.6, () => {
+        P.form = 'emergency'; P.formUntil = G.t + 8;
+        heal(40);
+        addBuff('ARMOR', { def: 0.45 }, 8, '🛡');
+        P.regen = 4; P.regenUntil = G.t + 8;
+        healZone(P.x, 95, 6, 10, true);
+        melee({ ox: 0, oy: 12, w: 150, h: 60, dmg: 18, life: 0.2, opts: { kb: 240, colors: ['#8ef59b', '#fff'] } });
+        toast('EMERGENCY MODE!', 1.4);
+      });
     } },
   },
   archaeologist: {
     color: '#a77bff', short: 'Archaeologist', name: 'Iris Tidewell', title: 'Mystical Archaeologist', emoji: '🌊', role: 'Crowd control / area damage', hp: 95, spd: 92,
+    el: 'blunt', jump: 1, stats: { atk: 4, def: 3, spd: 3 }, special: 'Many arms + Mermaid Form',
     unlock: { type: 'level', n: 4 },
     basic: { name: 'Spirit Hand', cd: 0.38, desc: 'A magic hand sprouts beneath an enemy. In Mermaid Form: water jet.', use() {
       act('cast', 0.15);
@@ -253,6 +321,7 @@ const CH = {
   },
   shipwright: {
     color: '#2ec5ff', short: 'Shipwright', name: 'Bolt Ironkeel', title: 'Cyborg Shipwright', emoji: '🤖', role: 'Heavy ranged damage', hp: 130, spd: 82,
+    el: 'explosive', jump: 0.88, stats: { atk: 5, def: 5, spd: 2 }, special: 'Cannons + steel barrier',
     unlock: { type: 'coins', n: 800 },
     basic: { name: 'Mech Punch / Cannon', cd: 0.45, desc: 'Mechanical punch up close, small cannon shot at range.', use() {
       const close = G.enemies.some(e => e.alive && Math.abs(e.x - (P.x + P.face * 14)) < 18 + e.w / 2 && Math.abs((e.y - e.h / 2) - (P.y - 12)) < 24);
@@ -277,6 +346,13 @@ const CH = {
         draw: hb => { g.strokeStyle = '#78909c'; g.lineWidth = 1; g.beginPath(); g.moveTo(P.x + P.face * 5, P.y - 11); g.lineTo(hb.x, hb.y); g.stroke(); R(hb.x - 7, hb.y - 4, 10, 8, '#9aa6b2'); R(hb.x + (hb.face > 0 ? 3 : -7), hb.y - 5, 4, 10, '#c9d2dc'); } });
       h.face = P.face;
     } },
+    s3: { name: 'Steel Barrier', icon: 'wall', cd: 10, desc: 'Deploy a steel wall for 4s: it destroys incoming shots and shoves enemies back.', use() {
+      act('punch', 0.3); sfx('punch'); shake(2);
+      const x = P.x + P.face * 22;
+      addHB({ x, y: GROUND - 18, w: 12, h: 36, life: 4, tick: 0.4, dmg: 5, opts: { kb: 160, el: 'blunt', colors: ['#cfd8dc', '#fff'] },
+        update(h) { for (const z of G.hz) if (!z.follow && Math.abs(z.x - h.x) < 10 && Math.abs(z.y - h.y) < 22) { z.dead = true; particles(z.x, z.y, 5, ['#ffd23f', '#fff'], { spd: 60 }); } },
+        draw(h) { R(h.x - 6, h.y - 18, 12, 36, '#78909c'); R(h.x - 6, h.y - 18, 12, 3, '#cfd8dc'); R(h.x - 4, h.y - 10, 8, 1, '#455a64'); R(h.x - 4, h.y, 8, 1, '#455a64'); R(h.x - 4, h.y + 10, 8, 1, '#455a64'); } });
+    } },
     ult: { name: 'Mecha Cannon', desc: 'Transform into a walking fortress and fire a huge energy cannon.', use() {
       lock(1.7); sinv(1.7); act('shoot', 1.7, { cannon: true }); sfx('ult');
       for (let i = 0; i < 10; i++) sched(i * 0.06, () => { const a = rand(0, 6.28); G.parts.push({ x: P.x + P.face * 16 + Math.cos(a) * 30, y: P.y - 15 + Math.sin(a) * 30, vx: -Math.cos(a) * 60, vy: -Math.sin(a) * 60, life: 0.5, age: 0, c: '#4fc3f7', s: 2, grav: 0 }); });
@@ -294,6 +370,7 @@ const CH = {
   },
   musician: {
     color: '#d07bff', short: 'Musician', name: 'Maestro Vale', title: 'Musical Swordsman', emoji: '🎵', role: 'Support + sword fighter', hp: 100, spd: 96,
+    el: 'sound', jump: 1, stats: { atk: 3, def: 3, spd: 4 }, special: 'Music buffs + stuns',
     unlock: { type: 'boss', n: 2 },
     basic: { name: 'Rapier', cd: 0.3, desc: 'Elegant sword thrust.', use() {
       act('slash', 0.14); sfx('slash');
@@ -309,6 +386,14 @@ const CH = {
       addBuff('MELODY', { aspd: 1.5, spd: 1.3, def: 0.7 }, 8, '🎶');
       for (let i = 0; i < 5; i++) sched(i * 0.12, () => noteParticle(P.x + rand(-10, 10), P.y - 26));
       toast('MUSIC BUFF!');
+    } },
+    s3: { name: 'Lullaby', icon: 'moon', cd: 12, desc: 'A soft tune puts nearby enemies to sleep for 3.5s.', use() {
+      act('cast', 0.6); sfx('melody');
+      for (let i = 0; i < 8; i++) sched(i * 0.08, () => noteParticle(P.x + rand(-30, 30), P.y - 20));
+      for (const e of G.enemies) if (e.alive && Math.hypot(e.x - P.x, e.y - P.y) < 140) {
+        hitEnemy(e, 6, { stun: 3.5, kb: 0, colors: ['#ce93d8', '#fff'] });
+        fx({ x: e.x, y: e.y - e.h, life: 2.5, draw(f) { if (!e.alive) return; g.globalAlpha = 1 - f.age / f.life; pxText('z', e.x + 6 + Math.sin(f.age * 3) * 3, e.y - e.h - 4 - (f.age * 8) % 12, '#e1bee7'); g.globalAlpha = 1; } });
+      }
     } },
     ult: { name: 'Musical Blade', desc: 'A sword symphony with huge sound waves that stun every enemy they touch.', use() {
       lock(1.4); sinv(1.5); sfx('ult');
