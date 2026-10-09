@@ -47,8 +47,8 @@ Friendship needs **repeated, low-pressure contact with the same people**. No mai
 
 ### Main user journey (implemented)
 
-1. **Discover**: landing page → "Trouver mes personnes" or "Explorer les activités".
-2. **Profile**: 6-step onboarding (city and distance → level → interests → energy and group size → availability and format → languages and bio). Optional steps can be skipped with sensible defaults.
+1. **Discover**: landing page → "Trouver ma guilde" or "Voir les quêtes".
+2. **Profile**: 7-step onboarding (city and distance → **character creator** → level → interests → energy and group size → availability and format → languages and bio). Optional steps can be skipped with sensible defaults.
 3. **Recommendations**: the dashboard separates **Retrouver** (circles, next meeting, familiar faces) from **Découvrir** (recommended for you, by interest, near the centre), and every card explains *why* it is shown.
 4. **Join**: the activity page shows practical info, the price, places left, the organizer, participants with shared interests, icebreakers, guidelines and the group discussion.
 5. **Meet**: the group thread is visible to participants only, and personal contact details are discouraged.
@@ -87,8 +87,8 @@ Things deliberately left out: points, badges, streaks, friend counts and popular
 /activites            Discovery: search, categories, energy, filters, sort
 /activites/:id        Activity detail
 /activites/:id/bilan  Post-activity feedback → follow-up (Same Circle)
-/cercles              My circles + open circles
-/cercles/:id          Circle detail: next meetings, ideas, timeline, members
+/guildes              My guilds + guilds open to newcomers   (/cercles redirects)
+/guildes/:id          Guild page: crest, story timeline of episodes, ideas, members
 /agenda               Upcoming activities
 /historique           History & feedback
 /enregistres          Saved activities
@@ -135,11 +135,31 @@ Additive rules in `src/lib/matching.ts`:
 
 The UI shows the reasons ("Tu aimes Studio Ghibli et Slice of life · Petit groupe · Tu es disponible sur ce créneau"), never a "% match".
 
-### Design direction
+### Design direction: "Cozy anime + social RPG"
 
-Warm paper background, ink text, a vermilion accent (*shu*) for discovery and indigo (*ai*) for reconnection. The two accent colours map to the product's two modes. Fraunces (editorial serif) is used for headings, Inter for UI, and Zen Kaku Gothic for kanji accents. Manga screentone and speed-line motifs are used sparingly in generated covers. There is no neon and no mascots, and all interface copy is in French.
+The visual metaphor: **your social life as a slice-of-life anime adventure.**
+- **Activities are quests**: illustrated invitation cards, each with a scene, a category sticker, a kanji stamp, a calendar ticket, and party slots showing free places.
+- **Participants form a team** ("équipe").
+- **Recurring communities are guilds**, with heraldic crests. A guild's meetings are **episodes** on a "Saison 1" story timeline, so coming back feels like continuing a story with familiar characters.
+- **Profiles are character sheets**:
+  - an original illustrated avatar, made in the onboarding character creator (no photo)
+  - a short character title
+  - interest badges colour-coded by family (genre, franchise, hobby, culture)
+- The home screen opens on an **illustrated street banner** that follows the real time of day, with your character saying *« Prêt·e pour un nouvel épisode ? »*.
 
----
+**Visual system:**
+- cream paper; pastel sakura, lavender and sora accents; plum ink line-art
+- ink-outlined manga panels with offset shadows
+- screentone and speed lines, speech bubbles, stickers, hanko stamps
+- Dela Gothic One for manga-style titles, Zen Maru Gothic for headings, Nunito for UI text
+- subtle motion: floating characters, falling petals, pop-in bubbles, all disabled under `prefers-reduced-motion`
+
+**Guard-rails:**
+- Themed labels always come with plain wording ("Rejoindre l’équipe").
+- Contrast stays readable.
+- No neon, no childish mascots, no clutter of Japanese clichés.
+- No gamification of friendship: no points, levels, streaks or friend counts.
+- **IP:** all illustrations, avatars and crests are original SVG. No existing characters, manga panels or franchise logos are used. Franchise names are user-selected text tags, and a "no affiliation" notice is shown.
 
 ## Business model and competitive strategy
 

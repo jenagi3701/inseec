@@ -64,15 +64,15 @@ export function recommend(profile: Profile, activity: Activity, ctx: MatchContex
   const familiar = participantIds.filter((id) => ctx.familiarIds.has(id));
   if (familiar.length) {
     score += 2 + familiar.length;
-    reasons.push(`${familiar.length} visage${familiar.length > 1 ? 's' : ''} familier${familiar.length > 1 ? 's' : ''} y participe${familiar.length > 1 ? 'nt' : ''}`);
+    reasons.push(`${familiar.length} compagnon${familiar.length > 1 ? 's' : ''} de route déjà rencontré${familiar.length > 1 ? 's' : ''}`);
   }
 
   if (activity.communityId && ctx.myCommunityIds.has(activity.communityId)) {
     score += 3;
-    reasons.unshift('C’est la prochaine rencontre de ton cercle');
+    reasons.unshift('C’est le prochain épisode de ta guilde');
   } else if (activity.recurrence && profile.format !== 'ponctuel') {
     score += 1;
-    reasons.push('Groupe récurrent : tu pourras revoir les mêmes personnes');
+    reasons.push('Guilde récurrente : tu retrouveras les mêmes personnes');
   }
 
   if (profile.level === 'debutant' && activity.level === 'debutant') {

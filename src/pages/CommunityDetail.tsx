@@ -4,9 +4,11 @@ import { useApp } from '../store/AppContext';
 import { ActivityCard } from '../components/ActivityCard';
 import { Icon } from '../components/Icon';
 import { Avatar, EmptyState, Modal, SectionHeader } from '../components/ui';
+import { GuildCrest } from '../components/Guild';
+import { Scene } from '../components/art/Scene';
 import { useToast } from '../components/Toast';
 import { categoryById, interestLabel } from '../data/taxonomy';
-import { formatShortDay } from '../lib/format';
+import { formatShortDay, formatTime } from '../lib/format';
 import { ME } from '../store/state';
 
 export default function CommunityDetail() {
@@ -15,117 +17,156 @@ export default function CommunityDetail() {
   const toast = useToast();
   const [confirmLeave, setConfirmLeave] = useState(false);
   const c = getCommunity(id);
-  if (!c) return <EmptyState icon="circles" title="Cercle introuvable" text="Ce cercle n’existe pas ou plus." action={<Link to="/cercles" className="btn-primary btn-sm">Mes cercles</Link>} />;
+  if (!c) return <EmptyState icon="circles" title="Guilde introuvable" text="Cette guilde n’existe pas ou plus." action={<Link to="/guildes" className="btn-primary btn-sm">Mes guildes</Link>} />;
 
   const cat = categoryById(c.categoryId);
   const member = isMember(c.id);
-  const own = activities.filter((a) => a.communityId === c.id);
-  const upcoming = own.filter((a) => !isPast(a)).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-  const past = own.filter((a) => isPast(a)).sort((a, b) => b.startsAt.localeCompare(a.startsAt));
-  const attended = past.filter((a) => isJoined(a.id)).length;
+  const episodes = activities.filter((a) => a.communityId === c.id).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  const upcoming = episodes.filter((a) => !isPast(a));
+  const attended = episodes.filter((a) => isPast(a) && isJoined(a.id)).length;
   const members = communityMembers(c).filter((m) => !state.blocked.includes(m));
-  // Feature: "Same Circle" follow-ups — other activities matching the circle's shared interests
+  // "Same team" follow-ups: other quests matching the guild's shared interests
   const ideas = activities.filter((a) => !isPast(a) && a.communityId !== c.id && a.tags.some((t) => c.tags.includes(t))).slice(0, 3);
+  const nextIdx = episodes.findIndex((a) => !isPast(a));
 
   return (
     <div>
-      <Link to="/cercles" className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes cercles</Link>
+      <Link to="/guildes" className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-white hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes guildes</Link>
 
-      <header className="relative overflow-hidden rounded-[2rem] p-6 md:p-10" style={{ background: cat.tint }}>
-        <span className="pointer-events-none absolute -right-4 -bottom-12 font-jp text-[12rem] leading-none font-bold opacity-15 select-none" style={{ color: cat.color }} aria-hidden="true">{cat.kanji}</span>
-        <div className="relative max-w-2xl">
-          <div className="flex flex-wrap gap-2">
-            {c.origin === 'cercle' && <span className="chip bg-white/80 text-ai">Né d’une première rencontre</span>}
-            <span className="chip bg-white/80" style={{ color: cat.color }}>{cat.label}</span>
-            {member && <span className="chip bg-ai text-white">Membre</span>}
-          </div>
-          <h1 className="mt-4 text-4xl font-semibold md:text-5xl">{c.name}</h1>
-          <p className="mt-2 font-display text-xl text-ink-2 italic">{c.tagline}</p>
-          <p className="mt-4 text-ink-2">{c.description}</p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            {member ? (
-              <>
-                <Link to={`/proposer?cercle=${c.id}`} className="btn-ai"><Icon name="plus" className="size-4" /> Proposer une rencontre</Link>
-                <button className="btn-ghost" onClick={() => setConfirmLeave(true)}>Quitter le cercle</button>
-              </>
-            ) : (
-              <button className="btn-ai" onClick={() => { dispatch({ type: 'joinCommunity', communityId: c.id, name: c.name }); toast(`Bienvenue dans « ${c.name} »`); }}>
-                <Icon name="circles" className="size-4" /> Rejoindre ce cercle
-              </button>
-            )}
+      {/* ——— Guild banner ——— */}
+      <header className="panel relative overflow-hidden">
+        <Scene scene={cat.scene} time="crepuscule" seed={c.id} className="absolute inset-y-0 right-0 h-full w-full md:w-[58%]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-40% md:via-cream/70 md:via-55% md:to-transparent" aria-hidden="true" />
+        <div className="relative grid gap-6 p-6 md:grid-cols-[auto_1fr] md:items-center md:p-10">
+          <GuildCrest categoryId={c.categoryId} born={c.origin === 'cercle'} className="size-24 md:size-32" />
+          <div className="max-w-2xl">
+            <div className="flex flex-wrap gap-2">
+              {c.origin === 'cercle' && <span className="sticker bg-white text-lav-deep">Née d’une première rencontre</span>}
+              <span className="sticker bg-white" style={{ color: cat.color }}>{cat.label}</span>
+              {member && <span className="sticker bg-lav-deep text-white">Membre</span>}
+            </div>
+            <h1 className="mt-3 font-manga text-4xl leading-tight font-normal md:text-5xl">{c.name}</h1>
+            <p className="mt-1 font-display text-xl font-bold text-ink-2">{c.tagline}</p>
+            <p className="mt-3 font-semibold text-ink-2">{c.description}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              {member ? (
+                <>
+                  <Link to={`/proposer?cercle=${c.id}`} className="btn-lav"><Icon name="plus" className="size-4" /> Proposer un épisode</Link>
+                  <button className="btn-ghost" onClick={() => setConfirmLeave(true)}>Quitter la guilde</button>
+                </>
+              ) : (
+                <button className="btn-lav" onClick={() => { dispatch({ type: 'joinCommunity', communityId: c.id, name: c.name }); toast(`Bienvenue dans la guilde « ${c.name} »`); }}>
+                  <Icon name="circles" className="size-4" /> Rejoindre cette guilde
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="card p-5"><p className="text-xs font-semibold text-ink-3">Rythme</p><p className="mt-1 font-semibold">{c.rhythm}</p></div>
-        <div className="card p-5"><p className="text-xs font-semibold text-ink-3">Membres</p><p className="mt-1 font-semibold">{members.length} personnes</p></div>
-        <div className="card p-5"><p className="text-xs font-semibold text-ink-3">Ton parcours</p><p className="mt-1 font-semibold">{attended ? `${attended} rencontre${attended > 1 ? 's' : ''} ensemble` : 'Pas encore de rencontre'}</p></div>
+        {[
+          ['Rythme', c.rhythm, 'repeat'],
+          ['Membres', `${members.length} personnes`, 'users'],
+          ['Ton parcours', attended ? `${attended} épisode${attended > 1 ? 's' : ''} vécu${attended > 1 ? 's' : ''} ensemble` : 'Pas encore d’épisode vécu', 'heart'],
+        ].map(([k, v, icon]) => (
+          <div key={k} className="card flex items-center gap-3 p-4">
+            <span className="inline-flex size-10 items-center justify-center rounded-xl border-2 border-ink bg-lav-soft text-lav-deep"><Icon name={icon as 'users'} className="size-5" /></span>
+            <div><p className="text-[11px] font-black tracking-wider text-ink-3 uppercase">{k}</p><p className="font-bold">{v}</p></div>
+          </div>
+        ))}
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_20rem]">
-        <div className="space-y-10">
+        <div className="space-y-12">
+          {/* ——— Story timeline ——— */}
           <section>
-            <SectionHeader title="Prochaines rencontres" />
-            {upcoming.length ? (
-              <div className="grid gap-5 sm:grid-cols-2">{upcoming.map((a) => <ActivityCard key={a.id} activity={a} showReason={false} />)}</div>
+            <SectionHeader title="L’histoire de la guilde" kicker="Saison 1" jp="物語" />
+            {episodes.length ? (
+              <ol className="relative space-y-3 pl-2">
+                <span className="absolute top-4 bottom-4 left-[29px] w-0.5 bg-ink/15" aria-hidden="true" />
+                {episodes.map((a, i) => {
+                  const done = isPast(a);
+                  const isNext = i === nextIdx;
+                  const mine = isJoined(a.id);
+                  return (
+                    <li key={a.id} className="relative flex items-center gap-4">
+                      <span className={`relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-ink font-manga text-sm ${isNext ? 'bg-sakura-deep text-white' : done ? 'bg-lav-soft text-lav-deep' : 'bg-white'}`} style={{ boxShadow: '2px 2px 0 0 #2b2440' }}>
+                        {i + 1}
+                      </span>
+                      <Link to={`/activites/${a.id}`} className={`card hover-lift flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 px-4 py-3 ${done ? 'bg-cream' : ''}`}>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-black tracking-wider uppercase text-ink-3">Épisode {i + 1} · {formatShortDay(a.startsAt)} · {formatTime(a.startsAt)}</p>
+                          <p className="truncate font-display font-black">{a.title}</p>
+                        </div>
+                        <span className={`sticker ${done ? (mine ? 'bg-lav-soft text-lav-deep' : 'bg-cream-2 text-ink-3') : mine ? 'bg-matcha-soft text-matcha' : isNext ? 'bg-sakura-soft text-sakura-deep' : 'bg-white text-ink-3'}`}>
+                          {done ? (mine ? 'Vécu ensemble' : 'Passé') : mine ? 'Inscrit·e' : isNext ? 'Prochain épisode' : 'À venir'}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+                {member && (
+                  <li className="relative flex items-center gap-4">
+                    <span className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-ink-3 bg-white text-ink-3"><Icon name="plus" className="size-5" /></span>
+                    <Link to={`/proposer?cercle=${c.id}`} className="font-extrabold text-lav-deep hover:underline">Écrire l’épisode suivant…</Link>
+                  </li>
+                )}
+              </ol>
             ) : (
-              <EmptyState icon="calendar" title="Aucune rencontre planifiée" text="Lance la prochaine : propose une date, un lieu public et une activité." action={member ? <Link to={`/proposer?cercle=${c.id}`} className="btn-ai btn-sm">Proposer une rencontre</Link> : undefined} />
+              <EmptyState icon="calendar" title="L’histoire commence ici" text="Aucun épisode encore. Propose une date, un lieu public et une activité." action={member ? <Link to={`/proposer?cercle=${c.id}`} className="btn-lav btn-sm">Proposer un épisode</Link> : undefined} />
             )}
           </section>
 
-          {ideas.length > 0 && (
+          {upcoming.length > 0 && (
             <section>
-              <SectionHeader title="Idées pour le groupe" kicker={`Selon vos passions communes : ${c.tags.slice(0, 3).map(interestLabel).join(', ')}`} />
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{ideas.map((a) => <ActivityCard key={a.id} activity={a} compact />)}</div>
+              <SectionHeader title="Prochains épisodes" />
+              <div className="grid gap-6 sm:grid-cols-2">{upcoming.map((a) => <ActivityCard key={a.id} activity={a} showReason={false} />)}</div>
             </section>
           )}
 
-          {past.length > 0 && (
+          {ideas.length > 0 && (
             <section>
-              <SectionHeader title="Rencontres passées" />
-              <ol className="relative space-y-4 border-l-2 border-line pl-6">
-                {past.map((a) => (
-                  <li key={a.id} className="relative">
-                    <span className={`absolute top-1.5 -left-[31px] size-3 rounded-full ring-4 ring-paper ${isJoined(a.id) ? 'bg-ai' : 'bg-line'}`} />
-                    <Link to={`/activites/${a.id}`} className="font-semibold hover:underline">{a.title}</Link>
-                    <p className="text-sm text-ink-3">{formatShortDay(a.startsAt)} · {a.participantIds.length} participant·es{isJoined(a.id) ? ' · tu y étais' : ''}</p>
-                  </li>
-                ))}
-              </ol>
+              <SectionHeader title="Idées de quêtes pour la guilde" kicker={`Selon vos passions communes : ${c.tags.slice(0, 3).map(interestLabel).join(', ')}`} />
+              <div className="grid gap-6 sm:grid-cols-2">{ideas.map((a) => <ActivityCard key={a.id} activity={a} compact />)}</div>
             </section>
           )}
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="card p-5">
-            <h2 className="font-display text-lg font-semibold">Membres</h2>
-            <ul className="mt-4 space-y-3">
+            <h2 className="text-lg">Membres de la guilde</h2>
+            <ul className="mt-4 space-y-2">
               {members.map((m) => {
                 const u = getUser(m);
                 if (!u) return null;
                 return (
                   <li key={m}>
-                    <Link to={m === ME ? '/profil' : `/profil/${m}`} className="flex items-center gap-3 rounded-xl p-1 hover:bg-paper">
-                      <Avatar user={u} size="sm" />
-                      <span className="text-sm font-semibold">{m === ME ? 'Toi' : u.firstName}</span>
-                      {m === c.organizerId && <span className="chip bg-paper-2 px-1.5 py-0 text-[10px] text-ink-2">Anime le cercle</span>}
-                      {familiarIds.has(m) && <span className="chip bg-ai-soft px-1.5 py-0 text-[10px] text-ai">Déjà rencontré·e</span>}
+                    <Link to={m === ME ? '/profil' : `/profil/${m}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink hover:bg-cream">
+                      <Avatar user={u} size="md" />
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-1 text-sm font-black">
+                          {m === ME ? 'Toi' : u.firstName}
+                          {m === c.organizerId && <span className="chip bg-peach px-1.5 py-0 text-[10px] text-peach-deep">Maître de guilde</span>}
+                          {familiarIds.has(m) && <span className="chip bg-lav-soft px-1.5 py-0 text-[10px] text-lav-deep">Déjà rencontré·e</span>}
+                        </p>
+                        {u.title && <p className="truncate text-xs font-semibold text-ink-3">{u.title}</p>}
+                      </div>
                     </Link>
                   </li>
                 );
               })}
             </ul>
-            {!member && <p className="mt-4 text-xs text-ink-3">Rejoindre un cercle ne t’engage à rien : tu choisis à quelles rencontres tu participes.</p>}
+            {!member && <p className="mt-4 text-xs font-semibold text-ink-3">Rejoindre une guilde ne t’engage à rien : tu choisis à quels épisodes tu participes.</p>}
           </div>
         </aside>
       </div>
 
-      <Modal open={confirmLeave} onClose={() => setConfirmLeave(false)} title="Quitter ce cercle ?">
-        <p className="text-sm text-ink-2">Tu ne verras plus ses prochaines rencontres en priorité. Les membres ne sont pas notifié·es. Tu pourras revenir quand tu veux.</p>
+      <Modal open={confirmLeave} onClose={() => setConfirmLeave(false)} title="Quitter cette guilde ?">
+        <p className="text-sm font-semibold text-ink-2">Tu ne verras plus ses prochains épisodes en priorité. Les membres ne sont pas notifié·es. Tu pourras revenir quand tu veux.</p>
         <div className="mt-6 flex justify-end gap-2">
           <button className="btn-ghost" onClick={() => setConfirmLeave(false)}>Rester</button>
-          <button className="btn-primary" onClick={() => { dispatch({ type: 'leaveCommunity', communityId: c.id }); setConfirmLeave(false); toast('Tu as quitté le cercle'); }}>Quitter</button>
+          <button className="btn-primary" onClick={() => { dispatch({ type: 'leaveCommunity', communityId: c.id }); setConfirmLeave(false); toast('Tu as quitté la guilde'); }}>Quitter</button>
         </div>
       </Modal>
     </div>

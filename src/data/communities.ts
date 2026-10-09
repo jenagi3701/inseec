@@ -1,4 +1,4 @@
-// Fictional recurring communities ("cercles"). Activities link to them via communityId.
+// Fictional recurring communities ("guildes" in the UI). Activities link to them via communityId.
 import type { Community, Message } from './types';
 import { daysAgo } from './dates';
 

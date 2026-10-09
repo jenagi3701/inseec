@@ -27,7 +27,7 @@ describe('matching', () => {
     const withCircle = recommend(me, a, { familiarIds: new Set(['u-clara']), myCommunityIds: new Set(['c-ghibli']) });
     expect(withCircle.score).toBeGreaterThan(base);
     expect(withCircle.familiar).toEqual(['u-clara']);
-    expect(withCircle.reasons[0]).toMatch(/cercle/);
+    expect(withCircle.reasons[0]).toMatch(/guilde/);
   });
 
   it('maps dates to availability slots', () => {

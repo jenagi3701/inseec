@@ -34,13 +34,13 @@ export function CityFields({ p, set }: { p: Profile; set: Patch }) {
         <input id="neighborhood" className="input" value={p.neighborhood ?? ''} onChange={(e) => set({ neighborhood: e.target.value })} placeholder="Ex. Croix-Rousse, Guillotière…" maxLength={40} />
       </div>
       <div>
-        <label className="label" htmlFor="distance">Distance maximale : <span className="text-shu">{p.distanceKm} km</span></label>
-        <input id="distance" type="range" min={1} max={15} value={p.distanceKm} onChange={(e) => set({ distanceKm: Number(e.target.value) })} className="w-full accent-shu" />
+        <label className="label" htmlFor="distance">Distance maximale : <span className="text-sakura">{p.distanceKm} km</span></label>
+        <input id="distance" type="range" min={1} max={15} value={p.distanceKm} onChange={(e) => set({ distanceKm: Number(e.target.value) })} className="w-full accent-sakura" />
         <div className="flex justify-between text-xs text-ink-3"><span>À pied</span><span>Toute la métropole</span></div>
       </div>
       <label className="flex items-center gap-3 rounded-xl border border-line bg-white p-3 text-sm">
-        <input type="checkbox" checked={!!p.newInTown} onChange={(e) => set({ newInTown: e.target.checked })} className="size-4 accent-shu" />
-        Je viens d’arriver dans la ville — montre-moi les activités accueillantes pour les nouveaux.
+        <input type="checkbox" checked={!!p.newInTown} onChange={(e) => set({ newInTown: e.target.checked })} className="size-4 accent-sakura" />
+        Je viens d’arriver dans la ville — montre-moi les quêtes accueillantes pour les nouveaux.
       </label>
     </div>
   );
@@ -55,9 +55,9 @@ export function LevelFields({ p, set }: { p: Profile; set: Patch }) {
           type="button"
           onClick={() => set({ level: l.id as LevelId })}
           aria-pressed={p.level === l.id}
-          className={`rounded-2xl border p-4 text-left transition ${p.level === l.id ? 'border-ink bg-white ring-2 ring-ink' : 'border-line bg-white hover:border-ink-3'}`}
+          className="tile p-4"
         >
-          <p className="font-semibold">{l.label}</p>
+          <p className="font-display font-black">{l.label}</p>
           <p className="text-sm text-ink-2">{l.description}</p>
         </button>
       ))}
@@ -90,7 +90,7 @@ export function InterestFields({ p, set }: { p: Profile; set: Patch }) {
         );
       })}
       <p className="text-sm text-ink-2">
-        <span className="font-semibold text-ink">{p.interests.length}</span> sélectionné{p.interests.length > 1 ? 's' : ''}. Mélange les univers : on te proposera des activités qui traversent tes passions.
+        <span className="font-semibold text-ink">{p.interests.length}</span> sélectionné{p.interests.length > 1 ? 's' : ''}. Mélange les univers : on te proposera des quêtes qui traversent tes passions. Les titres d’œuvres sont de simples étiquettes, sans lien officiel.
       </p>
     </div>
   );
@@ -108,16 +108,16 @@ export function EnergyFields({ p, set }: { p: Profile; set: Patch }) {
               type="button"
               aria-pressed={p.energy.includes(e.id)}
               onClick={() => set({ energy: toggle(p.energy, e.id as EnergyId) })}
-              className={`rounded-2xl border p-3.5 text-left transition ${p.energy.includes(e.id) ? 'border-ink bg-white ring-2 ring-ink' : 'border-line bg-white hover:border-ink-3'}`}
+              className="tile p-3.5"
             >
-              <p className="text-sm font-semibold">{e.label}</p>
+              <p className="text-sm font-black">{e.emoji} {e.label}</p>
               <p className="text-xs text-ink-2">{e.description}</p>
             </button>
           ))}
         </div>
       </div>
       <div>
-        <span className="label">Taille de groupe préférée</span>
+        <span className="label">Taille d’équipe préférée</span>
         <div className="flex flex-wrap gap-2">
           {GROUP_SIZES.map((g) => (
             <Pill key={g.id} active={p.groupSize === g.id} onClick={() => set({ groupSize: g.id as GroupSizeId })}>{g.label}</Pill>
@@ -130,8 +130,8 @@ export function EnergyFields({ p, set }: { p: Profile; set: Patch }) {
 
 export function AvailabilityFields({ p, set }: { p: Profile; set: Patch }) {
   const formats: { id: FormatPref; label: string; text: string }[] = [
-    { id: 'recurrent', label: 'Groupes récurrents', text: 'Revoir les mêmes personnes régulièrement.' },
-    { id: 'ponctuel', label: 'Activités ponctuelles', text: 'Découvrir sans engagement.' },
+    { id: 'recurrent', label: 'Guildes récurrentes', text: 'Revoir les mêmes personnes régulièrement.' },
+    { id: 'ponctuel', label: 'Quêtes ponctuelles', text: 'Découvrir sans engagement.' },
     { id: 'les-deux', label: 'Les deux', text: 'Je commence ponctuel, je reste si ça accroche.' },
   ];
   return (
@@ -149,8 +149,8 @@ export function AvailabilityFields({ p, set }: { p: Profile; set: Patch }) {
         <div className="grid gap-2 sm:grid-cols-3">
           {formats.map((f) => (
             <button key={f.id} type="button" aria-pressed={p.format === f.id} onClick={() => set({ format: f.id })}
-              className={`rounded-2xl border p-3.5 text-left transition ${p.format === f.id ? 'border-ink bg-white ring-2 ring-ink' : 'border-line bg-white hover:border-ink-3'}`}>
-              <p className="text-sm font-semibold">{f.label}</p>
+              className="tile p-3.5">
+              <p className="text-sm font-black">{f.label}</p>
               <p className="text-xs text-ink-2">{f.text}</p>
             </button>
           ))}

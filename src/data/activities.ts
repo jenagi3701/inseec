@@ -18,7 +18,7 @@ export const DEMO_ACTIVITIES: Activity[] = [
   },
   {
     ...D, id: 'a-ghibli-next', title: 'Dimanche Ghibli : Le Château ambulant', categoryId: 'anime',
-    description: 'Prochaine séance du cercle Ghibli. Le groupe a voté pour Le Château ambulant. Gâteaux faits maison bienvenus.',
+    description: 'Prochain épisode de la guilde Ghibli. Le groupe a voté pour Le Château ambulant. Gâteaux faits maison bienvenus.',
     startsAt: onWeekday(0, 4, 15), durationMin: 180, venue: 'Salon de thé Kissa (fictif)', address: 'Montée de la Grande-Côte', district: 'Croix-Rousse (1er)', distanceKm: 1.8,
     priceMin: 6, priceMax: 6, maxParticipants: 8, participantIds: ['u-clara', 'u-amandine'],
     level: 'tous', organizerId: 'u-yuki', communityId: 'c-ghibli', recurrence: 'mensuel', energy: 'calme',
@@ -221,7 +221,7 @@ export const DEMO_ACTIVITIES: Activity[] = [
   // ——— Past activities (history & follow-up demo) ———
   {
     ...D, id: 'p-ghibli', title: 'Dimanche Ghibli : Le Voyage de Chihiro', categoryId: 'anime',
-    description: 'Séance précédente du cercle Ghibli.',
+    description: 'Épisode précédent de la guilde Ghibli.',
     startsAt: daysAgo(19, 15), durationMin: 180, venue: 'Salon de thé Kissa (fictif)', address: 'Montée de la Grande-Côte', district: 'Croix-Rousse (1er)', distanceKm: 1.8,
     priceMin: 6, priceMax: 6, maxParticipants: 8, participantIds: ['u-yuki', 'u-clara', 'u-ines', 'u-amandine', 'u-nathan'],
     level: 'tous', organizerId: 'u-yuki', communityId: 'c-ghibli', recurrence: 'mensuel', energy: 'calme',
@@ -237,7 +237,7 @@ export const DEMO_ACTIVITIES: Activity[] = [
   },
   {
     ...D, id: 'p-decouverte', title: 'Découverte : jeux de société japonais', categoryId: 'jeux',
-    description: 'Une soirée ponctuelle pour découvrir des jeux conçus au Japon. Le groupe n’avait pas de cercle… pour l’instant.',
+    description: 'Une soirée ponctuelle pour découvrir des jeux conçus au Japon. Le groupe n’avait pas de guilde… pour l’instant.',
     startsAt: daysAgo(3, 19, 30), durationMin: 150, venue: 'Café-jeux Le Dé Rouge (fictif)', address: 'Rue de Marseille', district: 'Guillotière (7e)', distanceKm: 1.5,
     priceMin: 5, priceMax: 5, maxParticipants: 6, participantIds: ['u-nathan', 'u-clara', 'u-ines', 'u-lucas', 'u-hugo'],
     level: 'debutant', organizerId: 'u-hugo', recurrence: null, energy: 'calme',

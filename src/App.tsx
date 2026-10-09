@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AppLayout } from './components/Layout';
 import Landing from './pages/Landing';
 import Signup from './pages/Signup';
@@ -16,6 +16,11 @@ import Propose from './pages/Propose';
 import About from './pages/About';
 import { EmptyState } from './components/ui';
 
+function LegacyCircle() {
+  const { id } = useParams();
+  return <Navigate to={`/guildes/${id}`} replace />;
+}
+
 export default function App() {
   return (
     <Routes>
@@ -27,8 +32,10 @@ export default function App() {
         <Route path="/activites" element={<Discover />} />
         <Route path="/activites/:id" element={<ActivityDetail />} />
         <Route path="/activites/:id/bilan" element={<Feedback />} />
-        <Route path="/cercles" element={<Communities />} />
-        <Route path="/cercles/:id" element={<CommunityDetail />} />
+        <Route path="/guildes" element={<Communities />} />
+        <Route path="/guildes/:id" element={<CommunityDetail />} />
+        <Route path="/cercles" element={<Navigate to="/guildes" replace />} />
+        <Route path="/cercles/:id" element={<LegacyCircle />} />
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/historique" element={<History />} />
         <Route path="/enregistres" element={<Saved />} />

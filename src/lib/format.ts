@@ -52,3 +52,9 @@ export const recurrenceLabel = (r: string | null) =>
 
 export const levelActivityLabel = (l: string) =>
   l === 'debutant' ? 'Débutant·es bienvenu·es' : l === 'confirme' ? 'Confirmé·es' : 'Tous niveaux';
+
+/** Episode number of a recurring activity within its guild (1-based, chronological). */
+export function episodeOf(all: { id: string; communityId?: string; startsAt: string }[], a: { id: string; communityId?: string; startsAt: string }): number | null {
+  if (!a.communityId) return null;
+  return all.filter((x) => x.communityId === a.communityId && x.startsAt <= a.startsAt).length;
+}

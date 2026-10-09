@@ -43,21 +43,21 @@ export function ReportDialog({ open, onClose, targetType, targetId, targetLabel,
         <legend className="label">Motif</legend>
         {REASONS.map((r) => (
           <label key={r} className="flex cursor-pointer items-center gap-3 rounded-xl border border-line bg-white px-3 py-2.5 text-sm has-[:checked]:border-ink">
-            <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => { setReason(r); setError(''); }} className="accent-shu" />
+            <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => { setReason(r); setError(''); }} className="accent-sakura" />
             {r}
           </label>
         ))}
       </fieldset>
-      {error && <p className="mt-2 text-sm text-shu-dark" role="alert">{error}</p>}
+      {error && <p className="mt-2 text-sm text-sakura-deep" role="alert">{error}</p>}
       <label className="label mt-4" htmlFor="report-details">Détails (facultatif)</label>
       <textarea id="report-details" className="input min-h-24" value={details} onChange={(e) => setDetails(e.target.value)} placeholder="Que s’est-il passé ?" maxLength={1000} />
       {allowBlock && targetType === 'user' && (
         <label className="mt-4 flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="accent-shu" />
+          <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="accent-sakura" />
           Bloquer aussi ce membre
         </label>
       )}
-      <p className="mt-4 rounded-xl bg-shu-soft p-3 text-xs text-shu-dark">En cas de danger immédiat, appelle le 17 (police) ou le 112.</p>
+      <p className="mt-4 rounded-xl bg-sakura-soft p-3 text-xs text-sakura-deep">En cas de danger immédiat, appelle le 17 (police) ou le 112.</p>
       <div className="mt-5 flex justify-end gap-2">
         <button className="btn-ghost" onClick={onClose}>Annuler</button>
         <button className="btn-primary" onClick={submit}>Envoyer le signalement</button>

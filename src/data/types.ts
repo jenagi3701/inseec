@@ -1,6 +1,8 @@
 // Core data model for the Kizuna prototype.
 // Everything here is demo data held in the browser — there is no backend.
 
+export type SceneId = 'manga-cafe' | 'game-table' | 'street' | 'arcade' | 'atelier' | 'riverside';
+
 export type CategoryId = 'anime' | 'jeux' | 'culture' | 'gaming' | 'creatif' | 'sorties';
 
 export type EnergyId = 'calme' | 'creatif' | 'competitif' | 'social' | 'culturel';
@@ -29,12 +31,15 @@ export interface Category {
   kanji: string; // editorial accent used in cover art
   color: string; // css color for accents
   tint: string; // light background tint
+  scene: SceneId; // illustrated setting used for quest covers
+  questLabel: string; // RPG-flavoured name of the category
 }
 
 export interface Energy {
   id: EnergyId;
   label: string;
   description: string;
+  emoji: string;
 }
 
 export type InterestGroup = 'genre' | 'fandom' | 'loisir' | 'culture';
@@ -43,6 +48,18 @@ export interface Interest {
   id: string;
   label: string;
   group: InterestGroup;
+}
+
+/** Original illustrated avatar, built from simple parts (see components/art/AnimeAvatar). */
+export interface AvatarConfig {
+  hair: number; // style index
+  hairColor: number;
+  skin: number;
+  eyes: number; // iris colour
+  outfit: number;
+  accessory: number;
+  expression: number;
+  bg: number;
 }
 
 export interface Profile {
@@ -62,6 +79,8 @@ export interface Profile {
   format: FormatPref;
   distanceKm: number;
   avatarHue: number;
+  avatar?: AvatarConfig;
+  title?: string; // short "class" shown on the character card, e.g. « Barde du karaoké »
   newInTown?: boolean;
 }
 

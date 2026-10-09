@@ -20,13 +20,16 @@ Making friends as an adult, especially after moving to a new city, is hard. Soci
 |---|---|---|---|---|
 | Entry point | Personality quiz | Event topic | Fandom | **Passions + social energy** |
 | Format | Dinner with strangers | Mostly large events | Online | **Small-group activity** |
-| After the event | New strangers next time | No follow-up | Stays online | **Same circle, mutual connections** |
+| After the event | New strangers next time | No follow-up | Stays online | **Same team → guild, mutual connections** |
 | Shy-friendly | Medium | Low | High (online) | **High, in real life** |
 
 Distinctive features: **Same Circle**, **Interest Graph**, **Familiar Faces**, **Discreet mutual connection** (no rejection, no friend counts) and **Social-energy filter**.
 
+### Brand & experience
+"Cozy anime + social RPG": activities are **quests**, small groups are **teams**, recurring communities are **guilds** whose meetings are **episodes** of a shared story. Profiles are **character sheets** with an original illustrated avatar. The whole product uses original slice-of-life illustrations (manga café, Japanese street, arcade…), manga panels and speech bubbles, and franchise names only as text tags.
+
 ### MVP (working prototype)
-Landing page, sign-up and 6-step onboarding, a dashboard with explained recommendations, discovery with filters, activity pages (practical info, participants, icebreakers, group thread), join/leave with live counts, saved activities, agenda, history and feedback, the "meet again" follow-up and circle creation, a My Circles page and circle pages, proposing an activity, member profiles, notifications, privacy settings, report and block, guidelines, and data export and deletion. It is responsive and French-first.
+Landing page, sign-up and 7-step onboarding (including a character creator), a dashboard with explained recommendations, discovery with filters, activity pages (practical info, participants, icebreakers, group thread), join/leave with live counts, saved activities, agenda, history and feedback, the "meet again" follow-up and guild creation, a My Guilds page and guild pages with an episode timeline, proposing a quest, member profiles, notifications, privacy settings, report and block, guidelines, and data export and deletion. It is responsive and French-first.
 *Demo data only. Authentication, chat, payments and other members' answers are simulated.*
 
 ### Business model hypothesis

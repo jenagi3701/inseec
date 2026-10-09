@@ -1,26 +1,62 @@
 @import 'tailwindcss';
 
+/*
+ * Kizuna design system — "cozy anime + social RPG".
+ * Cream paper, pastel sakura / lavender / sora accents, ink line-art,
+ * manga panels with a soft offset shadow, screentone textures.
+ */
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Fraunces', ui-serif, Georgia, serif;
-  --font-jp: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-sans: 'Nunito', ui-rounded, system-ui, sans-serif;
+  --font-display: 'Zen Maru Gothic', 'Nunito', ui-rounded, sans-serif; /* headings */
+  --font-manga: 'Dela Gothic One', 'Zen Maru Gothic', sans-serif; /* big punchy titles */
+  --font-jp: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
 
-  --color-paper: #fbf7f0;
-  --color-paper-2: #f3ece1;
-  --color-ink: #1d1b26;
-  --color-ink-2: #4a4757;
-  --color-ink-3: #77737f;
-  --color-line: #e6ddcf;
-  --color-shu: #d9472b; /* vermilion — primary */
-  --color-shu-dark: #b8381f;
-  --color-shu-soft: #fbe4dc;
-  --color-ai: #2f4a8a; /* indigo — "reconnect" accent */
-  --color-ai-soft: #e1e7f5;
-  --color-matcha: #5f7f4e;
-  --color-matcha-soft: #e4ecdd;
-  --color-kin: #c07a1c;
+  --color-cream: #fff8ee;
+  --color-cream-2: #f7ecdc;
+  --color-ink: #2b2440; /* deep plum ink, softer than black */
+  --color-ink-2: #574e6d;
+  --color-ink-3: #877e99;
+  --color-line: #e9dccb;
+
+  /* sakura — primary action / discovery */
+  --color-sakura: #d9577f;
+  --color-sakura-deep: #b83a63;
+  --color-sakura-soft: #fde3ec;
+  --color-sakura-pale: #fff0f4;
+  /* lavender — guilds / continuity */
+  --color-lav: #6e56c2;
+  --color-lav-deep: #5a43aa;
+  --color-lav-soft: #ece6fb;
+  /* sora — muted blue */
+  --color-sora: #4e74a8;
+  --color-sora-soft: #e2edf9;
+  /* matcha & peach — supporting */
+  --color-matcha: #4f7d40;
+  --color-matcha-soft: #e3f0d9;
+  --color-peach: #fde7cf;
+  --color-peach-deep: #b8701c;
 
   --radius-card: 1.25rem;
+  --shadow-panel: 4px 4px 0 0 var(--color-ink);
+  --shadow-panel-sm: 3px 3px 0 0 var(--color-ink);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes petal {
+  0% { transform: translate(0, -10%) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  100% { transform: translate(-60px, 110vh) rotate(320deg); opacity: 0; }
 }
 
 @layer base {
@@ -28,81 +64,164 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply bg-paper text-ink font-sans antialiased;
+    @apply bg-cream text-ink font-sans antialiased;
+    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1.3px);
+    background-size: 22px 22px;
   }
   h1, h2, h3 {
-    @apply font-display tracking-tight;
+    @apply font-display font-black tracking-tight;
   }
   /* Grid items never force horizontal overflow on small screens */
   .grid > * {
     min-width: 0;
   }
   :focus-visible {
-    outline: 2px solid var(--color-ai);
+    outline: 2.5px solid var(--color-lav);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-2.5 text-sm font-extrabold transition duration-150 select-none disabled:cursor-not-allowed disabled:opacity-50;
+  box-shadow: var(--shadow-panel-sm);
+  &:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 var(--color-ink);
+  }
+  &:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 var(--color-ink);
+  }
 }
 @utility btn-primary {
-  @apply btn bg-shu text-white hover:bg-shu-dark;
+  @apply btn bg-sakura-deep text-white;
 }
 @utility btn-ink {
-  @apply btn bg-ink text-paper hover:bg-ink-2;
+  @apply btn bg-ink text-cream;
 }
-@utility btn-ai {
-  @apply btn bg-ai text-white hover:opacity-90;
+@utility btn-lav {
+  @apply btn bg-lav-deep text-white;
 }
 @utility btn-ghost {
-  @apply btn border border-line bg-white/60 text-ink hover:border-ink-3 hover:bg-white;
+  @apply btn bg-white text-ink;
 }
 @utility btn-sm {
   @apply px-3.5 py-1.5 text-xs;
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+}
+/* Manga panel: ink outline + offset shadow */
+@utility panel {
+  @apply rounded-[var(--radius-card)] border-2 border-ink bg-white;
+  box-shadow: var(--shadow-panel);
 }
 @utility card {
-  @apply rounded-[var(--radius-card)] border border-line bg-white;
+  @apply rounded-[var(--radius-card)] border-2 border-ink bg-white;
+  box-shadow: var(--shadow-panel-sm);
 }
 @utility chip {
-  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold;
+}
+/* Sticker-style tag */
+@utility sticker {
+  @apply inline-flex items-center gap-1 rounded-lg border-2 border-ink bg-white px-2 py-0.5 text-[11px] font-black tracking-wide uppercase;
+  box-shadow: 2px 2px 0 0 var(--color-ink);
 }
 @utility input {
-  @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-ink-3 focus:border-ai focus:ring-2 focus:ring-ai/15;
+  @apply w-full rounded-xl border-2 border-line bg-white px-3.5 py-2.5 text-sm font-semibold outline-none transition placeholder:font-normal placeholder:text-ink-3 focus:border-lav focus:ring-4 focus:ring-lav/15;
 }
 @utility label {
-  @apply mb-1.5 block text-sm font-semibold text-ink;
+  @apply mb-1.5 block text-sm font-extrabold text-ink;
 }
 @utility eyebrow {
-  @apply text-xs font-semibold uppercase tracking-[0.16em] text-ink-3;
+  @apply text-xs font-extrabold uppercase tracking-[0.18em] text-ink-3;
 }
 @utility toggle-pill {
-  @apply rounded-full border px-3.5 py-2 text-sm font-medium transition;
+  @apply rounded-full border-2 px-3.5 py-2 text-sm font-bold transition;
   &[aria-pressed='true'] {
-    @apply border-ink bg-ink text-paper;
+    @apply border-ink bg-ink text-cream;
+    box-shadow: 2px 2px 0 0 var(--color-sakura);
   }
   &[aria-pressed='false'] {
     @apply border-line bg-white text-ink-2 hover:border-ink-3;
   }
 }
+/* Selectable tile (onboarding choices, levels…) */
+@utility tile {
+  @apply rounded-2xl border-2 p-4 text-left transition;
+  &[aria-pressed='true'] {
+    @apply border-ink bg-sakura-pale;
+    box-shadow: var(--shadow-panel-sm);
+  }
+  &[aria-pressed='false'] {
+    @apply border-line bg-white hover:border-ink-3;
+  }
+}
 
-/* Manga screentone */
+/* Manga screentone — use with a text colour */
 .screentone {
-  background-image: radial-gradient(currentColor 1px, transparent 1.2px);
-  background-size: 8px 8px;
+  background-image: radial-gradient(currentColor 1px, transparent 1.3px);
+  background-size: 7px 7px;
+}
+.screentone-lg {
+  background-image: radial-gradient(currentColor 1.6px, transparent 1.9px);
+  background-size: 12px 12px;
 }
 .speedlines {
-  background-image: repeating-linear-gradient(115deg, currentColor 0 1px, transparent 1px 14px);
+  background-image: repeating-conic-gradient(from 0deg at 50% 50%, currentColor 0deg 1.2deg, transparent 1.2deg 9deg);
 }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
+/* Speech bubble with a tail (bottom-left by default) */
+.bubble {
+  position: relative;
+  border: 2px solid var(--color-ink);
+  background: #fff;
+  border-radius: 1.1rem;
+  padding: 0.5rem 0.85rem;
+  font-weight: 800;
+  box-shadow: 2px 2px 0 0 var(--color-ink);
 }
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  bottom: -8px;
+  width: 13px;
+  height: 13px;
+  background: inherit;
+  border-right: 2px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+  transform: rotate(45deg);
+}
+.bubble-right::after {
+  left: auto;
+  right: 18px;
+}
+
 .fade-up {
-  animation: fade-up 0.35s ease-out both;
+  animation: fade-up 0.4s ease-out both;
 }
+.pop {
+  animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+.petal {
+  animation: petal linear infinite;
+}
+.hover-lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.hover-lift:hover {
+  transform: translate(-2px, -3px);
+  box-shadow: 6px 7px 0 0 var(--color-ink);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fade-up { animation: none; }
+  .fade-up, .pop, .float, .petal {
+    animation: none !important;
+  }
+  .petal { display: none; }
+  .hover-lift:hover { transform: none; }
 }

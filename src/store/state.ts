@@ -42,7 +42,7 @@ export interface AppState {
   guidelinesAccepted: boolean;
 }
 
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 
 export const initialState: AppState = {
   version: STATE_VERSION,
@@ -77,8 +77,8 @@ export function seedPersonaHistory(state: AppState): AppState {
     },
     connections: [{ userId: 'u-clara', status: 'mutuelle', at: daysAgo(18, 21) }],
     notifications: [
-      { id: 'n-seed-1', text: 'Comment s’est passée « Découverte : jeux de société japonais » ? Dis-nous si tu veux revoir ce groupe.', link: '/activites/p-decouverte/bilan', at: daysAgo(2, 10), read: false },
-      { id: 'n-seed-2', text: 'Les Dimanches Ghibli : prochaine séance dimanche. 4 visages familiers y vont déjà.', link: '/activites/a-ghibli-mononoke', at: daysAgo(1, 9), read: false },
+      { id: 'n-seed-1', text: 'Comment s’est passée « Découverte : jeux de société japonais » ? Dis-nous si tu veux revoir cette équipe.', link: '/activites/p-decouverte/bilan', at: daysAgo(2, 10), read: false },
+      { id: 'n-seed-2', text: 'Les Dimanches Ghibli : l’épisode 2 arrive dimanche. 4 compagnons de route y vont déjà.', link: '/activites/a-ghibli-mononoke', at: daysAgo(1, 9), read: false },
       { id: 'n-seed-3', text: 'Connexion mutuelle avec Clara : vous avez accepté de rester en contact.', link: '/profil/u-clara', at: daysAgo(18, 21), read: true },
     ],
     guidelinesAccepted: true,
@@ -134,7 +134,7 @@ export function reducer(state: AppState, action: Action): AppState {
         profile: action.profile,
         onboarded: action.finishOnboarding ? true : state.onboarded,
         notifications: action.finishOnboarding
-          ? [note('Bienvenue sur Kizuna ! Voici des activités choisies selon tes passions.', '/accueil'), ...state.notifications]
+          ? [note('Bienvenue dans l’aventure ! Voici des quêtes choisies selon tes passions.', '/accueil'), ...state.notifications]
           : state.notifications,
       };
     case 'acceptGuidelines':
@@ -143,7 +143,7 @@ export function reducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         joined: withId(state.joined, action.activityId),
-        notifications: [note(`Inscription confirmée : « ${action.title} ». Tu peux te désinscrire à tout moment.`, `/activites/${action.activityId}`), ...state.notifications],
+        notifications: [note(`Tu as rejoint l’équipe de « ${action.title} ». Tu peux la quitter à tout moment.`, `/activites/${action.activityId}`), ...state.notifications],
       };
     case 'leave':
       return { ...state, joined: without(state.joined, action.activityId) };
@@ -153,7 +153,7 @@ export function reducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         communities: withId(state.communities, action.communityId),
-        notifications: [note(`Tu fais maintenant partie de « ${action.name} ». Tu verras ses prochaines rencontres en priorité.`, `/cercles/${action.communityId}`), ...state.notifications],
+        notifications: [note(`Tu as rejoint la guilde « ${action.name} ». Ses prochains épisodes s’afficheront en priorité.`, `/guildes/${action.communityId}`), ...state.notifications],
       };
     case 'leaveCommunity':
       return { ...state, communities: without(state.communities, action.communityId) };
@@ -180,14 +180,14 @@ export function reducer(state: AppState, action: Action): AppState {
         ...state,
         createdCommunities: [...state.createdCommunities, action.community],
         communities: withId(state.communities, action.community.id),
-        notifications: [note(`Ton cercle « ${action.community.name} » est créé. Propose la prochaine rencontre !`, `/cercles/${action.community.id}`), ...state.notifications],
+        notifications: [note(`Ta guilde « ${action.community.name} » est fondée. Écris le premier épisode !`, `/guildes/${action.community.id}`), ...state.notifications],
       };
     case 'createActivity':
       return {
         ...state,
         createdActivities: [...state.createdActivities, action.activity],
         joined: withId(state.joined, action.activity.id),
-        notifications: [note(`Ton activité « ${action.activity.title} » est publiée (démo).`, `/activites/${action.activity.id}`), ...state.notifications],
+        notifications: [note(`Ta quête « ${action.activity.title} » est publiée (démo).`, `/activites/${action.activity.id}`), ...state.notifications],
       };
     case 'requestConnection':
       if (state.connections.some((c) => c.userId === action.userId)) return state;

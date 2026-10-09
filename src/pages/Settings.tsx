@@ -17,7 +17,7 @@ function Toggle({ checked, onChange, label, hint }: { checked: boolean; onChange
       </span>
       <span className="relative mt-0.5 inline-flex shrink-0">
         <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-        <span className="h-6 w-11 rounded-full bg-line transition peer-checked:bg-matcha peer-focus-visible:ring-2 peer-focus-visible:ring-ai" />
+        <span className="h-6 w-11 rounded-full bg-line transition peer-checked:bg-matcha peer-focus-visible:ring-2 peer-focus-visible:ring-lav" />
         <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition peer-checked:translate-x-5" />
       </span>
     </label>
@@ -60,8 +60,8 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-3xl space-y-10">
       <div>
-        <p className="eyebrow mb-2">Compte</p>
-        <h1 className="text-4xl font-semibold">Paramètres & sécurité</h1>
+        <span className="sticker bg-white text-sakura-deep"><span className="font-jp">設定</span> Compte</span>
+        <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">Paramètres & sécurité</h1>
         <nav className="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Sections">
           {[['confidentialite', 'Confidentialité'], ['connexions', 'Connexions'], ['blocages', 'Blocages & signalements'], ['charte', 'Charte'], ['securite', 'Conseils sécurité'], ['donnees', 'Mes données']].map(([id, l]) => (
             <a key={id} href={`#${id}`} className="chip border border-line bg-white px-3 py-1.5 text-ink-2 hover:border-ink-3">{l}</a>
@@ -70,7 +70,7 @@ export default function Settings() {
       </div>
 
       <section id="confidentialite" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Confidentialité</h2>
+        <h2 className="mb-3 text-2xl">Confidentialité</h2>
         <div className="card divide-y divide-line">
           <Toggle checked={p.showNeighborhood} onChange={(v) => set({ showNeighborhood: v })} label="Afficher mon quartier" hint="Sinon, seule ta ville est visible." />
           <Toggle checked={p.showAge} onChange={(v) => set({ showAge: v })} label="Afficher mon âge" hint="Désactivé par défaut." />
@@ -88,7 +88,7 @@ export default function Settings() {
       </section>
 
       <section id="connexions" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Connexions</h2>
+        <h2 className="mb-3 text-2xl">Connexions</h2>
         <div className="card p-6">
           {state.connections.length ? (
             <ul className="space-y-3">
@@ -98,8 +98,8 @@ export default function Settings() {
                   <li key={c.userId} className="flex items-center gap-3">
                     <Avatar user={u} size="sm" />
                     <Link to={`/profil/${c.userId}`} className="flex-1 text-sm font-semibold hover:underline">{u?.firstName}</Link>
-                    <span className={`chip ${c.status === 'mutuelle' ? 'bg-ai-soft text-ai' : 'bg-paper-2 text-ink-3'}`}>{c.status === 'mutuelle' ? 'Mutuelle' : 'En attente (privé)'}</span>
-                    <button className="text-xs text-ink-3 hover:text-shu" onClick={() => { dispatch({ type: 'removeConnection', userId: c.userId }); toast('Connexion retirée'); }}>Retirer</button>
+                    <span className={`chip ${c.status === 'mutuelle' ? 'bg-lav-soft text-lav' : 'bg-cream-2 text-ink-3'}`}>{c.status === 'mutuelle' ? 'Mutuelle' : 'En attente (privé)'}</span>
+                    <button className="text-xs text-ink-3 hover:text-sakura" onClick={() => { dispatch({ type: 'removeConnection', userId: c.userId }); toast('Connexion retirée'); }}>Retirer</button>
                   </li>
                 );
               })}
@@ -111,7 +111,7 @@ export default function Settings() {
       </section>
 
       <section id="blocages" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Blocages & signalements</h2>
+        <h2 className="mb-3 text-2xl">Blocages & signalements</h2>
         <div className="card divide-y divide-line">
           <div className="p-6">
             <p className="text-sm font-semibold">Membres bloqués</p>
@@ -133,7 +133,7 @@ export default function Settings() {
               <ul className="mt-3 space-y-2">
                 {state.reports.map((r) => (
                   <li key={r.id} className="text-sm text-ink-2">
-                    <span className="font-medium text-ink">{r.reason}</span> · {r.targetType === 'user' ? getUser(r.targetId)?.firstName : r.targetType === 'activity' ? getActivity(r.targetId)?.title : 'un message'} · {timeAgo(r.at)} · <span className="chip bg-paper-2 text-ink-3">Reçu (démo)</span>
+                    <span className="font-medium text-ink">{r.reason}</span> · {r.targetType === 'user' ? getUser(r.targetId)?.firstName : r.targetType === 'activity' ? getActivity(r.targetId)?.title : 'un message'} · {timeAgo(r.at)} · <span className="chip bg-cream-2 text-ink-3">Reçu (démo)</span>
                   </li>
                 ))}
               </ul>
@@ -143,7 +143,7 @@ export default function Settings() {
       </section>
 
       <section id="charte" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Charte de la communauté</h2>
+        <h2 className="mb-3 text-2xl">Charte de la communauté</h2>
         <GuidelinesList />
         <div className="mt-4 card p-6">
           <p className="font-semibold">Ce que nous attendons des organisateur·rices</p>
@@ -158,7 +158,7 @@ export default function Settings() {
       </section>
 
       <section id="securite" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Se rencontrer en confiance</h2>
+        <h2 className="mb-3 text-2xl">Se rencontrer en confiance</h2>
         <div className="card p-6">
           <ul className="space-y-3">
             {SAFETY_TIPS.map((tip) => <li key={tip} className="flex gap-3 text-sm text-ink-2"><Icon name="shield" className="mt-0.5 size-4 shrink-0 text-matcha" /> {tip}</li>)}
@@ -167,18 +167,18 @@ export default function Settings() {
       </section>
 
       <section id="donnees" className="scroll-mt-24">
-        <h2 className="mb-3 text-2xl font-semibold">Mes données</h2>
+        <h2 className="mb-3 text-2xl">Mes données</h2>
         <div className="card p-6">
           <p className="text-sm text-ink-2">Kizuna ne collecte que ce qui sert aux recommandations : prénom, ville, passions, disponibilités et préférences. Pas de photo obligatoire, pas de données sensibles. Dans ce prototype, tout reste dans ton navigateur (localStorage).</p>
           <div className="mt-5 flex flex-wrap gap-2">
             <button className="btn-ghost" onClick={exportData}><Icon name="arrowRight" className="size-4 rotate-90" /> Exporter mes données (JSON)</button>
-            <button className="btn-ghost text-shu-dark" onClick={() => setDeleteOpen(true)}><Icon name="x" className="size-4" /> Supprimer mon compte</button>
+            <button className="btn-ghost text-sakura-deep" onClick={() => setDeleteOpen(true)}><Icon name="x" className="size-4" /> Supprimer mon compte</button>
           </div>
         </div>
       </section>
 
       <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)} title="Supprimer ton compte ?">
-        <p className="text-sm text-ink-2">Ton profil, tes inscriptions, tes cercles et tes messages seront effacés. Dans la démo, cela réinitialise simplement l’application.</p>
+        <p className="text-sm text-ink-2">Ton profil, tes inscriptions, tes guildes et tes messages seront effacés. Dans la démo, cela réinitialise simplement l’application.</p>
         <div className="mt-6 flex justify-end gap-2">
           <button className="btn-ghost" onClick={() => setDeleteOpen(false)}>Annuler</button>
           <button className="btn-primary" onClick={() => { navigate('/'); dispatch({ type: 'reset' }); }}>Supprimer définitivement</button>

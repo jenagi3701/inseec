@@ -1,97 +1,153 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import type { Activity, Category, Profile } from '../data/types';
 import { categoryById } from '../data/taxonomy';
 import { Icon, type IconName } from './Icon';
+import { AnimeAvatar, avatarFromSeed } from './art/AnimeAvatar';
+import { Scene } from './art/Scene';
+
+/* ——— Brand ——— */
+export function LogoMark({ className = 'size-9' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <path d="M10 6h44a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H30l-12 9v-9h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="#d9577f" stroke="#2b2440" strokeWidth="3" strokeLinejoin="round" />
+      <circle cx="25" cy="29" r="10" fill="none" stroke="#fff" strokeWidth="5" />
+      <circle cx="39" cy="29" r="10" fill="none" stroke="#fff" strokeWidth="5" />
+      <path d="M52 2l1.6 3.6L57 7l-3.4 1.4L52 12l-1.6-3.6L47 7l3.4-1.4z" fill="#ffd166" stroke="#2b2440" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-2 font-display text-xl font-semibold ${light ? 'text-paper' : 'text-ink'}`}>
-      <svg viewBox="0 0 64 64" className="size-8" aria-hidden="true">
-        <rect width="64" height="64" rx="16" fill="#D9472B" />
-        <circle cx="25" cy="32" r="11" fill="none" stroke="#FBF7F0" strokeWidth="5" />
-        <circle cx="39" cy="32" r="11" fill="none" stroke="#FBF7F0" strokeWidth="5" />
-      </svg>
-      Kizuna
-      <span className={`font-jp text-sm font-medium ${light ? 'text-paper/60' : 'text-ink-3'}`}>絆</span>
+    <span className={`inline-flex items-center gap-2 ${light ? 'text-cream' : 'text-ink'}`}>
+      <LogoMark />
+      <span className="font-manga text-xl leading-none tracking-wide">Kizuna</span>
+      <span className={`font-jp text-sm font-bold ${light ? 'text-cream/60' : 'text-sakura'}`}>絆</span>
     </span>
   );
 }
 
-export function Avatar({ user, size = 'md', ring = false }: { user?: Pick<Profile, 'firstName' | 'avatarHue'> | null; size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'; ring?: boolean }) {
-  const dims = { xs: 'size-6 text-[10px]', sm: 'size-8 text-xs', md: 'size-10 text-sm', lg: 'size-14 text-lg', xl: 'size-24 text-3xl' }[size];
-  const hue = user?.avatarHue ?? 0;
+/* ——— Characters ——— */
+type AvatarUser = Pick<Profile, 'firstName' | 'avatarHue'> & { id?: string; avatar?: Profile['avatar'] };
+
+export const avatarOf = (u: AvatarUser) => u.avatar ?? avatarFromSeed(u.id ?? u.firstName, u.avatarHue);
+
+const SIZES = { xs: 24, sm: 32, md: 40, lg: 56, xl: 96, '2xl': 140 } as const;
+
+export function Avatar({ user, size = 'md', ring = false, className = '' }: { user?: AvatarUser | null; size?: keyof typeof SIZES; ring?: boolean; className?: string }) {
+  const px = SIZES[size];
+  if (!user) return <span className="inline-block shrink-0 rounded-full bg-cream-2" style={{ width: px, height: px }} />;
   return (
-    <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold ${dims} ${ring ? 'ring-2 ring-white' : ''}`}
-      style={{ background: `hsl(${hue} 55% 88%)`, color: `hsl(${hue} 45% 30%)` }}
-      aria-hidden="true"
-    >
-      {user?.firstName?.[0] ?? '?'}
+    <span className={`inline-flex shrink-0 rounded-full border-ink bg-white ${size === 'xs' ? 'border-[1.5px]' : 'border-2'} ${ring ? 'ring-2 ring-white' : ''} ${className}`} style={{ width: px, height: px }}>
+      <AnimeAvatar config={avatarOf(user)} size={px - (size === 'xs' ? 3 : 4)} className="rounded-full" />
     </span>
   );
 }
 
-export function AvatarStack({ users, max = 5, size = 'sm' }: { users: (Profile | undefined)[]; max?: number; size?: 'xs' | 'sm' }) {
+export function AvatarStack({ users, max = 5, size = 'sm' }: { users: (Profile | undefined)[]; max?: number; size?: 'xs' | 'sm' | 'md' }) {
   const shown = users.filter(Boolean).slice(0, max) as Profile[];
-  const extra = users.length - shown.length;
+  const extra = users.filter(Boolean).length - shown.length;
+  const px = SIZES[size];
   return (
     <span className="flex -space-x-2">
-      {shown.map((u) => (
-        <Avatar key={u.id} user={u} size={size} ring />
-      ))}
+      {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
       {extra > 0 && (
-        <span className={`inline-flex items-center justify-center rounded-full bg-paper-2 font-semibold text-ink-2 ring-2 ring-white ${size === 'xs' ? 'size-6 text-[10px]' : 'size-8 text-xs'}`}>+{extra}</span>
+        <span className="inline-flex items-center justify-center rounded-full border-2 border-ink bg-cream-2 text-[10px] font-black text-ink-2" style={{ width: px, height: px }}>+{extra}</span>
       )}
     </span>
   );
 }
 
-/** Generated editorial cover: category colour, manga screentone and a kanji accent. */
-export function CoverArt({ activity, category, className = 'h-36', large = false }: { activity?: Activity; category?: Category; className?: string; large?: boolean }) {
-  const cat = category ?? categoryById(activity!.categoryId);
-  const seed = (activity?.id ?? cat.id).split('').reduce((s, c) => s + c.charCodeAt(0), 0);
-  const angle = (seed % 5) * 18 - 30;
+/** RPG-style party: filled avatars plus dashed "free slot" circles. */
+export function PartySlots({ users, max, size = 'sm', limit = 8 }: { users: (Profile | undefined)[]; max: number; size?: 'xs' | 'sm'; limit?: number }) {
+  const present = users.filter(Boolean) as Profile[];
+  const shownMax = Math.min(max, limit);
+  const shown = present.slice(0, shownMax);
+  const free = Math.max(0, shownMax - shown.length);
+  const px = SIZES[size];
   return (
-    <div className={`relative overflow-hidden ${className}`} style={{ background: cat.tint }} aria-hidden="true">
-      <div className="screentone absolute inset-0 opacity-[0.18]" style={{ color: cat.color, transform: `rotate(${angle}deg) scale(1.6)` }} />
-      <div className="absolute -right-6 -bottom-10 size-44 rounded-full opacity-90" style={{ background: cat.color }} />
-      <div className="speedlines absolute -right-6 -bottom-10 size-44 rounded-full opacity-20" style={{ color: '#fff' }} />
-      <span className={`absolute right-5 bottom-2 font-jp font-bold text-white/95 ${large ? 'text-8xl' : 'text-6xl'}`}>{cat.kanji}</span>
-      <span className="absolute top-3 left-3 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold backdrop-blur" style={{ color: cat.color }}>
-        {cat.label}
-      </span>
+    <span className="flex flex-wrap items-center gap-1" aria-label={`${present.length} membres d’équipe sur ${max} places`}>
+      {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
+      {Array.from({ length: free }, (_, i) => (
+        <span key={i} className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-ink-3/60 bg-white/70 text-ink-3" style={{ width: px, height: px }} aria-hidden="true">
+          <Icon name="plus" className="size-3" strokeWidth={2.5} />
+        </span>
+      ))}
+      {max > limit && <span className="ml-1 text-[11px] font-bold text-ink-3">/{max}</span>}
+    </span>
+  );
+}
+
+/* ——— Illustration ——— */
+/** Illustrated quest cover: scene + category sticker + hanko stamp. */
+export function CoverArt({ activity, category, className = 'h-36', large = false, children }: { activity?: Activity; category?: Category; className?: string; large?: boolean; children?: ReactNode }) {
+  const cat = category ?? categoryById(activity!.categoryId);
+  return (
+    <div className={`relative overflow-hidden ${className}`} style={{ background: cat.tint }}>
+      <Scene scene={cat.scene} seed={activity?.id ?? cat.id} className="absolute inset-0 h-full w-full" />
+      <span className="sticker absolute top-3 left-3" style={{ color: cat.color }}>{cat.questLabel}</span>
+      <Stamp kanji={cat.kanji} color={cat.color} className={`absolute right-3 bottom-3 ${large ? 'size-16 text-3xl' : 'size-11 text-xl'}`} />
+      {children}
     </div>
   );
+}
+
+/** Hanko-like stamp with a single kanji. */
+export function Stamp({ kanji, color, className = 'size-11 text-xl' }: { kanji: string; color: string; className?: string }) {
+  return (
+    <span className={`inline-flex rotate-[-8deg] items-center justify-center rounded-xl border-2 border-ink font-jp font-black text-white ${className}`} style={{ background: color, boxShadow: '2px 2px 0 0 #2b2440' }} aria-hidden="true">
+      {kanji}
+    </span>
+  );
+}
+
+export function Sparkle({ className = 'size-5', color = '#ffd166', style }: { className?: string; color?: string; style?: CSSProperties }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} aria-hidden="true">
+      <path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9L1.5 12l7.9-2.6z" fill={color} stroke="#2b2440" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function SpeechBubble({ children, className = '', right = false }: { children: ReactNode; className?: string; right?: boolean }) {
+  return <span className={`bubble inline-block text-sm ${right ? 'bubble-right' : ''} ${className}`}>{children}</span>;
 }
 
 export function CategoryDot({ id }: { id: string }) {
   const c = categoryById(id);
-  return <span className="inline-block size-2 rounded-full" style={{ background: c.color }} />;
+  return <span className="inline-block size-2.5 shrink-0 rounded-full border-[1.5px] border-ink" style={{ background: c.color }} />;
 }
 
+/* ——— Layout helpers ——— */
 export function EmptyState({ icon, title, text, action }: { icon: IconName; title: string; text: string; action?: ReactNode }) {
   return (
-    <div className="card flex flex-col items-center px-6 py-12 text-center">
-      <span className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-paper-2 text-ink-2">
-        <Icon name={icon} />
+    <div className="card relative flex flex-col items-center overflow-hidden px-6 py-12 text-center">
+      <div className="screentone absolute inset-0 text-lav opacity-10" aria-hidden="true" />
+      <span className="relative mb-4 inline-flex size-14 items-center justify-center rounded-2xl border-2 border-ink bg-lav-soft text-lav-deep" style={{ boxShadow: '3px 3px 0 0 #2b2440' }}>
+        <Icon name={icon} className="size-6" />
       </span>
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="mt-1 max-w-sm text-sm text-ink-2">{text}</p>
-      {action && <div className="mt-5">{action}</div>}
+      <Sparkle className="absolute top-8 left-[calc(50%+28px)] size-4" />
+      <h3 className="relative text-xl">{title}</h3>
+      <p className="relative mt-1 max-w-sm text-sm text-ink-2">{text}</p>
+      {action && <div className="relative mt-5">{action}</div>}
     </div>
   );
 }
 
-export function SectionHeader({ title, kicker, link, linkLabel }: { title: string; kicker?: string; link?: string; linkLabel?: string }) {
+export function SectionHeader({ title, kicker, link, linkLabel, jp }: { title: string; kicker?: string; link?: string; linkLabel?: string; jp?: string }) {
   return (
-    <div className="mb-4 flex items-end justify-between gap-4">
+    <div className="mb-5 flex items-end justify-between gap-4">
       <div>
         {kicker && <p className="eyebrow mb-1">{kicker}</p>}
-        <h2 className="text-2xl font-semibold">{title}</h2>
+        <h2 className="relative inline-block text-2xl md:text-[1.7rem]">
+          {jp && <span className="mr-2 font-jp text-sakura">{jp}</span>}
+          {title}
+          <span className="absolute -bottom-1 left-0 h-2 w-full -skew-x-12 rounded-full bg-sakura-soft -z-10" aria-hidden="true" />
+        </h2>
       </div>
       {link && (
-        <Link to={link} className="shrink-0 text-sm font-semibold text-ai hover:underline">
+        <Link to={link} className="shrink-0 rounded-full px-2 py-1 text-sm font-extrabold text-lav-deep hover:bg-lav-soft">
           {linkLabel ?? 'Tout voir'} →
         </Link>
       )}
@@ -99,7 +155,16 @@ export function SectionHeader({ title, kicker, link, linkLabel }: { title: strin
   );
 }
 
-export function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
+/** Pill showing a mode: "continue the story" (lavender) vs "new adventures" (sakura). */
+export function ModeTag({ mode }: { mode: 'retrouver' | 'decouvrir' }) {
+  return mode === 'retrouver' ? (
+    <span className="sticker bg-lav-soft text-lav-deep"><Icon name="repeat" className="size-3.5" /> Suite de l’histoire</span>
+  ) : (
+    <span className="sticker bg-sakura-soft text-sakura-deep"><Icon name="compass" className="size-3.5" /> Nouvelles aventures</span>
+  );
+}
+
+export function Modal({ open, onClose, title, children, wide = false }: { open: boolean; onClose: () => void; title: string; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -110,19 +175,20 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
   }, [open, onClose]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
       <div
         ref={ref}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="fade-up max-h-[90vh] w-full overflow-y-auto rounded-t-3xl bg-paper p-6 outline-none sm:max-w-lg sm:rounded-3xl"
+        className={`pop max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border-2 border-ink bg-cream p-6 outline-none sm:rounded-3xl ${wide ? 'sm:max-w-3xl' : 'sm:max-w-lg'}`}
+        style={{ boxShadow: '6px 6px 0 0 #2b2440' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button onClick={onClose} className="rounded-full p-1.5 text-ink-2 hover:bg-paper-2" aria-label="Fermer">
+          <h2 className="text-xl">{title}</h2>
+          <button onClick={onClose} className="rounded-full border-2 border-transparent p-1 text-ink-2 hover:border-ink hover:bg-white" aria-label="Fermer">
             <Icon name="x" />
           </button>
         </div>
@@ -133,5 +199,5 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
 }
 
 export function DemoBadge({ className = '' }: { className?: string }) {
-  return <span className={`chip bg-kin/15 text-kin ${className}`}>Démo</span>;
+  return <span className={`sticker bg-peach text-peach-deep ${className}`}>Démo</span>;
 }

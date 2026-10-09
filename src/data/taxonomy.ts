@@ -2,20 +2,20 @@
 import type { Category, Energy, GroupSizeId, Interest, LevelId, SlotId } from './types';
 
 export const CATEGORIES: Category[] = [
-  { id: 'anime', label: 'Anime & manga', short: 'Anime', kanji: '漫', color: '#D9472B', tint: '#FBE4DC' },
-  { id: 'jeux', label: 'Jeux de société', short: 'Jeux', kanji: '遊', color: '#2F4A8A', tint: '#E1E7F5' },
-  { id: 'culture', label: 'Culture japonaise', short: 'Culture', kanji: '文', color: '#5F7F4E', tint: '#E4ECDD' },
-  { id: 'gaming', label: 'Jeux vidéo', short: 'Gaming', kanji: '技', color: '#6B4AA0', tint: '#ECE4F6' },
-  { id: 'creatif', label: 'Créatif', short: 'Créatif', kanji: '創', color: '#C07A1C', tint: '#F8EBD6' },
-  { id: 'sorties', label: 'Sorties & social', short: 'Sorties', kanji: '縁', color: '#B23A64', tint: '#F6E0E8' },
+  { id: 'anime', label: 'Anime & manga', short: 'Anime', kanji: '漫', color: '#C9456F', tint: '#FDE3EC', scene: 'manga-cafe', questLabel: 'Quête manga' },
+  { id: 'jeux', label: 'Jeux de société', short: 'Jeux', kanji: '遊', color: '#4E74A8', tint: '#E2EDF9', scene: 'game-table', questLabel: 'Quête ludique' },
+  { id: 'culture', label: 'Culture japonaise', short: 'Culture', kanji: '和', color: '#4F7D40', tint: '#E3F0D9', scene: 'street', questLabel: 'Quête culturelle' },
+  { id: 'gaming', label: 'Jeux vidéo', short: 'Gaming', kanji: '技', color: '#6E56C2', tint: '#ECE6FB', scene: 'arcade', questLabel: 'Quête gaming' },
+  { id: 'creatif', label: 'Créatif', short: 'Créatif', kanji: '創', color: '#B8701C', tint: '#FDE7CF', scene: 'atelier', questLabel: 'Quête créative' },
+  { id: 'sorties', label: 'Sorties & social', short: 'Sorties', kanji: '縁', color: '#C25A48', tint: '#FBE3DC', scene: 'riverside', questLabel: 'Sortie en équipe' },
 ];
 
 export const ENERGIES: Energy[] = [
-  { id: 'calme', label: 'Calme & détente', description: 'Peu de pression, on peut juste être là.' },
-  { id: 'creatif', label: 'Créatif & collaboratif', description: 'On fabrique, on dessine, on cuisine ensemble.' },
-  { id: 'competitif', label: 'Compétitif & énergique', description: 'Tournois, défis, ça bouge.' },
-  { id: 'social', label: 'Social & bavard', description: 'La discussion est au cœur de l’activité.' },
-  { id: 'culturel', label: 'Culturel & découverte', description: 'On apprend quelque chose de nouveau.' },
+  { id: 'calme', label: 'Calme & cosy', description: 'Peu de pression, on peut juste être là.', emoji: '🍵' },
+  { id: 'creatif', label: 'Créatif & collaboratif', description: 'On fabrique, on dessine, on cuisine ensemble.', emoji: '🎨' },
+  { id: 'competitif', label: 'Compétitif & énergique', description: 'Tournois, défis, ça bouge.', emoji: '⚡' },
+  { id: 'social', label: 'Social & bavard', description: 'La discussion est au cœur de l’activité.', emoji: '💬' },
+  { id: 'culturel', label: 'Culturel & découverte', description: 'On apprend quelque chose de nouveau.', emoji: '⛩️' },
 ];
 
 export const INTERESTS: Interest[] = [
@@ -81,7 +81,7 @@ export const SLOTS: { id: SlotId; label: string }[] = [
 ];
 
 export const LEVELS: { id: LevelId; label: string; description: string }[] = [
-  { id: 'debutant', label: 'Je découvre', description: 'J’ai vu quelques films, je suis curieux·se.' },
+  { id: 'debutant', label: 'Je découvre', description: 'J’ai vu quelques films, je suis curieux·se. Bienvenue dans l’aventure !' },
   { id: 'curieux', label: 'Fan occasionnel·le', description: 'J’ai mes séries préférées, sans tout connaître.' },
   { id: 'passionne', label: 'Passionné·e', description: 'Je pourrais en parler pendant des heures.' },
 ];

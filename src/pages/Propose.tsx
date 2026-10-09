@@ -90,19 +90,19 @@ export default function Propose() {
     navigate(`/activites/${activity.id}`);
   };
 
-  const Err = ({ k }: { k: string }) => (errors[k] ? <p className="mt-1 text-sm text-shu-dark">{errors[k]}</p> : null);
+  const Err = ({ k }: { k: string }) => (errors[k] ? <p className="mt-1 text-sm text-sakura-deep">{errors[k]}</p> : null);
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Link to={circle ? `/cercles/${circle.id}` : '/activites'} className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Retour</Link>
-      <p className="eyebrow mb-2">{circle ? `Pour le cercle « ${circle.name} »` : 'Organiser'}</p>
-      <h1 className="text-4xl font-semibold">Proposer une activité</h1>
-      <p className="mt-2 text-ink-2">Petit groupe, lieu public, prix clair : c’est tout ce qu’il faut pour une bonne première rencontre.</p>
+      <Link to={circle ? `/guildes/${circle.id}` : '/activites'} className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Retour</Link>
+      <span className="sticker bg-white text-sakura-deep"><span className="font-jp">依頼</span> {circle ? `Nouvel épisode pour « ${circle.name} »` : 'Organiser'}</span>
+      <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">{circle ? 'Proposer un épisode' : 'Proposer une quête'}</h1>
+      <p className="mt-2 font-semibold text-ink-2">Petite équipe, lieu public, prix clair : c’est tout ce qu’il faut pour une bonne quête.</p>
 
       <form onSubmit={submit} noValidate className="mt-8 space-y-6">
         <div>
           <label className="label" htmlFor="title">Titre</label>
-          <input id="title" className="input" value={f.title} onChange={(e) => set({ title: e.target.value })} placeholder="Ex. Soirée Frieren & thé au jasmin" maxLength={80} />
+          <input id="title" className="input" value={f.title} onChange={(e) => set({ title: e.target.value })} placeholder="Ex. Soirée manga & thé au jasmin" maxLength={80} />
           <Err k="title" />
         </div>
         <div>
@@ -170,22 +170,22 @@ export default function Propose() {
             </select>
           </div>
           <div>
-            <label className="label" htmlFor="circle">Cercle</label>
+            <label className="label" htmlFor="circle">Guilde</label>
             <select id="circle" className="input" value={f.communityId} onChange={(e) => set({ communityId: e.target.value })}>
-              <option value="">Aucun — activité ouverte</option>
+              <option value="">Aucune — quête ouverte à tous</option>
               {myCircles.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
         </div>
         <label className="flex items-start gap-3 rounded-2xl border border-line bg-white p-4 text-sm">
-          <input type="checkbox" className="mt-0.5 size-4 accent-shu" checked={f.publicPlace} onChange={(e) => set({ publicPlace: e.target.checked })} />
+          <input type="checkbox" className="mt-0.5 size-4 accent-sakura" checked={f.publicPlace} onChange={(e) => set({ publicPlace: e.target.checked })} />
           <span>Je confirme que l’activité a lieu dans un lieu public, que le prix indiqué est exact, et je m’engage à respecter la charte organisateur.<Err k="publicPlace" /></span>
         </label>
         <div className="flex justify-end gap-2">
           <Link to="/activites" className="btn-ghost">Annuler</Link>
-          <button type="submit" className="btn-primary">Publier l’activité</button>
+          <button type="submit" className="btn-primary">Publier la quête</button>
         </div>
-        <p className="text-right text-xs text-ink-3">Démo : l’activité est visible uniquement dans ce navigateur.</p>
+        <p className="text-right text-xs text-ink-3">Démo : la quête est visible uniquement dans ce navigateur.</p>
       </form>
     </div>
   );
