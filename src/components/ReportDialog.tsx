@@ -42,7 +42,7 @@ export function ReportDialog({ open, onClose, targetType, targetId, targetLabel,
       <fieldset className="space-y-2">
         <legend className="label">Motif</legend>
         {REASONS.map((r) => (
-          <label key={r} className="flex cursor-pointer items-center gap-3 rounded-xl border border-line bg-white px-3 py-2.5 text-sm has-[:checked]:border-ink">
+          <label key={r} className="flex cursor-pointer items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5 text-sm has-[:checked]:border-sakura">
             <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => { setReason(r); setError(''); }} className="accent-sakura" />
             {r}
           </label>

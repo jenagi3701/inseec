@@ -95,7 +95,7 @@ export default function Propose() {
   return (
     <div className="mx-auto max-w-2xl">
       <Link to={circle ? `/guildes/${circle.id}` : '/activites'} className="mb-5 flex w-fit items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Retour</Link>
-      <span className="sticker bg-white text-sakura-deep"><span className="font-jp">依頼</span> {circle ? `Nouvel épisode pour « ${circle.name} »` : 'Organiser'}</span>
+      <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">依頼</span> {circle ? `Nouvel épisode pour « ${circle.name} »` : 'Organiser'}</span>
       <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">{circle ? 'Proposer un épisode' : 'Proposer une quête'}</h1>
       <p className="mt-2 font-semibold text-ink-2">Petite équipe, lieu public, prix clair : c’est tout ce qu’il faut pour une bonne quête.</p>
 
@@ -154,7 +154,7 @@ export default function Propose() {
         </div>
         <div>
           <span className="label">Passions liées</span>
-          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto rounded-2xl border border-line bg-white p-3">
+          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto rounded-2xl border border-line bg-surface p-3">
             {INTERESTS.map((i) => <Pill key={i.id} active={f.tags.includes(i.id)} onClick={() => set({ tags: f.tags.includes(i.id) ? f.tags.filter((t) => t !== i.id) : [...f.tags, i.id] })}>{i.label}</Pill>)}
           </div>
           <Err k="tags" />
@@ -177,7 +177,7 @@ export default function Propose() {
             </select>
           </div>
         </div>
-        <label className="flex items-start gap-3 rounded-2xl border border-line bg-white p-4 text-sm">
+        <label className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-4 text-sm">
           <input type="checkbox" className="mt-0.5 size-4 accent-sakura" checked={f.publicPlace} onChange={(e) => set({ publicPlace: e.target.checked })} />
           <span>Je confirme que l’activité a lieu dans un lieu public, que le prix indiqué est exact, et je m’engage à respecter la charte organisateur.<Err k="publicPlace" /></span>
         </label>

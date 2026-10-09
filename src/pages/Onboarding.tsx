@@ -91,14 +91,14 @@ export default function Onboarding() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <Logo />
-          <span className="sticker bg-white text-ink-2">{isLast ? 'Récapitulatif' : `Étape ${step + 1} / ${STEPS.length}`}</span>
+          <span className="sticker bg-surface text-ink-2">{isLast ? 'Récapitulatif' : `Étape ${step + 1} / ${STEPS.length}`}</span>
         </div>
         {/* Progress as quest map */}
         <div className="mb-10 flex items-center gap-1.5" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Progression de l’inscription">
           {STEPS.map((s, i) => (
             <div key={s.key} className="flex flex-1 items-center gap-1.5">
-              <span className={`inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-2 font-jp text-sm font-black transition ${i < step ? 'border-ink bg-lav-deep text-white' : i === step ? 'border-ink bg-sakura-deep text-white' : 'border-line bg-white text-ink-3'}`}>{s.jp}</span>
-              {i < STEPS.length - 1 && <span className={`h-1 flex-1 rounded-full ${i < step ? 'bg-lav-deep' : 'bg-line'}`} />}
+              <span className={`inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-2 font-jp text-sm font-black transition ${i < step ? 'border-edge bg-lavender text-on-accent' : i === step ? 'border-edge bg-sakura text-on-accent' : 'border-line bg-surface text-ink-3'}`}>{s.jp}</span>
+              {i < STEPS.length - 1 && <span className={`h-1 flex-1 rounded-full ${i < step ? 'bg-lavender' : 'bg-line'}`} />}
             </div>
           ))}
         </div>
@@ -133,7 +133,7 @@ export default function Onboarding() {
 
             {error && <p className="mt-6 rounded-xl border-2 border-sakura bg-sakura-soft p-3 text-sm font-bold text-sakura-deep" role="alert">{error}</p>}
 
-            <div className="sticky bottom-0 mt-10 flex items-center justify-between gap-3 border-t-2 border-ink bg-cream/95 py-4 backdrop-blur">
+            <div className="sticky bottom-0 mt-10 flex items-center justify-between gap-3 border-t border-edge bg-cream/95 py-4 backdrop-blur">
               <button className="btn-ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
                 <Icon name="arrowLeft" className="size-4" /> Retour
               </button>
@@ -144,7 +144,7 @@ export default function Onboarding() {
                 {isLast ? (
                   <button className="btn-primary" onClick={finish}>Commencer l’aventure <Icon name="arrowRight" className="size-4" /></button>
                 ) : (
-                  <button className="btn-ink" onClick={next}>Continuer <Icon name="arrowRight" className="size-4" /></button>
+                  <button className="btn-primary" onClick={next}>Continuer <Icon name="arrowRight" className="size-4" /></button>
                 )}
               </div>
             </div>

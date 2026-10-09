@@ -3,14 +3,15 @@
 import { useId, type ReactNode } from 'react';
 import type { SceneId } from '../../data/types';
 
-const INK = '#2b2440';
+const INK = '#2a2338';
 const line = { stroke: INK, strokeWidth: 2, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const };
 
 type Time = 'jour' | 'crepuscule' | 'soir';
+// Cozy Tokyo evenings: golden hour, sakura dusk, and a rainy night.
 const SKIES: Record<Time, [string, string, string]> = {
-  jour: ['#bcd8f3', '#dfeaf8', '#fff3e4'],
-  crepuscule: ['#b6a3e8', '#f3b6cb', '#fde2c4'],
-  soir: ['#3e3a6e', '#6c5ca8', '#c79ac4'],
+  jour: ['#4a4677', '#b07f9f', '#ecc08f'],
+  crepuscule: ['#2e2b55', '#73608f', '#d99aa8'],
+  soir: ['#1b1932', '#2c2a52', '#4a4373'],
 };
 
 export function timeFromSeed(seed: string): Time {
@@ -69,7 +70,7 @@ function Tone({ id }: { id: string }) {
   );
 }
 
-function Petals({ color = '#f7b8ca', seed = 0 }: { color?: string; seed?: number }) {
+function Petals({ color = '#E99BB5', seed = 0 }: { color?: string; seed?: number }) {
   const pts = [[60, 40], [140, 90], [230, 30], [310, 110], [370, 60], [190, 150], [30, 130]];
   return (
     <g fill={color} stroke={INK} strokeWidth=".8">
@@ -80,14 +81,15 @@ function Petals({ color = '#f7b8ca', seed = 0 }: { color?: string; seed?: number
   );
 }
 
-const windowGlow = (time: Time) => (time === 'soir' ? '#ffe3a3' : '#fdf6ea');
+const windowGlow = (time: Time) => (time === 'jour' ? '#f6dca6' : '#f2c97e');
 
 /* ——— 1. Manga café / bookshop ——— */
 function MangaCafe({ id, time }: { id: string; time: Time }) {
-  const spines = ['#f7b8ca', '#b9a6ea', '#a8d8c6', '#f5c88a', '#9fbbe3', '#e88a8a', '#fff1c9', '#c7b3e8'];
+  const spines = ['#E99BB5', '#B9A7CC', '#A6B59A', '#D7B77A', '#86A9B8', '#E2A48E', '#F4EBDD', '#cdb9de'];
   return (
     <>
-      <rect width="400" height="220" fill="#fbe9df" />
+      <rect width="400" height="220" fill="#5a4a63" />
+      <ellipse cx="118" cy="70" rx="170" ry="120" fill="#f2c97e" opacity=".22" />
       {/* window */}
       <g>
         <rect x="24" y="22" width="130" height="112" rx="6" fill="#fff" {...line} />
@@ -96,10 +98,10 @@ function MangaCafe({ id, time }: { id: string; time: Time }) {
       </g>
       {/* shelves */}
       <g>
-        <rect x="190" y="14" width="196" height="150" fill="#c99a76" {...line} />
+        <rect x="190" y="14" width="196" height="150" fill="#8a6248" {...line} />
         {[0, 1, 2].map((r) => (
           <g key={r}>
-            <rect x="198" y={22 + r * 47} width="180" height="40" fill="#8a5a3c" stroke={INK} strokeWidth="1.5" />
+            <rect x="198" y={22 + r * 47} width="180" height="40" fill="#5e3f30" stroke={INK} strokeWidth="1.5" />
             {Array.from({ length: 13 }, (_, i) => {
               const w = 9 + ((i * 7 + r * 3) % 5);
               const x = 200 + i * 13.6;
@@ -111,11 +113,11 @@ function MangaCafe({ id, time }: { id: string; time: Time }) {
       </g>
       {/* lamp */}
       <path d="M118 0v26" {...line} />
-      <path d="M100 44c0-10 8-18 18-18s18 8 18 18z" fill="#f7b8ca" {...line} />
-      <ellipse cx="118" cy="62" rx="40" ry="12" fill="#fff3c9" opacity=".55" />
+      <path d="M100 44c0-10 8-18 18-18s18 8 18 18z" fill="#D7B77A" {...line} />
+      <ellipse className="lantern-glow" cx="118" cy="66" rx="48" ry="20" fill="#f6d79a" opacity=".28" />
       {/* counter */}
-      <rect x="-5" y="160" width="410" height="70" fill="#e8b98e" {...line} />
-      <rect x="-5" y="160" width="410" height="10" fill="#f2cba4" stroke={INK} strokeWidth="2" />
+      <rect x="-5" y="160" width="410" height="70" fill="#a47456" {...line} />
+      <rect x="-5" y="160" width="410" height="10" fill="#c2916c" stroke={INK} strokeWidth="2" />
       {/* open manga */}
       <g transform="translate(120 128)">
         <path d="M0 34L40 26L80 34L80 40L40 33L0 40Z" fill="#fff" {...line} />
@@ -124,7 +126,7 @@ function MangaCafe({ id, time }: { id: string; time: Time }) {
         <rect x="46" y="27" width="12" height="6" fill={INK} opacity=".25" transform="skewY(10)" />
       </g>
       {/* cups */}
-      {[[250, 140, '#fff'], [290, 146, '#b9a6ea']].map(([x, y, c]) => (
+      {[[250, 140, '#F4EBDD'], [290, 146, '#B9A7CC']].map(([x, y, c]) => (
         <g key={String(x)} transform={`translate(${x} ${y})`}>
           <path d="M0 0h26l-3 20H3z" fill={String(c)} {...line} />
           <path d="M26 5c8 0 8 10 0 10" fill="none" {...line} />
@@ -132,7 +134,7 @@ function MangaCafe({ id, time }: { id: string; time: Time }) {
         </g>
       ))}
       <ellipse cx="60" cy="168" rx="26" ry="6" fill={INK} opacity=".08" />
-      <path d="M45 166c0-16 4-24 15-24s15 8 15 24z" fill="#a8d8c6" {...line} />
+      <path d="M45 166c0-16 4-24 15-24s15 8 15 24z" fill="#A6B59A" {...line} />
       <path d="M60 142c-8-14-2-24 6-26-2 10 4 16-6 26zM60 142c8-12 18-12 22-6-8 0-14 4-22 6z" fill="#7fbf8f" {...line} />
       <Tone id={id} />
     </>
@@ -143,18 +145,19 @@ function MangaCafe({ id, time }: { id: string; time: Time }) {
 function GameTable({ id, time }: { id: string; time: Time }) {
   return (
     <>
-      <rect width="400" height="220" fill="#e7eef8" />
+      <rect width="400" height="220" fill="#4a425f" />
+      <ellipse cx="200" cy="40" rx="150" ry="70" fill="#f2c97e" opacity=".16" />
       <rect x="250" y="12" width="120" height="76" rx="6" fill="#fff" {...line} />
       <svg x="256" y="18" width="108" height="64" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice"><Sky id={id + 'w'} time={time} /></svg>
       <path d="M310 12v76" {...line} />
       {/* garland */}
       <path d="M0 20Q100 50 230 18" fill="none" stroke={INK} strokeWidth="1.3" />
-      {[30, 70, 110, 150, 190].map((x, i) => <path key={x} d={`M${x} ${28 + Math.sin(i) * 3}l7 14 7-14z`} fill={['#f7b8ca', '#b9a6ea', '#a8d8c6', '#f5c88a', '#9fbbe3'][i]} stroke={INK} strokeWidth="1.3" strokeLinejoin="round" />)}
+      {[30, 70, 110, 150, 190].map((x, i) => <path key={x} d={`M${x} ${28 + Math.sin(i) * 3}l7 14 7-14z`} fill={['#E99BB5', '#B9A7CC', '#A6B59A', '#D7B77A', '#86A9B8'][i]} stroke={INK} strokeWidth="1.3" strokeLinejoin="round" />)}
       {/* table */}
-      <path d="M-20 228L40 96H360L420 228Z" fill="#d79c6b" {...line} />
-      <path d="M40 96H360L366 106H34Z" fill="#e8b98e" stroke={INK} strokeWidth="1.6" />
+      <path d="M-20 228L40 96H360L420 228Z" fill="#a8704f" {...line} />
+      <path d="M40 96H360L366 106H34Z" fill="#c08a64" stroke={INK} strokeWidth="1.6" />
       {/* board */}
-      <path d="M120 112H280L300 176H100Z" fill="#fff6e4" {...line} />
+      <path d="M120 112H280L300 176H100Z" fill="#F4EBDD" {...line} />
       {Array.from({ length: 5 }, (_, i) => <path key={'v' + i} d={`M${140 + i * 30} 112L${125 + i * 37.5} 176`} stroke={INK} strokeWidth="1" opacity=".5" />)}
       {[128, 144, 160].map((y) => <path key={y} d={`M${120 - (y - 112) * 0.31} ${y}H${280 + (y - 112) * 0.31}`} stroke={INK} strokeWidth="1" opacity=".5" />)}
       <path d="M150 128l8-6 8 6-8 6z" fill="#f7b8ca" stroke={INK} strokeWidth="1.4" />
@@ -187,8 +190,8 @@ function GameTable({ id, time }: { id: string; time: Time }) {
 /* ——— 3. Japanese neighbourhood street ——— */
 function Street({ id, time }: { id: string; time: Time }) {
   const night = time === 'soir';
-  const bld = night ? '#4b4580' : '#c8d3ea';
-  const bld2 = night ? '#5b5394' : '#e6dcf3';
+  const bld = night ? '#3a3560' : '#5a5180';
+  const bld2 = night ? '#4a4270' : '#6b5f8c';
   return (
     <>
       <Sky id={id} time={time} />
@@ -200,7 +203,7 @@ function Street({ id, time }: { id: string; time: Time }) {
       <path d="M360 0v190M344 26h32M348 40h24" {...line} />
       {/* shop */}
       <rect x="40" y="96" width="200" height="110" fill={bld2} {...line} />
-      <path d="M30 96h220l-12 22H42z" fill="#d9577f" {...line} />
+      <path d="M30 96h220l-12 22H42z" fill="#c9708f" {...line} />
       <path d="M42 118h196" stroke="#fff" strokeWidth="2" opacity=".5" />
       {/* noren curtain */}
       <g>
@@ -214,22 +217,24 @@ function Street({ id, time }: { id: string; time: Time }) {
       {/* lanterns */}
       {[60, 220].map((x) => (
         <g key={x} className="float" style={{ animationDelay: `${x / 100}s`, transformOrigin: `${x}px 118px` }}>
+          <ellipse className="lantern-glow" cx={x} cy="140" rx="26" ry="30" fill="#f2c97e" opacity=".22" />
           <path d={`M${x} 118v8`} {...line} />
-          <ellipse cx={x} cy="140" rx="11" ry="15" fill={night ? '#ff9db5' : '#f7b8ca'} {...line} />
+          <ellipse cx={x} cy="140" rx="11" ry="15" fill={x === 60 ? '#e8a08a' : '#E99BB5'} {...line} />
           <path d={`M${x - 11} 140h22M${x - 9} 132h18M${x - 9} 148h18`} stroke={INK} strokeWidth="1" opacity=".4" />
-          {night && <ellipse cx={x} cy="140" rx="22" ry="26" fill="#ffb3c6" opacity=".25" />}
         </g>
       ))}
       {/* vending machine */}
       <g transform="translate(270 112)">
-        <rect width="46" height="94" rx="4" fill="#9fbbe3" {...line} />
-        <rect x="6" y="8" width="34" height="44" rx="2" fill={night ? '#fff3c9' : '#fff'} stroke={INK} strokeWidth="1.5" />
+        <rect width="46" height="94" rx="4" fill="#86A9B8" {...line} />
+        <rect x="6" y="8" width="34" height="44" rx="2" fill="#f6e3b4" stroke={INK} strokeWidth="1.5" />
         {[0, 1, 2].map((r) => [0, 1, 2].map((c) => <rect key={`${r}${c}`} x={10 + c * 10} y={12 + r * 13} width="6" height="10" rx="2" fill={['#f7b8ca', '#a8d8c6', '#f5c88a'][(r + c) % 3]} stroke={INK} strokeWidth="1" />))}
         <rect x="10" y="62" width="26" height="8" rx="2" fill={INK} opacity=".3" />
         <rect x="8" y="78" width="30" height="10" rx="2" fill="#fff" stroke={INK} strokeWidth="1.4" />
       </g>
       {/* ground */}
-      <rect x="-5" y="204" width="410" height="20" fill={night ? '#3a3560' : '#e9dccb'} {...line} />
+      <rect x="-5" y="204" width="410" height="20" fill="#2f2a4c" {...line} />
+      {/* wet asphalt reflections */}
+      <g opacity=".55"><path d="M52 210h16M212 212h18M92 214h40" stroke="#f2c97e" strokeWidth="2" strokeLinecap="round" /><path d="M150 211h22M280 213h26" stroke="#E99BB5" strokeWidth="2" strokeLinecap="round" /></g>
       {/* cat */}
       <g transform="translate(330 186)">
         <path d="M0 18c0-10 6-14 14-14l3-6 3 6c4 2 6 6 6 14z" fill="#fff" {...line} />
@@ -267,8 +272,8 @@ function Arcade({ id }: { id: string; time: Time }) {
   );
   return (
     <>
-      <rect width="400" height="220" fill="#5d4f96" />
-      <rect width="400" height="220" fill="#3c3470" opacity=".35" />
+      <rect width="400" height="220" fill="#3b3456" />
+      <ellipse cx="200" cy="200" rx="220" ry="60" fill="#E99BB5" opacity=".12" />
       <g opacity=".35" stroke="#b9a6ea" strokeWidth="1">
         {Array.from({ length: 9 }, (_, i) => <path key={i} d={`M${i * 50 - 20} 220L${200} 150`} />)}
         <path d="M0 196H400M0 178H400" />
@@ -277,9 +282,9 @@ function Arcade({ id }: { id: string; time: Time }) {
         <rect width="80" height="20" rx="10" fill="#2b2440" stroke="#ffd1dc" strokeWidth="1.5" />
         {[14, 30, 46, 62].map((x, i) => <circle key={x} cx={x + 2} cy="10" r="3" fill={['#ffd1dc', '#c7b3e8', '#a8d8c6', '#fff1c9'][i]} />)}
       </g>
-      {cab(30, '#f7b8ca', '#6e56c2', 0)}
-      {cab(150, '#9fbbe3', '#d9577f', 1)}
-      {cab(270, '#a8d8c6', '#4e74a8', 2)}
+      {cab(30, '#E99BB5', '#5b4d84', 0)}
+      {cab(150, '#86A9B8', '#8a4f6e', 1)}
+      {cab(270, '#A6B59A', '#3f5f72', 2)}
       <Tone id={id} />
     </>
   );
@@ -289,13 +294,14 @@ function Arcade({ id }: { id: string; time: Time }) {
 function Atelier({ id, time }: { id: string; time: Time }) {
   return (
     <>
-      <rect width="400" height="220" fill="#fdf0de" />
+      <rect width="400" height="220" fill="#54485f" />
+      <ellipse className="lantern-glow" cx="320" cy="120" rx="120" ry="80" fill="#f2c97e" opacity=".2" />
       <rect x="30" y="14" width="160" height="104" rx="6" fill="#fff" {...line} />
       <svg x="36" y="20" width="148" height="92" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice"><Sky id={id + 'w'} time={time} /><path d="M0 160Q100 110 200 150T400 130V220H0z" fill="#a8d8c6" stroke={INK} strokeWidth="3" /></svg>
       <path d="M110 14v104M30 66h160" {...line} />
       {/* string of drawings */}
       <path d="M210 26Q300 44 390 24" fill="none" stroke={INK} strokeWidth="1.3" />
-      {[[232, 30, '#fde3ec'], [286, 36, '#ece6fb'], [340, 32, '#e3f0d9']].map(([x, y, c], i) => (
+      {[[232, 30, '#F6DCE5'], [286, 36, '#E9E1F1'], [340, 32, '#E2E9DA']].map(([x, y, c], i) => (
         <g key={String(x)} transform={`translate(${x} ${y}) rotate(${[-6, 3, -2][i]})`}>
           <rect width="40" height="48" fill={String(c)} {...line} />
           <circle cx="20" cy="20" r="9" fill="none" stroke={INK} strokeWidth="1.4" />
@@ -304,7 +310,7 @@ function Atelier({ id, time }: { id: string; time: Time }) {
         </g>
       ))}
       {/* desk */}
-      <rect x="-5" y="150" width="410" height="80" fill="#c99a76" {...line} />
+      <rect x="-5" y="150" width="410" height="80" fill="#8f6449" {...line} />
       {/* sketchbook */}
       <g transform="translate(110 120) rotate(-6)">
         <rect width="150" height="70" rx="4" fill="#fff" {...line} />
@@ -339,22 +345,23 @@ function Riverside({ id, time }: { id: string; time: Time }) {
   return (
     <>
       <Sky id={id} time={time} />
-      {!night && <circle cx="300" cy="70" r="22" fill="#fff3c9" stroke={INK} strokeWidth="1.6" />}
-      <path d="M0 120Q60 92 130 112T260 104T400 112V150H0z" fill={night ? '#4b4580' : '#b9d7b0'} stroke={INK} strokeWidth="1.8" />
+      {!night && <circle cx="300" cy="74" r="22" fill="#f6d79a" stroke={INK} strokeWidth="1.6" />}
+      <path d="M0 120Q60 92 130 112T260 104T400 112V150H0z" fill={night ? '#3a3560' : '#6f7a7e'} stroke={INK} strokeWidth="1.8" />
       {/* bridge */}
       <path d="M150 128Q220 84 290 128" fill="none" stroke={INK} strokeWidth="9" />
       <path d="M150 128Q220 84 290 128" fill="none" stroke={night ? '#8f84c9' : '#efe2cf'} strokeWidth="5.5" />
       <path d="M140 126H300" {...line} />
       {[170, 195, 220, 245, 270].map((x) => <path key={x} d={`M${x} 126v${-8 + Math.abs(x - 220) / 6}`} stroke={INK} strokeWidth="1.5" />)}
       {/* river */}
-      <rect x="-5" y="128" width="410" height="50" fill={night ? '#5b5394' : '#9fc4e6'} stroke={INK} strokeWidth="2" />
-      <g stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity=".7">
-        <path d="M30 144h30M120 156h40M240 146h26M310 160h44M80 168h24" />
+      <rect x="-5" y="128" width="410" height="50" fill={night ? '#3b3a66' : '#5f7a96'} stroke={INK} strokeWidth="2" />
+      <g strokeWidth="2" strokeLinecap="round" opacity=".75">
+        <path d="M30 144h30M240 146h26M80 168h24" stroke="#f2c97e" />
+        <path d="M120 156h40M310 160h44" stroke="#E99BB5" />
       </g>
       {/* bank */}
-      <path d="M-5 172Q100 164 200 172T405 170V225H-5z" fill={night ? '#3a3560' : '#d8e8c8'} stroke={INK} strokeWidth="2" />
+      <path d="M-5 172Q100 164 200 172T405 170V225H-5z" fill={night ? '#2f2a4c' : '#5c6450'} stroke={INK} strokeWidth="2" />
       {/* autumn trees */}
-      {[[40, 150, '#e88a6a'], [86, 160, '#f5b56a'], [350, 154, '#d9577f']].map(([x, y, c]) => (
+      {[[40, 150, '#E2A48E'], [86, 160, '#D7B77A'], [350, 154, '#E99BB5']].map(([x, y, c]) => (
         <g key={String(x)} transform={`translate(${x} ${y})`}>
           <path d="M0 40V10" stroke={INK} strokeWidth="3" />
           <circle cx="0" cy="0" r="20" fill={String(c)} {...line} />
@@ -364,13 +371,13 @@ function Riverside({ id, time }: { id: string; time: Time }) {
       ))}
       {/* bench + picnic blanket */}
       <g transform="translate(180 178)">
-        <path d="M0 18l14-14h70l14 14z" fill="#fde3ec" {...line} />
+        <path d="M0 18l14-14h70l14 14z" fill="#F6DCE5" {...line} />
         <path d="M14 4l8 14M34 4l4 14M56 4l-2 14M76 4l-6 14" stroke="#f7b8ca" strokeWidth="3" />
         <rect x="36" y="-6" width="24" height="12" rx="3" fill="#fff" {...line} />
         <path d="M40-6v-4h16v4" fill="none" stroke={INK} strokeWidth="1.5" />
       </g>
       <Wires y={22} time={time} />
-      <Petals color="#f5b56a" seed={id.length} />
+      <Petals color="#D7B77A" seed={id.length} />
       <Tone id={id} />
     </>
   );
@@ -385,6 +392,19 @@ const SCENES: Record<SceneId, (p: { id: string; time: Time }) => ReactNode> = {
   riverside: Riverside,
 };
 
+function Rain({ id }: { id: string }) {
+  return (
+    <>
+      <defs>
+        <pattern id={`rain${id}`} width="18" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(14)">
+          <path d="M9 0v10" stroke="#cfe0e8" strokeWidth="1" strokeLinecap="round" opacity=".45" />
+        </pattern>
+      </defs>
+      <rect width="400" height="220" fill={`url(#rain${id})`} />
+    </>
+  );
+}
+
 export function Scene({ scene, seed = scene, time, className = '' }: { scene: SceneId; seed?: string; time?: Time; className?: string }) {
   const id = useId().replace(/:/g, '');
   const t = time ?? timeFromSeed(seed);
@@ -392,6 +412,7 @@ export function Scene({ scene, seed = scene, time, className = '' }: { scene: Sc
   return (
     <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden="true">
       <Comp id={id} time={t} />
+      {t === 'soir' && (scene === 'street' || scene === 'riverside') && <Rain id={id} />}
     </svg>
   );
 }

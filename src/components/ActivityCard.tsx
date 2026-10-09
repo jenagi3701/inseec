@@ -69,8 +69,8 @@ export function SaveButton({ activityId, className = '' }: { activityId: string;
       }}
       aria-pressed={saved}
       aria-label={saved ? 'Retirer des activités enregistrées' : 'Enregistrer l’activité'}
-      className={`inline-flex size-9 items-center justify-center rounded-full border-2 border-ink bg-white transition hover:-translate-y-0.5 ${saved ? 'text-sakura' : 'text-ink-2'} ${className}`}
-      style={{ boxShadow: '2px 2px 0 0 #2b2440' }}
+      className={`inline-flex size-9 items-center justify-center rounded-full border border-edge bg-surface transition hover:-translate-y-0.5 ${saved ? 'text-sakura-deep' : 'text-ink-2'} ${className}`}
+      style={{ boxShadow: 'var(--shadow-sm)' }}
     >
       <svg viewBox="0 0 24 24" className="size-[18px]" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2} strokeLinejoin="round" aria-hidden="true">
         <path d="M12 20.5s-7.5-4.6-7.5-10.3A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 7.5 2.6c0 5.7-7.5 10.3-7.5 10.3z" />
@@ -83,8 +83,8 @@ export function SaveButton({ activityId, className = '' }: { activityId: string;
 export function DateTicket({ iso, className = '' }: { iso: string; className?: string }) {
   const d = new Date(iso);
   return (
-    <span className={`inline-flex w-12 shrink-0 flex-col self-start items-center overflow-hidden rounded-xl border-2 border-ink bg-white text-center ${className}`} style={{ boxShadow: '2px 2px 0 0 #2b2440' }}>
-      <span className="w-full bg-sakura-deep py-0.5 text-[10px] font-black tracking-wider text-white uppercase">{d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</span>
+    <span className={`inline-flex w-12 shrink-0 flex-col self-start items-center overflow-hidden rounded-xl border border-edge bg-surface text-center ${className}`} style={{ boxShadow: 'var(--shadow-sm)' }}>
+      <span className="w-full bg-sakura py-0.5 text-[10px] font-black tracking-wider text-on-accent uppercase">{d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</span>
       <span className="font-manga text-lg leading-7">{d.getDate()}</span>
     </span>
   );
@@ -100,9 +100,9 @@ export function ActivityCard({ activity, showReason = true, compact = false }: {
   const friend = rec.familiar.length ? getUser(rec.familiar[0]) : undefined;
 
   return (
-    <article className="card hover-lift group relative flex flex-col overflow-hidden">
+    <article className="paper hover-lift group relative flex flex-col overflow-hidden">
       <Link to={`/activites/${activity.id}`} className="absolute inset-0 z-0" aria-label={`Voir ${activity.title}`} />
-      <div className="relative border-b-2 border-ink">
+      <div className="relative border-b border-edge">
         <CoverArt activity={activity} className={compact ? 'h-28' : 'h-40'}>
           <div className="absolute top-3 right-3 z-10">
             <SaveButton activityId={activity.id} />
@@ -141,7 +141,7 @@ export function ActivityCard({ activity, showReason = true, compact = false }: {
         )}
         {showReason && rec.reasons.length > 0 && !compact && (
           <p className="relative mt-3 rounded-2xl border-2 border-dashed border-lav/40 bg-lav-soft/50 px-3 py-2 pl-8 text-xs leading-relaxed text-ink-2">
-            <Sparkle className="absolute top-2 left-2 size-4" color="#c7b3e8" />
+            <Sparkle className="absolute top-2 left-2 size-4" color="#B9A7CC" />
             <span className="font-extrabold text-ink">Pour toi : </span>
             {explain(rec)}
           </p>

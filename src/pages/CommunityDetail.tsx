@@ -31,19 +31,19 @@ export default function CommunityDetail() {
 
   return (
     <div>
-      <Link to="/guildes" className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-white hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes guildes</Link>
+      <Link to="/guildes" className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-surface hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes guildes</Link>
 
       {/* ——— Guild banner ——— */}
       <header className="panel relative overflow-hidden">
         <Scene scene={cat.scene} time="crepuscule" seed={c.id} className="absolute inset-y-0 right-0 h-full w-full md:w-[58%]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-40% md:via-cream/70 md:via-55% md:to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-45% md:via-cream/85 md:via-62% md:to-cream/10" aria-hidden="true" />
         <div className="relative grid gap-6 p-6 md:grid-cols-[auto_1fr] md:items-center md:p-10">
           <GuildCrest categoryId={c.categoryId} born={c.origin === 'cercle'} className="size-24 md:size-32" />
           <div className="max-w-2xl">
             <div className="flex flex-wrap gap-2">
-              {c.origin === 'cercle' && <span className="sticker bg-white text-lav-deep">Née d’une première rencontre</span>}
-              <span className="sticker bg-white" style={{ color: cat.color }}>{cat.label}</span>
-              {member && <span className="sticker bg-lav-deep text-white">Membre</span>}
+              {c.origin === 'cercle' && <span className="sticker bg-surface text-lav-deep">Née d’une première rencontre</span>}
+              <span className="sticker scope-day bg-surface" style={{ color: cat.ink }}>{cat.label}</span>
+              {member && <span className="sticker bg-lavender text-on-accent">Membre</span>}
             </div>
             <h1 className="mt-3 font-manga text-4xl leading-tight font-normal md:text-5xl">{c.name}</h1>
             <p className="mt-1 font-display text-xl font-bold text-ink-2">{c.tagline}</p>
@@ -71,7 +71,7 @@ export default function CommunityDetail() {
           ['Ton parcours', attended ? `${attended} épisode${attended > 1 ? 's' : ''} vécu${attended > 1 ? 's' : ''} ensemble` : 'Pas encore d’épisode vécu', 'heart'],
         ].map(([k, v, icon]) => (
           <div key={k} className="card flex items-center gap-3 p-4">
-            <span className="inline-flex size-10 items-center justify-center rounded-xl border-2 border-ink bg-lav-soft text-lav-deep"><Icon name={icon as 'users'} className="size-5" /></span>
+            <span className="inline-flex size-10 items-center justify-center rounded-xl border border-edge bg-lav-soft text-lav-deep"><Icon name={icon as 'users'} className="size-5" /></span>
             <div><p className="text-[11px] font-black tracking-wider text-ink-3 uppercase">{k}</p><p className="font-bold">{v}</p></div>
           </div>
         ))}
@@ -91,7 +91,7 @@ export default function CommunityDetail() {
                   const mine = isJoined(a.id);
                   return (
                     <li key={a.id} className="relative flex items-center gap-4">
-                      <span className={`relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-ink font-manga text-sm ${isNext ? 'bg-sakura-deep text-white' : done ? 'bg-lav-soft text-lav-deep' : 'bg-white'}`} style={{ boxShadow: '2px 2px 0 0 #2b2440' }}>
+                      <span className={`relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-edge font-manga text-sm ${isNext ? 'bg-sakura text-on-accent' : done ? 'bg-lav-soft text-lav-deep' : 'bg-surface'}`} style={{ boxShadow: 'var(--shadow-sm)' }}>
                         {i + 1}
                       </span>
                       <Link to={`/activites/${a.id}`} className={`card hover-lift flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 px-4 py-3 ${done ? 'bg-cream' : ''}`}>
@@ -99,7 +99,7 @@ export default function CommunityDetail() {
                           <p className="text-[11px] font-black tracking-wider uppercase text-ink-3">Épisode {i + 1} · {formatShortDay(a.startsAt)} · {formatTime(a.startsAt)}</p>
                           <p className="truncate font-display font-black">{a.title}</p>
                         </div>
-                        <span className={`sticker ${done ? (mine ? 'bg-lav-soft text-lav-deep' : 'bg-cream-2 text-ink-3') : mine ? 'bg-matcha-soft text-matcha' : isNext ? 'bg-sakura-soft text-sakura-deep' : 'bg-white text-ink-3'}`}>
+                        <span className={`sticker ${done ? (mine ? 'bg-lav-soft text-lav-deep' : 'bg-cream-2 text-ink-3') : mine ? 'bg-matcha-soft text-matcha' : isNext ? 'bg-sakura-soft text-sakura-deep' : 'bg-surface text-ink-3'}`}>
                           {done ? (mine ? 'Vécu ensemble' : 'Passé') : mine ? 'Inscrit·e' : isNext ? 'Prochain épisode' : 'À venir'}
                         </span>
                       </Link>
@@ -108,7 +108,7 @@ export default function CommunityDetail() {
                 })}
                 {member && (
                   <li className="relative flex items-center gap-4">
-                    <span className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-ink-3 bg-white text-ink-3"><Icon name="plus" className="size-5" /></span>
+                    <span className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-ink-3 bg-surface text-ink-3"><Icon name="plus" className="size-5" /></span>
                     <Link to={`/proposer?cercle=${c.id}`} className="font-extrabold text-lav-deep hover:underline">Écrire l’épisode suivant…</Link>
                   </li>
                 )}
@@ -142,7 +142,7 @@ export default function CommunityDetail() {
                 if (!u) return null;
                 return (
                   <li key={m}>
-                    <Link to={m === ME ? '/profil' : `/profil/${m}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink hover:bg-cream">
+                    <Link to={m === ME ? '/profil' : `/profil/${m}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink-3 hover:bg-cream">
                       <Avatar user={u} size="md" />
                       <div className="min-w-0">
                         <p className="flex flex-wrap items-center gap-1 text-sm font-black">

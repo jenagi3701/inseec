@@ -10,20 +10,20 @@ import { Scene } from './art/Scene';
 export function LogoMark({ className = 'size-9' }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-      <path d="M10 6h44a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H30l-12 9v-9h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="#d9577f" stroke="#2b2440" strokeWidth="3" strokeLinejoin="round" />
-      <circle cx="25" cy="29" r="10" fill="none" stroke="#fff" strokeWidth="5" />
-      <circle cx="39" cy="29" r="10" fill="none" stroke="#fff" strokeWidth="5" />
-      <path d="M52 2l1.6 3.6L57 7l-3.4 1.4L52 12l-1.6-3.6L47 7l3.4-1.4z" fill="#ffd166" stroke="#2b2440" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M10 6h44a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H30l-12 9v-9h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="#E99BB5" stroke="#2a2338" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="25" cy="29" r="10" fill="none" stroke="#252238" strokeWidth="5" />
+      <circle cx="39" cy="29" r="10" fill="none" stroke="#252238" strokeWidth="5" />
+      <path d="M52 2l1.6 3.6L57 7l-3.4 1.4L52 12l-1.6-3.6L47 7l3.4-1.4z" fill="#D7B77A" stroke="#30283D" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 }
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-2 ${light ? 'text-cream' : 'text-ink'}`}>
+    <span className={`inline-flex items-center gap-2 ${light ? 'text-on-night' : 'text-ink'}`}>
       <LogoMark />
       <span className="font-manga text-xl leading-none tracking-wide">Kizuna</span>
-      <span className={`font-jp text-sm font-bold ${light ? 'text-cream/60' : 'text-sakura'}`}>絆</span>
+      <span className={`font-jp text-sm font-bold ${light ? 'text-on-night/60' : 'text-sakura-deep'}`}>絆</span>
     </span>
   );
 }
@@ -39,7 +39,7 @@ export function Avatar({ user, size = 'md', ring = false, className = '' }: { us
   const px = SIZES[size];
   if (!user) return <span className="inline-block shrink-0 rounded-full bg-cream-2" style={{ width: px, height: px }} />;
   return (
-    <span className={`inline-flex shrink-0 rounded-full border-ink bg-white ${size === 'xs' ? 'border-[1.5px]' : 'border-2'} ${ring ? 'ring-2 ring-white' : ''} ${className}`} style={{ width: px, height: px }}>
+    <span className={`inline-flex shrink-0 rounded-full border-edge bg-surface ${size === 'xs' ? 'border-[1.5px]' : 'border-2'} ${ring ? 'ring-2 ring-surface' : ''} ${className}`} style={{ width: px, height: px }}>
       <AnimeAvatar config={avatarOf(user)} size={px - (size === 'xs' ? 3 : 4)} className="rounded-full" />
     </span>
   );
@@ -53,7 +53,7 @@ export function AvatarStack({ users, max = 5, size = 'sm' }: { users: (Profile |
     <span className="flex -space-x-2">
       {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
       {extra > 0 && (
-        <span className="inline-flex items-center justify-center rounded-full border-2 border-ink bg-cream-2 text-[10px] font-black text-ink-2" style={{ width: px, height: px }}>+{extra}</span>
+        <span className="inline-flex items-center justify-center rounded-full border border-edge bg-cream-2 text-[10px] font-black text-ink-2" style={{ width: px, height: px }}>+{extra}</span>
       )}
     </span>
   );
@@ -70,7 +70,7 @@ export function PartySlots({ users, max, size = 'sm', limit = 8 }: { users: (Pro
     <span className="flex flex-wrap items-center gap-1" aria-label={`${present.length} membres d’équipe sur ${max} places`}>
       {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
       {Array.from({ length: free }, (_, i) => (
-        <span key={i} className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-ink-3/60 bg-white/70 text-ink-3" style={{ width: px, height: px }} aria-hidden="true">
+        <span key={i} className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-ink-3/60 bg-surface/70 text-ink-3" style={{ width: px, height: px }} aria-hidden="true">
           <Icon name="plus" className="size-3" strokeWidth={2.5} />
         </span>
       ))}
@@ -86,7 +86,7 @@ export function CoverArt({ activity, category, className = 'h-36', large = false
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ background: cat.tint }}>
       <Scene scene={cat.scene} seed={activity?.id ?? cat.id} className="absolute inset-0 h-full w-full" />
-      <span className="sticker absolute top-3 left-3" style={{ color: cat.color }}>{cat.questLabel}</span>
+      <span className="sticker scope-day absolute top-3 left-3 bg-surface" style={{ color: cat.ink }}>{cat.questLabel}</span>
       <Stamp kanji={cat.kanji} color={cat.color} className={`absolute right-3 bottom-3 ${large ? 'size-16 text-3xl' : 'size-11 text-xl'}`} />
       {children}
     </div>
@@ -96,16 +96,16 @@ export function CoverArt({ activity, category, className = 'h-36', large = false
 /** Hanko-like stamp with a single kanji. */
 export function Stamp({ kanji, color, className = 'size-11 text-xl' }: { kanji: string; color: string; className?: string }) {
   return (
-    <span className={`inline-flex rotate-[-8deg] items-center justify-center rounded-xl border-2 border-ink font-jp font-black text-white ${className}`} style={{ background: color, boxShadow: '2px 2px 0 0 #2b2440' }} aria-hidden="true">
+    <span className={`inline-flex rotate-[-8deg] items-center justify-center rounded-xl border border-edge font-jp font-black text-on-accent ${className}`} style={{ background: color, boxShadow: 'var(--shadow-sm)' }} aria-hidden="true">
       {kanji}
     </span>
   );
 }
 
-export function Sparkle({ className = 'size-5', color = '#ffd166', style }: { className?: string; color?: string; style?: CSSProperties }) {
+export function Sparkle({ className = 'size-5', color = '#D7B77A', style }: { className?: string; color?: string; style?: CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} aria-hidden="true">
-      <path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9L1.5 12l7.9-2.6z" fill={color} stroke="#2b2440" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9L1.5 12l7.9-2.6z" fill={color} stroke="#30283D" strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -116,15 +116,15 @@ export function SpeechBubble({ children, className = '', right = false }: { chil
 
 export function CategoryDot({ id }: { id: string }) {
   const c = categoryById(id);
-  return <span className="inline-block size-2.5 shrink-0 rounded-full border-[1.5px] border-ink" style={{ background: c.color }} />;
+  return <span className="inline-block size-2.5 shrink-0 rounded-full border border-edge" style={{ background: c.color }} />;
 }
 
 /* ——— Layout helpers ——— */
 export function EmptyState({ icon, title, text, action }: { icon: IconName; title: string; text: string; action?: ReactNode }) {
   return (
     <div className="card relative flex flex-col items-center overflow-hidden px-6 py-12 text-center">
-      <div className="screentone absolute inset-0 text-lav opacity-10" aria-hidden="true" />
-      <span className="relative mb-4 inline-flex size-14 items-center justify-center rounded-2xl border-2 border-ink bg-lav-soft text-lav-deep" style={{ boxShadow: '3px 3px 0 0 #2b2440' }}>
+      <div className="screentone absolute inset-0 text-lav-deep opacity-10" aria-hidden="true" />
+      <span className="relative mb-4 inline-flex size-14 items-center justify-center rounded-2xl border border-edge bg-lav-soft text-lav-deep" style={{ boxShadow: 'var(--shadow-sm)' }}>
         <Icon name={icon} className="size-6" />
       </span>
       <Sparkle className="absolute top-8 left-[calc(50%+28px)] size-4" />
@@ -141,9 +141,9 @@ export function SectionHeader({ title, kicker, link, linkLabel, jp }: { title: s
       <div>
         {kicker && <p className="eyebrow mb-1">{kicker}</p>}
         <h2 className="relative inline-block text-2xl md:text-[1.7rem]">
-          {jp && <span className="mr-2 font-jp text-sakura">{jp}</span>}
+          {jp && <span className="mr-2 font-jp text-sakura-deep">{jp}</span>}
           {title}
-          <span className="absolute -bottom-1 left-0 h-2 w-full -skew-x-12 rounded-full bg-sakura-soft -z-10" aria-hidden="true" />
+          <span className="absolute -bottom-1 left-0 h-1.5 w-full -skew-x-12 rounded-full bg-sakura/35 -z-10" aria-hidden="true" />
         </h2>
       </div>
       {link && (
@@ -175,20 +175,20 @@ export function Modal({ open, onClose, title, children, wide = false }: { open: 
   }, [open, onClose]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-night/70 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
       <div
         ref={ref}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`pop max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border-2 border-ink bg-cream p-6 outline-none sm:rounded-3xl ${wide ? 'sm:max-w-3xl' : 'sm:max-w-lg'}`}
-        style={{ boxShadow: '6px 6px 0 0 #2b2440' }}
+        className={`scope-day pop max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border border-edge bg-cream p-6 outline-none sm:rounded-3xl ${wide ? 'sm:max-w-3xl' : 'sm:max-w-lg'}`}
+        style={{ boxShadow: '0 30px 60px -20px rgb(8 6 18 / 0.8)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h2 className="text-xl">{title}</h2>
-          <button onClick={onClose} className="rounded-full border-2 border-transparent p-1 text-ink-2 hover:border-ink hover:bg-white" aria-label="Fermer">
+          <button onClick={onClose} className="rounded-full border-2 border-transparent p-1 text-ink-2 hover:border-ink-3 hover:bg-surface" aria-label="Fermer">
             <Icon name="x" />
           </button>
         </div>

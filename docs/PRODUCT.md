@@ -147,12 +147,12 @@ The visual metaphor: **your social life as a slice-of-life anime adventure.**
   - interest badges colour-coded by family (genre, franchise, hobby, culture)
 - The home screen opens on an **illustrated street banner** that follows the real time of day, with your character saying *« Prêt·e pour un nouvel épisode ? »*.
 
-**Visual system:**
-- cream paper; pastel sakura, lavender and sora accents; plum ink line-art
-- ink-outlined manga panels with offset shadows
-- screentone and speed lines, speech bubbles, stickers, hanko stamps
-- Dela Gothic One for manga-style titles, Zen Maru Gothic for headings, Nunito for UI text
-- subtle motion: floating characters, falling petals, pop-in bubbles, all disabled under `prefers-reduced-motion`
+**Visual system: "Cozy Tokyo at night".**
+- Midnight-plum page and deep-plum sections, with warm-cream "paper" objects for the content people act on (quest invitations, character sheets, guild cards, dialogs).
+- Sakura Pink for primary actions and selections, Rainy Tokyo Blue for secondary actions, Muted Lavender for guilds, and Lantern Gold only for small warm details.
+- Soft shadows, thin borders, lantern and sakura glows, and lamp-lit or rainy evening illustrations.
+- Dela Gothic One for titles, Zen Maru Gothic for headings, Nunito for UI text.
+- Scope-aware design tokens keep every text/surface pair at WCAG AA or better.
 
 **Guard-rails:**
 - Themed labels always come with plain wording ("Rejoindre l’équipe").

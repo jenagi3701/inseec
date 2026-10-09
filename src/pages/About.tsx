@@ -21,7 +21,7 @@ const GLOSSARY: [string, string, string][] = [
 export default function About() {
   return (
     <div className="mx-auto max-w-4xl">
-      <span className="sticker bg-white text-sakura-deep"><span className="font-jp">物語</span> À propos du projet</span>
+      <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">物語</span> À propos du projet</span>
       <h1 className="font-manga text-4xl leading-tight font-normal md:text-5xl">Les passions créent le premier lien. Les activités le renforcent. Les guildes lui laissent le temps de grandir.</h1>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -30,10 +30,10 @@ export default function About() {
           <p className="font-display text-xl">Rencontrer de nouvelles personnes.</p>
           <p className="mt-2 text-sm text-ink-2">Un format unique, des tables qui changent, et l’on repart souvent de zéro la fois suivante.</p>
         </div>
-        <div className="rounded-3xl bg-lav p-6 text-white">
-          <p className="mb-2 text-xs font-semibold tracking-[0.16em] text-white/60 uppercase">Kizuna</p>
+        <div className="dusk rounded-3xl border border-edge p-6">
+          <p className="mb-2 text-xs font-semibold tracking-[0.16em] text-ink-3 uppercase">Kizuna</p>
           <p className="font-display text-xl">Se rencontrer par ce qu’on aime, faire ensemble, se revoir.</p>
-          <p className="mt-2 text-sm text-white/75">Des activités variées, une ambiance choisie, et des groupes qui se retrouvent.</p>
+          <p className="mt-2 text-sm text-ink-2">Des activités variées, une ambiance choisie, et des groupes qui se retrouvent.</p>
         </div>
       </div>
 
@@ -41,9 +41,9 @@ export default function About() {
       <div className="mt-6 space-y-4">
         {FEATURES.map((f) => (
           <div key={f.name} className="card grid gap-4 p-6 md:grid-cols-[auto_1fr_16rem]">
-            <span className="flex size-12 items-center justify-center rounded-2xl bg-sakura-soft font-jp text-xl font-bold text-sakura">{f.jp}</span>
+            <span className="flex size-12 items-center justify-center rounded-2xl bg-sakura-soft font-jp text-xl font-bold text-sakura-deep">{f.jp}</span>
             <div>
-              <p className="flex items-center gap-2 font-display text-xl font-semibold"><Icon name={f.icon} className="size-5 text-sakura" /> {f.name}</p>
+              <p className="flex items-center gap-2 font-display text-xl font-semibold"><Icon name={f.icon} className="size-5 text-sakura-deep" /> {f.name}</p>
               <p className="mt-1 text-sm text-ink-2">{f.text}</p>
             </div>
             <p className="rounded-2xl bg-cream p-3 text-sm"><span className="font-semibold">Rétention : </span><span className="text-ink-2">{f.retention}</span></p>
@@ -56,7 +56,7 @@ export default function About() {
       <dl className="mt-6 grid gap-3 sm:grid-cols-2">
         {GLOSSARY.map(([term, jp, meaning]) => (
           <div key={term} className="card flex items-start gap-3 p-4">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-sakura-soft font-jp font-black text-sakura-deep">{jp}</span>
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-edge bg-sakura-soft font-jp font-black text-sakura-deep">{jp}</span>
             <div><dt className="font-display font-black">{term}</dt><dd className="text-sm font-semibold text-ink-2">{meaning}</dd></div>
           </div>
         ))}

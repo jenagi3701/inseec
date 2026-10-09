@@ -18,7 +18,7 @@ function Toggle({ checked, onChange, label, hint }: { checked: boolean; onChange
       <span className="relative mt-0.5 inline-flex shrink-0">
         <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
         <span className="h-6 w-11 rounded-full bg-line transition peer-checked:bg-matcha peer-focus-visible:ring-2 peer-focus-visible:ring-lav" />
-        <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition peer-checked:translate-x-5" />
+        <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-surface shadow transition peer-checked:translate-x-5" />
       </span>
     </label>
   );
@@ -68,11 +68,11 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-3xl space-y-10">
       <div>
-        <span className="sticker bg-white text-sakura-deep"><span className="font-jp">設定</span> Compte</span>
+        <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">設定</span> Compte</span>
         <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">Paramètres & sécurité</h1>
         <nav className="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Sections">
           {[['confidentialite', 'Confidentialité'], ['connexions', 'Connexions'], ['blocages', 'Blocages & signalements'], ['charte', 'Charte'], ['securite', 'Conseils sécurité'], ['donnees', 'Mes données']].map(([id, l]) => (
-            <a key={id} href={`#${id}`} className="chip border border-line bg-white px-3 py-1.5 text-ink-2 hover:border-ink-3">{l}</a>
+            <a key={id} href={`#${id}`} className="chip border border-line bg-surface px-3 py-1.5 text-ink-2 hover:border-ink-3-3">{l}</a>
           ))}
         </nav>
       </div>
@@ -106,8 +106,8 @@ export default function Settings() {
                   <li key={c.userId} className="flex items-center gap-3">
                     <Avatar user={u} size="sm" />
                     <Link to={`/profil/${c.userId}`} className="flex-1 text-sm font-semibold hover:underline">{u?.firstName}</Link>
-                    <span className={`chip ${c.status === 'mutuelle' ? 'bg-lav-soft text-lav' : 'bg-cream-2 text-ink-3'}`}>{c.status === 'mutuelle' ? 'Mutuelle' : 'En attente (privé)'}</span>
-                    <button className="text-xs text-ink-3 hover:text-sakura" onClick={() => { dispatch({ type: 'removeConnection', userId: c.userId }); toast('Connexion retirée'); }}>Retirer</button>
+                    <span className={`chip ${c.status === 'mutuelle' ? 'bg-lav-soft text-lav-deep' : 'bg-cream-2 text-ink-3'}`}>{c.status === 'mutuelle' ? 'Mutuelle' : 'En attente (privé)'}</span>
+                    <button className="text-xs text-ink-3 hover:text-sakura-deep" onClick={() => { dispatch({ type: 'removeConnection', userId: c.userId }); toast('Connexion retirée'); }}>Retirer</button>
                   </li>
                 );
               })}

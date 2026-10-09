@@ -34,11 +34,11 @@ export function CityFields({ p, set }: { p: Profile; set: Patch }) {
         <input id="neighborhood" className="input" value={p.neighborhood ?? ''} onChange={(e) => set({ neighborhood: e.target.value })} placeholder="Ex. Croix-Rousse, Guillotière…" maxLength={40} />
       </div>
       <div>
-        <label className="label" htmlFor="distance">Distance maximale : <span className="text-sakura">{p.distanceKm} km</span></label>
+        <label className="label" htmlFor="distance">Distance maximale : <span className="text-sakura-deep">{p.distanceKm} km</span></label>
         <input id="distance" type="range" min={1} max={15} value={p.distanceKm} onChange={(e) => set({ distanceKm: Number(e.target.value) })} className="w-full accent-sakura" />
         <div className="flex justify-between text-xs text-ink-3"><span>À pied</span><span>Toute la métropole</span></div>
       </div>
-      <label className="flex items-center gap-3 rounded-xl border border-line bg-white p-3 text-sm">
+      <label className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3 text-sm">
         <input type="checkbox" checked={!!p.newInTown} onChange={(e) => set({ newInTown: e.target.checked })} className="size-4 accent-sakura" />
         Je viens d’arriver dans la ville — montre-moi les quêtes accueillantes pour les nouveaux.
       </label>

@@ -17,18 +17,18 @@ export const HAIR_COLORS = [
 export const SKIN_TONES = ['#ffe3d3', '#f6cfb5', '#e7b493', '#c98e6b', '#9c6a4c', '#6f4a36'];
 export const EYE_COLORS = ['#6b4a3a', '#3f5fa8', '#7b5ac9', '#3f8a6c', '#c45a7a', '#c08a2e'];
 export const OUTFITS = [
-  { name: 'Sweat sakura', color: '#f7b8ca', trim: '#fff' },
+  { name: 'Sweat sakura', color: '#E99BB5', trim: '#fff' },
   { name: 'Veste marine', color: '#3f4f7d', trim: '#e7ecf7' },
   { name: 'Pull crème', color: '#f2e2c4', trim: '#c9a97a' },
-  { name: 'Hoodie lavande', color: '#b9a6ea', trim: '#fff' },
-  { name: 'Chemise menthe', color: '#a8d8c6', trim: '#fff' },
+  { name: 'Hoodie lavande', color: '#B9A7CC', trim: '#fff' },
+  { name: 'Chemise sauge', color: '#A6B59A', trim: '#fff' },
   { name: 'Haut prune', color: '#5b3f6b', trim: '#f0c6d4' },
 ];
 export const ACCESSORIES = ['Aucun', 'Lunettes rondes', 'Barrette étoile', 'Casque audio', 'Fleur', 'Pansement'];
 export const EXPRESSIONS = ['Sourire', 'Ravi·e', 'Serein·e', 'Clin d’œil'];
-export const AVATAR_BGS = ['#fde3ec', '#ece6fb', '#e2edf9', '#e3f0d9', '#fde7cf', '#fff3c9'];
+export const AVATAR_BGS = ['#F6DCE5', '#E9E1F1', '#DCE8EC', '#E2E9DA', '#F2E4C6', '#F4EBDD'];
 
-const INK = '#2b2440';
+const INK = '#2a2338';
 
 function fnv(str: string) {
   let h = 2166136261;

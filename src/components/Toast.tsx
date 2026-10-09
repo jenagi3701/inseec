@@ -16,8 +16,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-[60] flex flex-col items-center gap-2 px-4 md:bottom-6" role="status" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className="fade-up flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-cream shadow-lg">
-            <Icon name="check" className="size-4 text-matcha-soft" />
+          <div key={t.id} className="scope-day fade-up flex items-center gap-2 rounded-full border border-edge bg-cream px-4 py-2.5 text-sm font-bold text-ink shadow-[0_14px_30px_-12px_rgb(8_6_18/0.8)]">
+            <Icon name="check" className="size-4 text-matcha" />
             {t.text}
           </div>
         ))}

@@ -49,26 +49,33 @@ No API keys, environment variables or paid services are needed.
 
 To start from scratch, use the account menu → *Se déconnecter (réinitialise la démo)*. Signing up normally takes you through the 7-step onboarding, which includes creating your character.
 
-## Visual identity: "cozy anime + social RPG"
+## Visual identity: "Cozy Tokyo at night"
+
+A rainy evening in Tokyo with friends. The page and its sections are midnight-plum streets. Content objects (quest invitations, character sheets, guild cards, dialogs, popovers) are warm cream **paper** that glows like a lit café window.
 
 - **Palette** (`src/index.css`, `@theme`):
-  - warm cream paper with a dotted texture
-  - **sakura** pink for actions and discovery
-  - **lavender** for guilds and continuity
-  - muted **sora** blue, matcha and peach as supporting colours
-  - deep plum **ink** for line-art instead of pure black
-- **Manga language**:
-  - ink-outlined panels with an offset shadow (`panel`, `card`, `btn`)
-  - screentone and speed-line textures
-  - speech bubbles (`.bubble`)
-  - sticker labels and hanko-style kanji stamps
-  - slight card tilts and floating petals; all motion respects `prefers-reduced-motion`
-- **Typography** (Google Fonts, OFL licence): *Dela Gothic One* for big manga-style titles, *Zen Maru Gothic* for headings and kanji, *Nunito* for readable UI text.
+
+  | Colour | Hex | Used for |
+  | --- | --- | --- |
+  | Midnight Plum | `#252238` | page, night base |
+  | Deep Plum | `#343047` | night cards and sections |
+  | Warm Cream | `#F4EBDD` | paper surfaces |
+  | Sakura Pink | `#E99BB5` | primary buttons, selected filters, key highlights |
+  | Rainy Tokyo Blue | `#86A9B8` | secondary actions, icons |
+  | Lantern Gold | `#D7B77A` | small warm details only |
+  | Matcha Sage | `#A6B59A` | supporting accent |
+  | Muted Lavender | `#B9A7CC` | guilds and continuity |
+  | Text | `#30283D` / `#F4EBDD` | on cream / on night |
+
+- **Scope-aware tokens.** The default tokens are the night palette. The `.paper` and `.scope-day` classes re-declare the *same* token names with the day palette, so `text-ink`, `bg-sakura-soft`, `text-sakura-deep`… adapt to the surface they sit on. Accent *text* uses a light shade on night surfaces and a deep shade on cream, so pale pink text never lands on cream. Brand fills (sakura, rain, lavender, lantern, sage) always carry `text-on-accent` (`#252238`).
+- **Contrast.** Every text/surface token pair is at least 4.5:1 (WCAG AA). The requested secondary grey `#81778A` measures about 3.6:1 on both cream and midnight, so it is kept as the `mute` token for icons and dividers. Secondary text uses slightly deeper (cream) or lighter (night) derived greys.
+- **Depth.** Soft shadows, thin warm borders, gentle radial glows of lantern, sakura and rain light in the page background, and a hover glow on cards. No neon outlines or hard offset shadows.
+- **Typography** (Google Fonts, OFL licence): *Dela Gothic One* for manga-style titles, *Zen Maru Gothic* for headings and kanji, *Nunito* for UI text.
 - **Original illustrations** (`src/components/art/`):
-  - `Scene.tsx`: six slice-of-life settings (manga café/bookshop, game table, neighbourhood street with lanterns and a vending machine, arcade, drawing atelier, riverside), each in three times of day.
-  - `AnimeAvatar.tsx`: an avatar generator with 6 hairstyles, 8 hair colours, 6 skin tones, eye colours, expressions, outfits and accessories. Demo members are either hand-tuned or generated from a seed.
-  - Guild crests (`Guild.tsx`), the logo mark and decorations (`ui.tsx`).
-- **No copyrighted material**: no existing characters, manga panels or franchise logos. Franchise names appear only as text interest tags, with a "no affiliation" notice.
+  - `Scene.tsx`: six settings (manga café, game room, neighbourhood street, arcade, drawing atelier, riverside). Each has three evening lights: golden hour, sakura dusk, and a rainy night with rain and wet-asphalt reflections. Interiors are lamp-lit, and lanterns and windows glow amber.
+  - `AnimeAvatar.tsx`: avatar generator. Guild crests are in `Guild.tsx`, the logo in `ui.tsx`.
+  - No copyrighted characters, panels or logos. Franchise names appear only as text tags.
+- **Motion:** floating characters, falling petals, a slow lantern flicker and pop-in bubbles, all disabled under `prefers-reduced-motion`.
 
 ### Vocabulary (French UI)
 

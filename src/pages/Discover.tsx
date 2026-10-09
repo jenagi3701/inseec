@@ -74,9 +74,9 @@ export default function Discover() {
     <div>
       <header className="panel relative overflow-hidden">
         <Scene scene="riverside" time="crepuscule" seed="board" className="absolute inset-y-0 right-0 h-full w-full md:w-[58%]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-40% md:via-cream/70 md:via-55% md:to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-45% md:via-cream/85 md:via-62% md:to-cream/10" aria-hidden="true" />
         <div className="relative p-6 md:p-8">
-          <span className="sticker bg-white text-ink-2"><span className="font-jp text-sakura">依頼</span> Lyon & Villeurbanne</span>
+          <span className="sticker bg-surface text-ink-2"><span className="font-jp text-sakura-deep">依頼</span> Lyon & Villeurbanne</span>
           <h1 className="mt-3 font-manga text-4xl font-normal md:text-5xl">Tableau des quêtes</h1>
           <p className="mt-2 max-w-md font-semibold text-ink-2">Toutes les activités à venir. Choisis selon tes passions… et ton énergie du jour.</p>
         </div>
@@ -103,7 +103,7 @@ export default function Discover() {
         <button className="toggle-pill shrink-0" aria-pressed={!cat} onClick={() => setParam('categorie', '')}>Toutes les quêtes</button>
         {CATEGORIES.map((c) => (
           <button key={c.id} className="toggle-pill shrink-0" aria-pressed={cat === c.id} onClick={() => setParam('categorie', cat === c.id ? '' : c.id)}>
-            <span className="mr-1.5 inline-block size-2.5 rounded-full border-[1.5px] border-ink" style={{ background: c.color }} /> {c.label}
+            <span className="mr-1.5 inline-block size-2.5 rounded-full border border-edge" style={{ background: c.color }} /> {c.label}
           </button>
         ))}
       </div>
@@ -132,7 +132,7 @@ export default function Discover() {
 
       <div className="mt-6 mb-4 flex items-center justify-between">
         <p className="text-sm text-ink-2"><strong className="text-ink">{results.length}</strong> quête{results.length > 1 ? 's' : ''} à venir</p>
-        {(activeFilters > 0 || cat || energy || q) && <button className="text-sm font-semibold text-lav" onClick={reset}>Réinitialiser</button>}
+        {(activeFilters > 0 || cat || energy || q) && <button className="text-sm font-semibold text-lav-deep" onClick={reset}>Réinitialiser</button>}
       </div>
 
       {results.length ? (

@@ -24,7 +24,7 @@ const MENU: { to: string; label: string; icon: IconName }[] = [
 
 export function DemoBanner() {
   return (
-    <div className="flex items-center justify-center gap-2 bg-ink px-4 py-1.5 text-center text-[11px] font-bold tracking-wide text-cream/80">
+    <div className="flex items-center justify-center gap-2 bg-night px-4 py-1.5 text-center text-[11px] font-bold tracking-wide text-on-night/80">
       <Sparkle className="size-3 shrink-0" /> {t('demo.banner')}
     </div>
   );
@@ -46,8 +46,8 @@ function useClickOutside(open: boolean, close: () => void) {
   return ref;
 }
 
-const popover = 'pop absolute right-0 z-50 mt-2 overflow-hidden rounded-2xl border-2 border-ink bg-white';
-const popShadow = { boxShadow: '5px 5px 0 0 #2b2440' };
+const popover = 'scope-day pop absolute right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-edge bg-cream';
+const popShadow = { boxShadow: '0 24px 48px -18px rgb(8 6 18 / 0.85)' };
 
 function Notifications() {
   const { state, dispatch, unread } = useApp();
@@ -57,17 +57,17 @@ function Notifications() {
   return (
     <div className="relative" ref={ref}>
       <button
-        className="relative inline-flex size-10 items-center justify-center rounded-full border-2 border-transparent text-ink hover:border-ink hover:bg-white"
+        className="relative inline-flex size-10 items-center justify-center rounded-full border-2 border-transparent text-ink hover:border-ink-3 hover:bg-surface"
         aria-label={`${t('nav.notifications')}${unread ? ` (${unread} non lues)` : ''}`}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
         <Icon name="bell" />
-        {unread > 0 && <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full border-2 border-ink bg-sakura text-[10px] font-black text-white">{unread}</span>}
+        {unread > 0 && <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full border border-edge bg-sakura text-[10px] font-black text-on-accent">{unread}</span>}
       </button>
       {open && (
         <div className={`${popover} w-[min(22rem,calc(100vw-2rem))]`} style={popShadow}>
-          <div className="flex items-center justify-between border-b-2 border-ink bg-sakura-soft px-4 py-3">
+          <div className="flex items-center justify-between border-b border-edge bg-sakura-soft px-4 py-3">
             <p className="font-display font-black">{t('nav.notifications')}</p>
             {unread > 0 && (
               <button className="text-xs font-extrabold text-lav-deep" onClick={() => dispatch({ type: 'markNotificationsRead' })}>
@@ -87,7 +87,7 @@ function Notifications() {
                     if (n.link) navigate(n.link);
                   }}
                 >
-                  <span className={`mt-1.5 size-2.5 shrink-0 rounded-full border-[1.5px] ${n.read ? 'border-line' : 'border-ink bg-sakura'}`} />
+                  <span className={`mt-1.5 size-2.5 shrink-0 rounded-full border-[1.5px] ${n.read ? 'border-line' : 'border-edge bg-sakura'}`} />
                   <span>
                     {n.text}
                     <span className="mt-0.5 block text-xs font-normal text-ink-3">{timeAgo(n.at)}</span>
@@ -154,18 +154,18 @@ export function AppLayout() {
   return (
     <div className="min-h-dvh pb-24 md:pb-0">
       <DemoBanner />
-      <header className="sticky top-0 z-40 border-b-2 border-ink bg-cream/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-edge bg-cream/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
           <Link to="/accueil" aria-label="Kizuna — accueil">
             <Logo />
           </Link>
-          <nav className="hidden items-center gap-1 rounded-full border-2 border-ink bg-white p-1 md:flex" style={{ boxShadow: '3px 3px 0 0 #2b2440' }} aria-label="Navigation principale">
+          <nav className="hidden items-center gap-1 rounded-full border border-edge bg-surface p-1 md:flex" style={{ boxShadow: 'var(--shadow-sm)' }} aria-label="Navigation principale">
             {MAIN_NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
                 title={n.hint}
-                className={({ isActive }) => `inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-extrabold transition ${isActive ? 'bg-sakura-deep text-white' : 'text-ink-2 hover:bg-sakura-pale hover:text-ink'}`}
+                className={({ isActive }) => `inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-extrabold transition ${isActive ? 'bg-sakura text-on-accent' : 'text-ink-2 hover:bg-sakura-pale hover:text-ink'}`}
               >
                 <Icon name={n.icon} className="size-4" />
                 {n.label}
@@ -191,7 +191,7 @@ export function AppLayout() {
           <Link to="/a-propos" className="hover:text-ink">À propos</Link>
         </span>
       </footer>
-      <nav className="fixed inset-x-3 bottom-3 z-40 rounded-3xl border-2 border-ink bg-white/95 backdrop-blur md:hidden" style={{ boxShadow: '4px 4px 0 0 #2b2440' }} aria-label="Navigation mobile">
+      <nav className="fixed inset-x-3 bottom-3 z-40 rounded-3xl border border-edge bg-surface/95 backdrop-blur md:hidden" style={{ boxShadow: 'var(--shadow-sm)' }} aria-label="Navigation mobile">
         <div className="grid grid-cols-5 p-1">
           {[...MAIN_NAV, { to: '/profil', label: t('nav.profile'), icon: 'user' as IconName, hint: '' }].map((n) => (
             <NavLink

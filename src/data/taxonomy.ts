@@ -2,12 +2,12 @@
 import type { Category, Energy, GroupSizeId, Interest, LevelId, SlotId } from './types';
 
 export const CATEGORIES: Category[] = [
-  { id: 'anime', label: 'Anime & manga', short: 'Anime', kanji: '漫', color: '#C9456F', tint: '#FDE3EC', scene: 'manga-cafe', questLabel: 'Quête manga' },
-  { id: 'jeux', label: 'Jeux de société', short: 'Jeux', kanji: '遊', color: '#4E74A8', tint: '#E2EDF9', scene: 'game-table', questLabel: 'Quête ludique' },
-  { id: 'culture', label: 'Culture japonaise', short: 'Culture', kanji: '和', color: '#4F7D40', tint: '#E3F0D9', scene: 'street', questLabel: 'Quête culturelle' },
-  { id: 'gaming', label: 'Jeux vidéo', short: 'Gaming', kanji: '技', color: '#6E56C2', tint: '#ECE6FB', scene: 'arcade', questLabel: 'Quête gaming' },
-  { id: 'creatif', label: 'Créatif', short: 'Créatif', kanji: '創', color: '#B8701C', tint: '#FDE7CF', scene: 'atelier', questLabel: 'Quête créative' },
-  { id: 'sorties', label: 'Sorties & social', short: 'Sorties', kanji: '縁', color: '#C25A48', tint: '#FBE3DC', scene: 'riverside', questLabel: 'Sortie en équipe' },
+  { id: 'anime', label: 'Anime & manga', short: 'Anime', kanji: '漫', color: '#E99BB5', ink: '#A3446A', tint: '#F6DCE5', scene: 'manga-cafe', questLabel: 'Quête manga' },
+  { id: 'jeux', label: 'Jeux de société', short: 'Jeux', kanji: '遊', color: '#86A9B8', ink: '#46707F', tint: '#DCE8EC', scene: 'game-table', questLabel: 'Quête ludique' },
+  { id: 'culture', label: 'Culture japonaise', short: 'Culture', kanji: '和', color: '#A6B59A', ink: '#536648', tint: '#E2E9DA', scene: 'street', questLabel: 'Quête culturelle' },
+  { id: 'gaming', label: 'Jeux vidéo', short: 'Gaming', kanji: '技', color: '#B9A7CC', ink: '#65508E', tint: '#E9E1F1', scene: 'arcade', questLabel: 'Quête gaming' },
+  { id: 'creatif', label: 'Créatif', short: 'Créatif', kanji: '創', color: '#D7B77A', ink: '#7C5D24', tint: '#F2E4C6', scene: 'atelier', questLabel: 'Quête créative' },
+  { id: 'sorties', label: 'Sorties & social', short: 'Sorties', kanji: '縁', color: '#E2A48E', ink: '#94503C', tint: '#F6E0D7', scene: 'riverside', questLabel: 'Sortie en équipe' },
 ];
 
 export const ENERGIES: Energy[] = [

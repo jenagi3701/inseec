@@ -29,7 +29,8 @@ export interface Category {
   label: string;
   short: string;
   kanji: string; // editorial accent used in cover art
-  color: string; // css color for accents
+  color: string; // pastel fill (stamps, crests, dots) — pair with dark text
+  ink: string; // deep shade for text on cream surfaces
   tint: string; // light background tint
   scene: SceneId; // illustrated setting used for quest covers
   questLabel: string; // RPG-flavoured name of the category

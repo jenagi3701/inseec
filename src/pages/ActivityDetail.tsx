@@ -26,7 +26,7 @@ export default function ActivityDetail() {
 function Info({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
   return (
     <div className="flex gap-3">
-      <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-sakura-pale text-sakura-deep" style={{ boxShadow: '2px 2px 0 0 #2b2440' }}>
+      <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-edge bg-sakura-pale text-sakura-deep" style={{ boxShadow: 'var(--shadow-sm)' }}>
         <Icon name={icon} className="size-[18px]" strokeWidth={2} />
       </span>
       <div>
@@ -41,7 +41,7 @@ function Section({ title, jp, children, className = '', aside }: { title: string
   return (
     <section className={`card p-6 ${className}`}>
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl">{jp && <span className="mr-2 font-jp text-sakura">{jp}</span>}{title}</h2>
+        <h2 className="text-xl">{jp && <span className="mr-2 font-jp text-sakura-deep">{jp}</span>}{title}</h2>
         {aside}
       </div>
       <div className="mt-4">{children}</div>
@@ -86,16 +86,16 @@ function Detail({ id }: { id: string }) {
 
   return (
     <div className="pb-20 lg:pb-0">
-      <button onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-white hover:text-ink">
+      <button onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-surface hover:text-ink">
         <Icon name="arrowLeft" className="size-4" /> Retour
       </button>
 
       {/* ——— Quest hero ——— */}
       <div className="panel overflow-hidden">
-        <div className="relative border-b-2 border-ink">
+        <div className="relative border-b border-edge">
           <CoverArt activity={activity} className="h-52 md:h-72" large>
             <div className="absolute top-3 right-3"><SaveButton activityId={activity.id} /></div>
-            {ep && <span className="sticker absolute bottom-3 left-3 bg-lav-deep text-white">Épisode {ep}{community ? ` · ${community.name}` : ''}</span>}
+            {ep && <span className="sticker absolute bottom-3 left-3 bg-lavender text-on-accent">Épisode {ep}{community ? ` · ${community.name}` : ''}</span>}
           </CoverArt>
         </div>
         <div className="flex gap-4 p-6 md:p-8">
@@ -124,10 +124,10 @@ function Detail({ id }: { id: string }) {
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_22rem]">
         <div className="space-y-6">
           {past && joined && (
-            <div className="panel relative overflow-hidden bg-lav-deep p-6 text-white">
+            <div className="panel dusk relative overflow-hidden p-6">
               <div className="speedlines absolute inset-[-60%] text-white opacity-[0.06]" aria-hidden="true" />
               <p className="relative font-manga text-2xl">{feedback ? 'Merci pour ton bilan !' : 'Fin d’épisode. Envie de revoir cette équipe ?'}</p>
-              <p className="relative mt-1 text-white/75">{feedback ? 'Tu peux revenir sur ton bilan à tout moment.' : 'Ta réponse est privée. Elle permet de fonder une guilde si l’envie est partagée.'}</p>
+              <p className="relative mt-1 text-ink-2">{feedback ? 'Tu peux revenir sur ton bilan à tout moment.' : 'Ta réponse est privée. Elle permet de fonder une guilde si l’envie est partagée.'}</p>
               <Link to={`/activites/${activity.id}/bilan`} className="btn-ghost relative mt-4">{feedback ? 'Voir mon bilan' : 'Donner mon avis'}</Link>
             </div>
           )}
@@ -161,7 +161,7 @@ function Detail({ id }: { id: string }) {
               <Info icon="chat" label="Langue">{activity.language}</Info>
               <Info icon="repeat" label="Rythme">{recurrenceLabel(activity.recurrence)}{community && <><br /><span className="font-normal text-ink-3">{community.rhythm}</span></>}</Info>
             </div>
-            <div className="mt-6 flex flex-col items-start gap-4 rounded-2xl border-2 border-ink bg-sakura-pale p-4 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col items-start gap-4 rounded-2xl border border-edge bg-sakura-pale p-4 sm:flex-row sm:items-center">
               <Avatar user={organizer} size="lg" />
               <div className="min-w-0 flex-1 text-sm">
                 <p className="text-[11px] font-black tracking-wider text-sakura-deep uppercase">Guide de la quête</p>
@@ -201,7 +201,7 @@ function Detail({ id }: { id: string }) {
                     return (
                       <li key={m.id} className={`group flex items-start gap-2.5 ${mine ? 'flex-row-reverse' : ''}`}>
                         <Avatar user={author} size="sm" />
-                        <div className={`max-w-[80%] rounded-2xl border-2 border-ink px-3.5 py-2 ${mine ? 'rounded-tr-sm bg-sakura-soft' : 'rounded-tl-sm bg-white'}`}>
+                        <div className={`max-w-[80%] rounded-2xl border border-edge px-3.5 py-2 ${mine ? 'rounded-tr-sm bg-sakura-soft' : 'rounded-tl-sm bg-surface'}`}>
                           <p className="text-xs font-black">{mine ? 'Toi' : author?.firstName} <span className="font-semibold text-ink-3">· {timeAgo(m.at)}</span></p>
                           <p className="text-sm font-semibold break-words text-ink-2">{m.text}</p>
                         </div>
@@ -239,7 +239,7 @@ function Detail({ id }: { id: string }) {
         {/* ——— Sidebar ——— */}
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="panel overflow-hidden">
-            <div className="flex items-baseline justify-between border-b-2 border-ink bg-sakura-soft px-5 py-4">
+            <div className="flex items-baseline justify-between border-b border-edge bg-sakura-soft px-5 py-4">
               <p className="font-manga text-2xl">{formatPrice(activity.priceMin, activity.priceMax)}</p>
               <p className={`text-sm font-black ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>
                 {past ? 'Terminée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : joined ? 'Complet (dont toi)' : 'Équipe complète'}
@@ -278,7 +278,7 @@ function Detail({ id }: { id: string }) {
                 const isMe = u!.id === ME;
                 return (
                   <li key={u!.id}>
-                    <Link to={isMe ? '/profil' : `/profil/${u!.id}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink hover:bg-cream">
+                    <Link to={isMe ? '/profil' : `/profil/${u!.id}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink-3 hover:bg-cream">
                       <Avatar user={u} size="md" />
                       <div className="min-w-0 flex-1">
                         <p className="flex flex-wrap items-center gap-1 text-sm font-black">
@@ -312,7 +312,7 @@ function Detail({ id }: { id: string }) {
 
       {/* Mobile: keep the main action reachable without scrolling to the sidebar */}
       {!past && (
-        <div className="fixed inset-x-3 bottom-[5.25rem] z-30 flex items-center justify-between gap-3 rounded-2xl border-2 border-ink bg-white px-4 py-2.5 lg:hidden" style={{ boxShadow: '4px 4px 0 0 #2b2440' }}>
+        <div className="fixed inset-x-3 bottom-[5.25rem] z-30 flex items-center justify-between gap-3 rounded-2xl border border-edge bg-surface px-4 py-2.5 lg:hidden" style={{ boxShadow: 'var(--shadow-sm)' }}>
           <div className="min-w-0">
             <p className="font-manga text-lg leading-none">{formatPrice(activity.priceMin, activity.priceMax)}</p>
             <p className={`text-xs font-black ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>{joined ? 'Ta place est réservée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : 'Équipe complète'}</p>

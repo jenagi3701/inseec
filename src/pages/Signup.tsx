@@ -33,20 +33,20 @@ export default function Signup() {
     <div className="min-h-dvh">
       <DemoBanner />
       <div className="mx-auto grid min-h-[calc(100dvh-28px)] max-w-6xl md:grid-cols-2">
-        <div className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[2rem] border-2 border-ink p-10 md:flex" style={{ boxShadow: '6px 6px 0 0 #2b2440' }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#2b2440] via-[#3e3a6e] to-[#6c5ca8]" aria-hidden="true" />
+        <div className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[2rem] border border-edge p-10 md:flex" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-midnight via-plum to-[#4a3f63]" aria-hidden="true" />
           <div className="screentone absolute inset-0 text-white opacity-[0.06]" aria-hidden="true" />
           <Scene scene="street" time="soir" seed="signup" className="absolute inset-x-0 bottom-0 aspect-[400/220] h-auto w-full" />
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent" aria-hidden="true" />
           <Link to="/" className="relative"><Logo light /></Link>
-          <div className="relative text-cream">
+          <div className="relative text-on-night">
             <div className="mb-6 flex -space-x-3">
               {['u-yuki', 'u-clara', 'u-nathan', 'u-ines', 'u-hugo'].map((id) => <Avatar key={id} user={DEMO_USERS.find((u) => u.id === id)} size="lg" />)}
             </div>
             <p className="font-manga text-3xl leading-tight">« Kizuna » : le lien qui se tisse, épisode après épisode.</p>
-            <p className="mt-4 font-semibold text-cream/75">Ici, on ne collectionne pas les contacts. On retrouve les mêmes visages, quête après quête.</p>
+            <p className="mt-4 font-semibold text-on-night/75">Ici, on ne collectionne pas les contacts. On retrouve les mêmes visages, quête après quête.</p>
           </div>
-          <p className="relative text-xs font-semibold text-cream/60">Prototype, aucun compte réel n’est créé.</p>
+          <p className="relative text-xs font-semibold text-on-night/60">Prototype, aucun compte réel n’est créé.</p>
         </div>
         <div className="flex flex-col justify-center px-4 py-10 sm:px-10">
           <Link to="/" className="mb-8 md:hidden"><Logo /></Link>

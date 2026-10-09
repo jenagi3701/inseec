@@ -1,44 +1,123 @@
 @import 'tailwindcss';
 
 /*
- * Kizuna design system — "cozy anime + social RPG".
- * Cream paper, pastel sakura / lavender / sora accents, ink line-art,
- * manga panels with a soft offset shadow, screentone textures.
+ * Kizuna design system — "Cozy Tokyo at night".
+ * Layout concept: a rainy Tokyo evening. Midnight-plum streets and deep-plum
+ * sections, with warm cream "paper" objects (quest invitations, character
+ * sheets, dialogs) glowing like lit café windows. Sakura for primary actions,
+ * rainy blue for secondary ones, lantern gold only for small warm details.
+ *
+ * Tokens are scope-aware: the defaults below are the NIGHT palette; `.paper`
+ * (and `.scope-day`) re-declare the same tokens with the DAY palette, so a
+ * component's classes (text-ink, bg-sakura-soft…) adapt to the surface it sits
+ * on and keep their contrast. Fixed brand colours (sakura, lavender, rain,
+ * lantern, sage, midnight, plum) never change and are used as fills with
+ * `text-on-accent`.
  */
 @theme {
   --font-sans: 'Nunito', ui-rounded, system-ui, sans-serif;
-  --font-display: 'Zen Maru Gothic', 'Nunito', ui-rounded, sans-serif; /* headings */
-  --font-manga: 'Dela Gothic One', 'Zen Maru Gothic', sans-serif; /* big punchy titles */
+  --font-display: 'Zen Maru Gothic', 'Nunito', ui-rounded, sans-serif;
+  --font-manga: 'Dela Gothic One', 'Zen Maru Gothic', sans-serif;
   --font-jp: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
 
-  --color-cream: #fff8ee;
-  --color-cream-2: #f7ecdc;
-  --color-ink: #2b2440; /* deep plum ink, softer than black */
-  --color-ink-2: #574e6d;
-  --color-ink-3: #877e99;
-  --color-line: #e9dccb;
+  /* Fixed brand palette */
+  --color-midnight: #252238; /* Midnight Plum — page */
+  --color-plum: #343047; /* Deep Plum — elevated surfaces */
+  --color-paper: #f4ebdd; /* Warm Cream */
+  --color-sakura: #e99bb5; /* Sakura Pink — primary */
+  --color-rain: #86a9b8; /* Rainy Tokyo Blue — secondary */
+  --color-lantern: #d7b77a; /* Lantern Gold — small warm details */
+  --color-sage: #a6b59a; /* Matcha Sage */
+  --color-lavender: #b9a7cc; /* Muted Lavender */
+  --color-on-accent: #252238; /* text on any brand fill */
+  --color-night: #1c1a2b; /* deepest band (banner, ribbon) */
+  --color-on-night: #f4ebdd;
 
-  /* sakura — primary action / discovery */
-  --color-sakura: #d9577f;
-  --color-sakura-deep: #b83a63;
-  --color-sakura-soft: #fde3ec;
-  --color-sakura-pale: #fff0f4;
-  /* lavender — guilds / continuity */
-  --color-lav: #6e56c2;
-  --color-lav-deep: #5a43aa;
-  --color-lav-soft: #ece6fb;
-  /* sora — muted blue */
-  --color-sora: #4e74a8;
-  --color-sora-soft: #e2edf9;
-  /* matcha & peach — supporting */
-  --color-matcha: #4f7d40;
-  --color-matcha-soft: #e3f0d9;
-  --color-peach: #fde7cf;
-  --color-peach-deep: #b8701c;
+  /* Scope-aware tokens — NIGHT values */
+  --color-cream: #252238; /* page / base of the current surface */
+  --color-cream-2: #2d2942; /* subtle inset */
+  --color-surface: #343047; /* elevated surface */
+  --color-field: #2a2640; /* inputs */
+  --color-ink: #f4ebdd; /* primary text */
+  --color-ink-2: #d6ccd9; /* secondary text */
+  --color-ink-3: #aea3b9; /* meta text (AA on midnight & plum) */
+  --color-mute: #81778a; /* icons, dividers — not for small text */
+  --color-line: #463f5b;
+  --color-edge: #4d4664; /* restrained borders */
+  --color-sakura-deep: #f2b4c8; /* sakura as text */
+  --color-sakura-soft: rgb(233 155 181 / 0.16);
+  --color-sakura-pale: rgb(233 155 181 / 0.09);
+  --color-lav: #b9a7cc;
+  --color-lav-deep: #d0c2e0;
+  --color-lav-soft: rgb(185 167 204 / 0.16);
+  --color-sora: #a3c2cf;
+  --color-sora-soft: rgb(134 169 184 / 0.16);
+  --color-matcha: #bccaae;
+  --color-matcha-soft: rgb(166 181 154 / 0.16);
+  --color-peach: rgb(215 183 122 / 0.15);
+  --color-peach-deep: #e3c995;
 
   --radius-card: 1.25rem;
-  --shadow-panel: 4px 4px 0 0 var(--color-ink);
-  --shadow-panel-sm: 3px 3px 0 0 var(--color-ink);
+  --shadow-sm: 0 6px 16px -8px rgb(8 6 18 / 0.55);
+  --shadow-panel: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 18px 40px -22px rgb(8 6 18 / 0.85);
+  --shadow-glow: 0 0 0 1px rgb(233 155 181 / 0.45), 0 22px 44px -20px rgb(233 155 181 / 0.35);
+}
+
+@layer components {
+/* DAY palette — warm cream "paper" objects, dialogs and popovers */
+.paper,
+.scope-day {
+  --color-cream: #f4ebdd;
+  --color-cream-2: #ebe0cd;
+  --color-surface: #fbf6ee;
+  --color-field: #fffdf8;
+  --color-ink: #30283d;
+  --color-ink-2: #554b63;
+  --color-ink-3: #675d73; /* secondary text, ≥4.5:1 on cream */
+  --color-mute: #81778a;
+  --color-line: #ddcfba;
+  --color-edge: #dccbb3;
+  --color-sakura-deep: #953a5f; /* deep sakura text, ≥5:1 on cream tints */
+  --color-sakura-soft: #f6dce5;
+  --color-sakura-pale: #f9ebef;
+  --color-lav: #7a62a3;
+  --color-lav-deep: #65508e;
+  --color-lav-soft: #e9e1f1;
+  --color-sora: #3b6170;
+  --color-sora-soft: #dce8ec;
+  --color-matcha: #536648;
+  --color-matcha-soft: #e2e9da;
+  --color-peach: #f2e4c6;
+  --color-peach-deep: #7c5d24;
+  color: var(--color-ink);
+  color-scheme: light;
+}
+
+/* NIGHT palette re-declared, for night panels nested inside paper */
+.scope-night,
+.dusk {
+  --color-cream: #252238;
+  --color-cream-2: #2d2942;
+  --color-surface: #3b3652;
+  --color-field: #2a2640;
+  --color-ink: #f4ebdd;
+  --color-ink-2: #d6ccd9;
+  --color-ink-3: #b3a8be;
+  --color-line: #4d4664;
+  --color-edge: #544c6c;
+  --color-sakura-deep: #f2b4c8;
+  --color-sakura-soft: rgb(233 155 181 / 0.18);
+  --color-sakura-pale: rgb(233 155 181 / 0.1);
+  --color-lav: #b9a7cc;
+  --color-lav-deep: #d0c2e0;
+  --color-lav-soft: rgb(185 167 204 / 0.18);
+  --color-sora: #a3c2cf;
+  --color-matcha: #bccaae;
+  --color-matcha-soft: rgb(166 181 154 / 0.18);
+  --color-peach-deep: #e3c995;
+  color: var(--color-ink);
+  color-scheme: dark;
+}
 }
 
 @keyframes float {
@@ -46,7 +125,7 @@
   50% { transform: translateY(-6px); }
 }
 @keyframes pop {
-  from { opacity: 0; transform: scale(0.85); }
+  from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: none; }
 }
 @keyframes fade-up {
@@ -55,80 +134,101 @@
 }
 @keyframes petal {
   0% { transform: translate(0, -10%) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.9; }
+  10% { opacity: 0.8; }
   100% { transform: translate(-60px, 110vh) rotate(320deg); opacity: 0; }
+}
+@keyframes lantern {
+  0%, 100% { opacity: 0.16; }
+  50% { opacity: 0.3; }
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    color-scheme: dark;
   }
   body {
-    @apply bg-cream text-ink font-sans antialiased;
-    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1.3px);
-    background-size: 22px 22px;
+    @apply bg-midnight text-ink font-sans antialiased;
+    /* soft lantern + sakura glows over a faint rain-dot texture */
+    background-image:
+      radial-gradient(60rem 30rem at 85% -10%, rgb(233 155 181 / 0.12), transparent 60%),
+      radial-gradient(50rem 28rem at -10% 10%, rgb(134 169 184 / 0.1), transparent 60%),
+      radial-gradient(40rem 30rem at 50% 110%, rgb(215 183 122 / 0.07), transparent 60%),
+      radial-gradient(rgb(244 235 221 / 0.035) 1px, transparent 1.3px);
+    background-size: auto, auto, auto, 22px 22px;
+    background-attachment: fixed, fixed, fixed, scroll;
   }
   h1, h2, h3 {
     @apply font-display font-black tracking-tight;
+    text-wrap: balance;
   }
   /* Grid items never force horizontal overflow on small screens */
   .grid > * {
     min-width: 0;
   }
   :focus-visible {
-    outline: 2.5px solid var(--color-lav);
+    outline: 2.5px solid var(--color-sakura);
     outline-offset: 2px;
     border-radius: 8px;
+  }
+  ::selection {
+    background: rgb(233 155 181 / 0.4);
   }
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-2.5 text-sm font-extrabold transition duration-150 select-none disabled:cursor-not-allowed disabled:opacity-50;
-  box-shadow: var(--shadow-panel-sm);
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-transparent px-5 py-2.5 text-sm font-extrabold transition duration-150 select-none disabled:cursor-not-allowed disabled:opacity-50;
+  box-shadow: var(--shadow-sm);
   &:hover:not(:disabled) {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 0 var(--color-ink);
+    transform: translateY(-1px);
+    filter: brightness(1.06);
   }
   &:active:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 0 var(--color-ink);
+    transform: translateY(0) scale(0.98);
   }
 }
+/* Sakura: primary actions */
 @utility btn-primary {
-  @apply btn bg-sakura-deep text-white;
+  @apply btn bg-sakura text-on-accent;
+  &:hover:not(:disabled) {
+    box-shadow: 0 10px 24px -10px rgb(233 155 181 / 0.6);
+  }
 }
+/* Rainy blue: secondary actions */
 @utility btn-ink {
-  @apply btn bg-ink text-cream;
+  @apply btn bg-rain text-on-accent;
 }
+/* Lavender: guild / continuity actions */
 @utility btn-lav {
-  @apply btn bg-lav-deep text-white;
+  @apply btn bg-lavender text-on-accent;
 }
 @utility btn-ghost {
-  @apply btn bg-white text-ink;
+  @apply btn border-edge bg-surface text-ink;
+  &:hover:not(:disabled) {
+    border-color: var(--color-ink-3);
+  }
 }
 @utility btn-sm {
   @apply px-3.5 py-1.5 text-xs;
-  box-shadow: 2px 2px 0 0 var(--color-ink);
 }
-/* Manga panel: ink outline + offset shadow */
+/* Night section card */
 @utility panel {
-  @apply rounded-[var(--radius-card)] border-2 border-ink bg-white;
+  @apply rounded-[var(--radius-card)] border border-edge bg-surface;
   box-shadow: var(--shadow-panel);
 }
 @utility card {
-  @apply rounded-[var(--radius-card)] border-2 border-ink bg-white;
-  box-shadow: var(--shadow-panel-sm);
+  @apply rounded-[var(--radius-card)] border border-edge bg-surface;
+  box-shadow: var(--shadow-panel);
 }
 @utility chip {
   @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold;
 }
-/* Sticker-style tag */
 @utility sticker {
-  @apply inline-flex items-center gap-1 rounded-lg border-2 border-ink bg-white px-2 py-0.5 text-[11px] font-black tracking-wide uppercase;
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  @apply inline-flex items-center gap-1 rounded-lg border border-edge bg-surface px-2 py-0.5 text-[11px] font-black tracking-wide text-ink uppercase;
+  box-shadow: var(--shadow-sm);
 }
 @utility input {
-  @apply w-full rounded-xl border-2 border-line bg-white px-3.5 py-2.5 text-sm font-semibold outline-none transition placeholder:font-normal placeholder:text-ink-3 focus:border-lav focus:ring-4 focus:ring-lav/15;
+  @apply w-full rounded-xl border border-line bg-field px-3.5 py-2.5 text-sm font-semibold text-ink outline-none transition placeholder:font-normal placeholder:text-ink-3 focus:border-sakura focus:ring-4 focus:ring-sakura/20;
 }
 @utility label {
   @apply mb-1.5 block text-sm font-extrabold text-ink;
@@ -137,28 +237,41 @@
   @apply text-xs font-extrabold uppercase tracking-[0.18em] text-ink-3;
 }
 @utility toggle-pill {
-  @apply rounded-full border-2 px-3.5 py-2 text-sm font-bold transition;
+  @apply rounded-full border px-3.5 py-2 text-sm font-bold transition;
   &[aria-pressed='true'] {
-    @apply border-ink bg-ink text-cream;
-    box-shadow: 2px 2px 0 0 var(--color-sakura);
+    @apply border-sakura bg-sakura text-on-accent;
   }
   &[aria-pressed='false'] {
-    @apply border-line bg-white text-ink-2 hover:border-ink-3;
+    @apply border-line bg-surface text-ink-2 hover:border-ink-3 hover:text-ink;
   }
 }
-/* Selectable tile (onboarding choices, levels…) */
 @utility tile {
-  @apply rounded-2xl border-2 p-4 text-left transition;
+  @apply rounded-2xl border p-4 text-left text-ink transition;
   &[aria-pressed='true'] {
-    @apply border-ink bg-sakura-pale;
-    box-shadow: var(--shadow-panel-sm);
+    @apply border-sakura bg-sakura-soft;
+    box-shadow: 0 0 0 1px var(--color-sakura);
   }
   &[aria-pressed='false'] {
-    @apply border-line bg-white hover:border-ink-3;
+    @apply border-line bg-surface hover:border-ink-3;
   }
 }
 
-/* Manga screentone — use with a text colour */
+@layer components {
+/* Warm cream object on the night page */
+.paper {
+  background-color: var(--color-cream);
+  border: 1px solid var(--color-edge);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.5) inset, 0 22px 44px -22px rgb(8 6 18 / 0.9);
+}
+/* Dusk panel: deep plum with a lavender/sakura lantern glow */
+.dusk {
+  background:
+    radial-gradient(28rem 16rem at 100% 0%, rgb(233 155 181 / 0.18), transparent 70%),
+    radial-gradient(24rem 14rem at 0% 100%, rgb(215 183 122 / 0.1), transparent 70%),
+    linear-gradient(135deg, #3d3656, #2c2843);
+}
+
 .screentone {
   background-image: radial-gradient(currentColor 1px, transparent 1.3px);
   background-size: 7px 7px;
@@ -170,56 +283,58 @@
 .speedlines {
   background-image: repeating-conic-gradient(from 0deg at 50% 50%, currentColor 0deg 1.2deg, transparent 1.2deg 9deg);
 }
+.rain {
+  background-image: repeating-linear-gradient(105deg, rgb(244 235 221 / 0.07) 0 1px, transparent 1px 14px);
+}
 
-/* Speech bubble with a tail (bottom-left by default) */
+/* Speech bubble — always warm cream with dark text, whatever the surface */
 .bubble {
+  --color-ink: #30283d;
+  --color-ink-2: #554b63;
+  --color-ink-3: #675d73;
+  --color-sakura-deep: #953a5f;
   position: relative;
-  border: 2px solid var(--color-ink);
-  background: #fff;
+  border: 1px solid #dccbb3;
+  background: #fffaf1;
+  color: var(--color-ink);
   border-radius: 1.1rem;
   padding: 0.5rem 0.85rem;
   font-weight: 800;
-  box-shadow: 2px 2px 0 0 var(--color-ink);
+  box-shadow: 0 8px 18px -10px rgb(8 6 18 / 0.6);
 }
 .bubble::after {
   content: '';
   position: absolute;
   left: 18px;
-  bottom: -8px;
-  width: 13px;
-  height: 13px;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
   background: inherit;
-  border-right: 2px solid var(--color-ink);
-  border-bottom: 2px solid var(--color-ink);
+  border-right: 1px solid #dccbb3;
+  border-bottom: 1px solid #dccbb3;
   transform: rotate(45deg);
 }
 .bubble-right::after {
   left: auto;
   right: 18px;
 }
+}
 
-.fade-up {
-  animation: fade-up 0.4s ease-out both;
-}
-.pop {
-  animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
-}
-.float {
-  animation: float 6s ease-in-out infinite;
-}
-.petal {
-  animation: petal linear infinite;
-}
+.fade-up { animation: fade-up 0.4s ease-out both; }
+.pop { animation: pop 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both; }
+.float { animation: float 6s ease-in-out infinite; }
+.petal { animation: petal linear infinite; }
+.lantern-glow { animation: lantern 4s ease-in-out infinite; }
 .hover-lift {
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .hover-lift:hover {
-  transform: translate(-2px, -3px);
-  box-shadow: 6px 7px 0 0 var(--color-ink);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-up, .pop, .float, .petal {
+  .fade-up, .pop, .float, .petal, .lantern-glow {
     animation: none !important;
   }
   .petal { display: none; }

@@ -16,7 +16,7 @@ function Swatches({ label, colors, value, onChange, names }: { label: string; co
             aria-label={names?.[i] ?? `${label} ${i + 1}`}
             title={names?.[i]}
             onClick={() => onChange(i)}
-            className={`size-8 rounded-full border-2 transition ${value === i ? 'scale-110 border-ink ring-2 ring-sakura ring-offset-2' : 'border-ink/30 hover:border-ink'}`}
+            className={`size-8 rounded-full border-2 transition ${value === i ? 'scale-110 border-edge ring-2 ring-sakura ring-offset-2 ring-offset-cream' : 'border-ink/30 hover:border-ink-3'}`}
             style={{ background: c }}
           />
         ))}
@@ -52,7 +52,7 @@ export function AvatarEditor({ value, onChange, name }: { value: AvatarConfig; o
       <div className="flex flex-col items-center gap-3 md:sticky md:top-4 md:self-start">
         <div className="panel relative overflow-hidden p-2">
           <AnimeAvatar config={value} size={180} square />
-          {name && <span className="sticker absolute bottom-3 left-1/2 -translate-x-1/2 bg-white">{name}</span>}
+          {name && <span className="sticker absolute bottom-3 left-1/2 -translate-x-1/2 bg-surface">{name}</span>}
         </div>
         <button type="button" className="btn-ghost btn-sm" onClick={() => onChange(randomAvatar())}>
           <Icon name="sparkle" className="size-4" /> Aléatoire

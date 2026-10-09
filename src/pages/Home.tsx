@@ -46,7 +46,7 @@ export default function Home() {
       {/* ——— Greeting banner ——— */}
       <section className="panel fade-up relative overflow-hidden">
         <Scene scene="street" time={timeOfDay()} seed="home" className="absolute inset-y-0 right-0 h-full w-full md:w-[58%]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-40% md:via-cream/70 md:via-55% md:to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-45% md:via-cream/85 md:via-62% md:to-cream/10" aria-hidden="true" />
         <div className="relative grid items-center gap-6 p-6 md:grid-cols-[1fr_auto] md:p-8">
           <div>
             <p className="eyebrow mb-2">{formatDay(new Date().toISOString())}</p>
@@ -62,7 +62,7 @@ export default function Home() {
                 [data.mine.length, data.mine.length > 1 ? 'quêtes prévues' : 'quête prévue', 'calendar'],
                 [familiarIds.size, 'compagnons de route', 'users'],
               ].map(([n, label, icon]) => (
-                <span key={String(label)} className="sticker bg-white px-3 py-1.5 text-xs normal-case tracking-normal">
+                <span key={String(label)} className="sticker bg-surface px-3 py-1.5 text-xs normal-case tracking-normal">
                   <Icon name={icon as 'users'} className="size-4 text-sakura-deep" /> <span className="font-manga text-base">{n}</span> {label}
                 </span>
               ))}
@@ -77,14 +77,14 @@ export default function Home() {
 
       {/* ——— Continuity prompt ——— */}
       {data.pendingFeedback.map((a) => (
-        <section key={a.id} className="panel fade-up relative overflow-hidden bg-lav-deep text-white">
+        <section key={a.id} className="panel dusk fade-up relative overflow-hidden">
           <div className="speedlines absolute inset-[-60%] text-white opacity-[0.06]" aria-hidden="true" />
           <div className="relative grid items-center gap-6 p-6 md:grid-cols-[1fr_auto] md:p-8">
             <div>
-              <span className="sticker bg-white text-lav-deep">Fin d’épisode · {relativeDay(a.startsAt)}</span>
+              <span className="sticker bg-surface text-lav-deep">Fin d’épisode · {relativeDay(a.startsAt)}</span>
               <h2 className="mt-3 font-manga text-3xl font-normal">Envie de revoir cette équipe ?</h2>
-              <p className="mt-1 text-sm font-bold text-white/70">{a.title}</p>
-              <p className="mt-2 max-w-xl text-white/80">Ta réponse reste privée. Si plusieurs personnes disent oui, l’équipe peut devenir une guilde, et l’épisode suivant se prépare.</p>
+              <p className="mt-1 text-sm font-bold text-ink-2">{a.title}</p>
+              <p className="mt-2 max-w-xl text-ink-2">Ta réponse reste privée. Si plusieurs personnes disent oui, l’équipe peut devenir une guilde, et l’épisode suivant se prépare.</p>
             </div>
             <div className="flex flex-col items-start gap-4 md:items-end">
               <div className="flex items-end gap-2">
@@ -109,10 +109,10 @@ export default function Home() {
           <div>
             <SectionHeader title="Ta prochaine quête" />
             {next ? (
-              <Link to={`/activites/${next.id}`} className="card hover-lift block overflow-hidden">
-                <div className="border-b-2 border-ink">
+              <Link to={`/activites/${next.id}`} className="paper hover-lift block overflow-hidden">
+                <div className="border-b border-edge">
                   <CoverArt activity={next} className="h-40">
-                    {nextEp && <span className="sticker absolute bottom-3 left-3 bg-lav-deep text-white">Épisode {nextEp}</span>}
+                    {nextEp && <span className="sticker absolute bottom-3 left-3 bg-lavender text-on-accent">Épisode {nextEp}</span>}
                   </CoverArt>
                 </div>
                 <div className="flex gap-3 p-5">
@@ -210,7 +210,7 @@ export default function Home() {
       )}
 
       <section className="panel relative overflow-hidden bg-sakura-soft p-6 md:p-8">
-        <div className="screentone-lg absolute inset-0 text-sakura opacity-15" aria-hidden="true" />
+        <div className="screentone-lg absolute inset-0 text-sakura-deep opacity-15" aria-hidden="true" />
         <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Sparkle className="size-8" />

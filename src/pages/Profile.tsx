@@ -48,12 +48,12 @@ function InterestGraph({ interests, highlight }: { interests: string[]; highligh
 function Portrait({ user, children }: { user: Profile; children?: React.ReactNode }) {
   const cfg = avatarOf(user);
   return (
-    <div className="panel overflow-hidden">
-      <div className="relative border-b-2 border-ink" style={{ background: AVATAR_BGS[cfg.bg % AVATAR_BGS.length] }}>
+    <div className="paper overflow-hidden">
+      <div className="relative border-b border-edge" style={{ background: AVATAR_BGS[cfg.bg % AVATAR_BGS.length] }}>
         <div className="screentone-lg absolute inset-0 text-ink opacity-10" aria-hidden="true" />
         <div className="speedlines absolute inset-[-50%] text-white opacity-30" aria-hidden="true" />
         <AnimeAvatar config={cfg} size={260} square className="relative mx-auto block h-auto w-full max-w-[260px]" title={`Avatar de ${user.firstName}`} />
-        <span className="sticker absolute top-3 left-3 bg-white">{levelLabel(user.level)}</span>
+        <span className="sticker absolute top-3 left-3 bg-surface">{levelLabel(user.level)}</span>
       </div>
       <div className="p-5">{children}</div>
     </div>
@@ -86,7 +86,7 @@ export function MyProfile() {
   return (
     <div>
       <div className="mb-6">
-        <span className="sticker bg-white text-sakura-deep"><span className="font-jp">プロフィール</span> Fiche personnage</span>
+        <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">プロフィール</span> Fiche personnage</span>
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[20rem_1fr]">
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
@@ -106,7 +106,7 @@ export function MyProfile() {
         <div className="space-y-6">
           <section className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura">好</span>Mon graphe de passions</h2>
+              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">好</span>Mon graphe de passions</h2>
               <button className="btn-ghost btn-sm" onClick={() => open('interets')}>Modifier</button>
             </div>
             <p className="mt-1 mb-4 text-sm font-semibold text-ink-2">Tes recommandations traversent toutes ces passions, pas une seule. Les titres d’œuvres sont de simples étiquettes.</p>
@@ -114,14 +114,14 @@ export function MyProfile() {
           </section>
 
           <section className="card p-6">
-            <h2 className="text-xl"><span className="mr-2 font-jp text-sakura">旅</span>Mon parcours</h2>
+            <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">旅</span>Mon parcours</h2>
             <p className="mt-1 text-xs font-semibold text-ink-3">Visible par toi seul·e. Ici, on ne collectionne pas les amis.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Link to="/historique" className="flex items-center gap-3 rounded-2xl border-2 border-ink bg-sakura-pale p-4 hover:-translate-y-0.5">
+              <Link to="/historique" className="flex items-center gap-3 rounded-2xl border border-edge bg-sakura-pale p-4 hover:-translate-y-0.5">
                 <span className="font-manga text-3xl text-sakura-deep">{lived}</span>
                 <span className="text-sm font-bold">quête{lived > 1 ? 's' : ''} vécue{lived > 1 ? 's' : ''}<br /><span className="font-semibold text-ink-3">Journal d’aventure →</span></span>
               </Link>
-              <Link to="/guildes" className="flex items-center gap-3 rounded-2xl border-2 border-ink bg-lav-soft p-4 hover:-translate-y-0.5">
+              <Link to="/guildes" className="flex items-center gap-3 rounded-2xl border border-edge bg-lav-soft p-4 hover:-translate-y-0.5">
                 <span className="flex -space-x-3">{guilds.slice(0, 3).map((g) => <GuildCrest key={g.id} categoryId={g.categoryId} className="size-10" />)}</span>
                 <span className="text-sm font-bold">{guilds.length} guilde{guilds.length > 1 ? 's' : ''}<br /><span className="font-semibold text-ink-3">Mes guildes →</span></span>
               </Link>
@@ -239,7 +239,7 @@ export function MemberProfile() {
 
         <div className="space-y-6">
           {u.bio && <p className="bubble text-base font-semibold">{u.bio}</p>}
-          {!met && <p className="rounded-2xl border-2 border-dashed border-line bg-white p-4 text-sm font-semibold text-ink-2">Vous ne vous êtes pas encore rencontré·es. La connexion devient possible après une quête commune.</p>}
+          {!met && <p className="rounded-2xl border-2 border-dashed border-line bg-surface p-4 text-sm font-semibold text-ink-2">Vous ne vous êtes pas encore rencontré·es. La connexion devient possible après une quête commune.</p>}
 
           <section className="card p-6">
             <h2 className="text-xl">Passions {shared.length > 0 && <span className="text-base font-bold text-sakura-deep">· ★ {shared.length} en commun avec toi</span>}</h2>
@@ -248,11 +248,11 @@ export function MemberProfile() {
 
           {(together.length > 0 || sharedGuilds.length > 0) && (
             <section className="card p-6">
-              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura">絆</span>Votre histoire commune</h2>
+              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">絆</span>Votre histoire commune</h2>
               {sharedGuilds.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-3">
                   {sharedGuilds.map((c) => (
-                    <Link key={c.id} to={`/guildes/${c.id}`} className="flex items-center gap-2 rounded-2xl border-2 border-ink bg-lav-soft py-1.5 pr-4 pl-2 text-sm font-black text-lav-deep hover:-translate-y-0.5">
+                    <Link key={c.id} to={`/guildes/${c.id}`} className="flex items-center gap-2 rounded-2xl border border-edge bg-lav-soft py-1.5 pr-4 pl-2 text-sm font-black text-lav-deep hover:-translate-y-0.5">
                       <GuildCrest categoryId={c.categoryId} className="size-8" /> {c.name}
                     </Link>
                   ))}

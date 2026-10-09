@@ -12,10 +12,10 @@ export function GuildCrest({ categoryId, className = 'size-14', born = false }: 
   const cat = categoryById(categoryId);
   return (
     <svg viewBox="0 0 64 72" className={`shrink-0 ${className}`} aria-hidden="true">
-      <path d="M32 4L58 12V34C58 52 46 63 32 68C18 63 6 52 6 34V12Z" fill={cat.color} stroke="#2b2440" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M32 4L58 12V34C58 52 46 63 32 68C18 63 6 52 6 34V12Z" fill={cat.color} stroke="#30283D" strokeWidth="3" strokeLinejoin="round" />
       <path d="M32 10L52 16V34C52 48 43 57 32 61C21 57 12 48 12 34V16Z" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="2" />
-      <text x="32" y="44" textAnchor="middle" fontFamily="'Zen Maru Gothic', sans-serif" fontWeight="900" fontSize="24" fill="#fff">{cat.kanji}</text>
-      {born && <path d="M52 2l2 4.4 4.6 1-3.4 3.2.8 4.8L52 13.2l-4 2.2.8-4.8L45.4 7.4l4.6-1z" fill="#ffd166" stroke="#2b2440" strokeWidth="1.6" strokeLinejoin="round" />}
+      <text x="32" y="44" textAnchor="middle" fontFamily="'Zen Maru Gothic', sans-serif" fontWeight="900" fontSize="24" fill="#252238">{cat.kanji}</text>
+      {born && <path d="M52 2l2 4.4 4.6 1-3.4 3.2.8 4.8L52 13.2l-4 2.2.8-4.8L45.4 7.4l4.6-1z" fill="#D7B77A" stroke="#30283D" strokeWidth="1.6" strokeLinejoin="round" />}
     </svg>
   );
 }
@@ -31,15 +31,15 @@ export function GuildCard({ c }: { c: Community }) {
   const shared = c.tags.filter((t) => me?.interests.includes(t));
   const ep = next ? episodeOf(activities, next) : null;
   return (
-    <article className="card hover-lift relative flex flex-col overflow-hidden">
+    <article className="paper hover-lift relative flex flex-col overflow-hidden">
       <Link to={`/guildes/${c.id}`} className="absolute inset-0" aria-label={`Voir la guilde ${c.name}`} />
-      <div className="relative flex items-start gap-4 border-b-2 border-ink p-5" style={{ background: cat.tint }}>
+      <div className="relative flex items-start gap-4 border-b border-edge p-5" style={{ background: cat.tint }}>
         <div className="screentone absolute inset-0 opacity-15" style={{ color: cat.color }} aria-hidden="true" />
         <GuildCrest categoryId={c.categoryId} born={c.origin === 'cercle'} className="relative size-16" />
         <div className="relative min-w-0">
           <div className="flex flex-wrap gap-1.5">
-            {c.origin === 'cercle' && <span className="sticker bg-white text-lav-deep">Née d’une quête</span>}
-            {member && <span className="sticker bg-lav-deep text-white">Membre</span>}
+            {c.origin === 'cercle' && <span className="sticker bg-surface text-lav-deep">Née d’une quête</span>}
+            {member && <span className="sticker bg-lavender text-on-accent">Membre</span>}
           </div>
           <h3 className="mt-2 text-xl leading-tight">{c.name}</h3>
           <p className="text-sm font-semibold text-ink-2">{c.tagline}</p>

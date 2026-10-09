@@ -14,7 +14,7 @@ import { ME } from '../store/state';
 export function PageHeader({ jp, kicker, title, text }: { jp: string; kicker: string; title: string; text?: string }) {
   return (
     <header className="mb-8">
-      <span className="sticker bg-white text-sakura-deep"><span className="font-jp">{jp}</span> {kicker}</span>
+      <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">{jp}</span> {kicker}</span>
       <h1 className="mt-3 font-manga text-4xl font-normal md:text-5xl">{title}</h1>
       {text && <p className="mt-2 max-w-2xl font-semibold text-ink-2">{text}</p>}
     </header>
@@ -47,7 +47,7 @@ export function Agenda() {
                     const rec = recommendFor(a);
                     const c = a.communityId ? getCommunity(a.communityId) : undefined;
                     return (
-                      <Link key={a.id} to={`/activites/${a.id}`} className="card hover-lift flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
+                      <Link key={a.id} to={`/activites/${a.id}`} className="paper hover-lift flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
                         <DateTicket iso={a.startsAt} />
                         <div className="w-16 shrink-0 text-center">
                           <p className="font-manga text-base">{formatTime(a.startsAt).replace(' h ', 'h')}</p>
@@ -56,7 +56,7 @@ export function Agenda() {
                           <p className="flex items-center gap-2 font-display font-black"><CategoryDot id={a.categoryId} /> <span className="truncate">{a.title}</span></p>
                           <p className="truncate text-sm text-ink-2">{a.venue} · {a.district}</p>
                           <div className="mt-1.5 flex flex-wrap gap-1.5">
-                            {c && <span className="chip bg-lav-soft text-lav"><Icon name="repeat" className="size-3" /> {c.name}</span>}
+                            {c && <span className="chip bg-lav-soft text-lav-deep"><Icon name="repeat" className="size-3" /> {c.name}</span>}
                             {rec.familiar.length > 0 && <span className="chip bg-sakura-soft text-sakura-deep">{rec.familiar.length} compagnon{rec.familiar.length > 1 ? 's' : ''} de route</span>}
                           </div>
                         </div>
@@ -95,8 +95,8 @@ export function History() {
           past.map((a) => {
             const fb = state.feedback[a.id];
             return (
-              <div key={a.id} className="card flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
-                <div className="relative hidden h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 border-ink sm:block"><Scene scene={categoryById(a.categoryId).scene} seed={a.id} className="absolute inset-0 h-full w-full" /></div>
+              <div key={a.id} className="paper flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
+                <div className="relative hidden h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-edge sm:block"><Scene scene={categoryById(a.categoryId).scene} seed={a.id} className="absolute inset-0 h-full w-full" /></div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-black text-ink-3">{relativeDay(a.startsAt)}</p>
                   <Link to={`/activites/${a.id}`} className="flex items-center gap-2 font-display font-black hover:underline"><CategoryDot id={a.categoryId} /> {a.title}</Link>

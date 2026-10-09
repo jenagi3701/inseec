@@ -64,19 +64,19 @@ function Form({ activity }: { activity: Activity }) {
         </div>
       </section>
 
-      <section className="panel relative mt-10 overflow-hidden bg-lav-deep p-6 text-white">
+      <section className="panel dusk relative mt-10 overflow-hidden p-6">
         <div className="speedlines absolute inset-[-60%] text-white opacity-[0.06]" aria-hidden="true" />
         <h2 className="relative font-manga text-2xl font-normal">Aimerais-tu revoir cette équipe ?</h2>
         <div className="relative mt-4 flex items-end gap-3"><AvatarStack users={others} size="md" /> <span className="bubble mb-7 text-xs text-ink">On se revoit ?</span></div>
         <div className="mt-5 grid gap-2 sm:grid-cols-3">
           {([['oui', 'Oui, avec plaisir'], ['peut-etre', 'Peut-être'], ['non', 'Pas cette fois']] as const).map(([v, l]) => (
             <button key={v} type="button" aria-pressed={meetAgain === v} onClick={() => { setMeetAgain(v); setError(''); }}
-              className={`relative rounded-2xl border-2 px-4 py-3 text-sm font-extrabold transition ${meetAgain === v ? 'border-ink bg-white text-lav-deep shadow-[3px_3px_0_0_#2b2440]' : 'border-white/40 hover:bg-white/10'}`}>
+              className={`relative rounded-2xl border-2 px-4 py-3 text-sm font-extrabold transition ${meetAgain === v ? 'border-edge bg-surface text-lav-deep shadow-[var(--shadow-sm)]' : 'border-white/40 hover:bg-surface/10'}`}>
               {l}
             </button>
           ))}
         </div>
-        <p className="relative mt-3 text-xs font-semibold text-white/70">« Pas cette fois » est une réponse parfaitement normale. Personne n’en est informé.</p>
+        <p className="relative mt-3 text-xs font-semibold text-ink-2">« Pas cette fois » est une réponse parfaitement normale. Personne n’en est informé.</p>
       </section>
 
       <section className="mt-10">
@@ -84,7 +84,7 @@ function Form({ activity }: { activity: Activity }) {
         <p className="mt-1 text-sm text-ink-2">Facultatif. La connexion n’apparaît que si l’autre personne t’a aussi choisi·e. Sinon, rien ne se passe — et personne ne le sait.</p>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {others.map((u) => (
-            <label key={u!.id} className="flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white p-3 has-[:checked]:border-ink has-[:checked]:bg-lav-soft has-[:checked]:shadow-[3px_3px_0_0_#2b2440]">
+            <label key={u!.id} className="flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-surface p-3 has-[:checked]:border-sakura has-[:checked]:bg-lav-soft has-[:checked]:shadow-[var(--shadow-sm)]">
               <input type="checkbox" className="size-4 accent-[var(--color-lav)]" checked={connectWith.includes(u!.id)}
                 onChange={(e) => setConnectWith((c) => (e.target.checked ? [...c, u!.id] : c.filter((x) => x !== u!.id)))} />
               <Avatar user={u} size="md" />
@@ -101,7 +101,7 @@ function Form({ activity }: { activity: Activity }) {
 
       {error && <p className="mt-6 rounded-xl bg-sakura-soft p-3 text-sm text-sakura-deep" role="alert">{error}</p>}
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-        <button className="inline-flex items-center gap-1.5 text-sm text-ink-3 hover:text-sakura" onClick={() => setReportOpen(true)}><Icon name="flag" className="size-4" /> Un problème pendant l’activité ?</button>
+        <button className="inline-flex items-center gap-1.5 text-sm text-ink-3 hover:text-sakura-deep" onClick={() => setReportOpen(true)}><Icon name="flag" className="size-4" /> Un problème pendant l’activité ?</button>
         <button className="btn-primary px-6 py-3" onClick={submit}>Envoyer mon bilan</button>
       </div>
       <ReportDialog open={reportOpen} onClose={() => setReportOpen(false)} targetType="activity" targetId={activity.id} targetLabel="un problème" />
@@ -160,11 +160,11 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
 
       {mutual.length > 0 && (
         <div className="pop panel relative mt-6 overflow-hidden bg-sakura-soft p-5">
-          <div className="speedlines absolute inset-[-80%] text-sakura opacity-15" aria-hidden="true" />
+          <div className="speedlines absolute inset-[-80%] text-sakura-deep opacity-15" aria-hidden="true" />
           <p className="relative font-manga text-xl text-sakura-deep">Connexion mutuelle 🎉</p>
           <div className="relative mt-3 flex flex-wrap gap-3">
             {mutual.map((c) => (
-              <Link key={c.userId} to={`/profil/${c.userId}`} className="flex items-center gap-2 rounded-full border-2 border-ink bg-white py-1 pr-4 pl-1 text-sm font-black">
+              <Link key={c.userId} to={`/profil/${c.userId}`} className="flex items-center gap-2 rounded-full border border-edge bg-surface py-1 pr-4 pl-1 text-sm font-black">
                 <Avatar user={getUser(c.userId)} size="sm" /> {getUser(c.userId)?.firstName}
               </Link>
             ))}
@@ -179,10 +179,10 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
           {/* Same Circle */}
           {community ? (
             <section className="panel overflow-hidden">
-              <div className="border-b-2 border-ink bg-lav-deep p-6 text-white">
-                <span className="sticker bg-white text-lav-deep">Même équipe, nouvel épisode</span>
+              <div className="dusk border-b border-edge p-6">
+                <span className="sticker bg-surface text-lav-deep">Même équipe, nouvel épisode</span>
                 <h2 className="mt-3 font-manga text-2xl font-normal">{community.name} se retrouve bientôt</h2>
-                <p className="mt-1 text-white/75">{community.rhythm}. {alsoYes.length} personnes de cette équipe ont aussi envie de revenir (simulation démo).</p>
+                <p className="mt-1 text-ink-2">{community.rhythm}. {alsoYes.length} personnes de cette équipe ont aussi envie de revenir (simulation démo).</p>
               </div>
               <div className="grid gap-3 p-6 sm:grid-cols-2">
                 {nextOfCommunity ? (
@@ -207,10 +207,10 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
             </section>
           ) : (
             <section className="panel overflow-hidden">
-              <div className="border-b-2 border-ink bg-lav-deep p-6 text-white">
-                <span className="sticker bg-white text-lav-deep">Même équipe, nouvel épisode</span>
+              <div className="dusk border-b border-edge p-6">
+                <span className="sticker bg-surface text-lav-deep">Même équipe, nouvel épisode</span>
                 <h2 className="mt-3 font-manga text-2xl font-normal">{alsoYes.length} personne{alsoYes.length > 1 ? 's' : ''} sur {others.length} veulent aussi se revoir</h2>
-                <div className="mt-3 flex items-center gap-3"><AvatarStack users={alsoYes.map(getUser)} /><span className="text-sm text-white/70">Réponses simulées pour la démo</span></div>
+                <div className="mt-3 flex items-center gap-3"><AvatarStack users={alsoYes.map(getUser)} /><span className="text-sm text-ink-2">Réponses simulées pour la démo</span></div>
               </div>
               <div className="p-6">
                 {alreadyCircle ? (
@@ -247,7 +247,7 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
                 </li>
               ))}
             </ul>
-            <Link to={`/proposer${alreadyCircle ? `?cercle=${alreadyCircle.id}` : community ? `?cercle=${community.id}` : ''}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-lav"><Icon name="plus" className="size-4" /> Proposer une nouvelle quête</Link>
+            <Link to={`/proposer${alreadyCircle ? `?cercle=${alreadyCircle.id}` : community ? `?cercle=${community.id}` : ''}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-lav-deep"><Icon name="plus" className="size-4" /> Proposer une nouvelle quête</Link>
           </section>
         </div>
       ) : (

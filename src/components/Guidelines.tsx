@@ -21,7 +21,7 @@ export function GuidelinesList({ compact = false }: { compact?: boolean }) {
   return (
     <ul className={`grid gap-3 ${compact ? '' : 'sm:grid-cols-2'}`}>
       {GUIDELINES.map((g) => (
-        <li key={g.title} className="flex gap-3 rounded-2xl border-2 border-ink bg-white p-4">
+        <li key={g.title} className="flex gap-3 rounded-2xl border border-edge bg-surface p-4">
           <Icon name="leaf" className="mt-0.5 size-5 shrink-0 text-matcha" />
           <div>
             <p className="text-sm font-black">{g.title}</p>
