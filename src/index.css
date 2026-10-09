@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-jp: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+
+  --color-paper: #fbf7f0;
+  --color-paper-2: #f3ece1;
+  --color-ink: #1d1b26;
+  --color-ink-2: #4a4757;
+  --color-ink-3: #77737f;
+  --color-line: #e6ddcf;
+  --color-shu: #d9472b; /* vermilion — primary */
+  --color-shu-dark: #b8381f;
+  --color-shu-soft: #fbe4dc;
+  --color-ai: #2f4a8a; /* indigo — "reconnect" accent */
+  --color-ai-soft: #e1e7f5;
+  --color-matcha: #5f7f4e;
+  --color-matcha-soft: #e4ecdd;
+  --color-kin: #c07a1c;
+
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+  /* Grid items never force horizontal overflow on small screens */
+  .grid > * {
+    min-width: 0;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ai);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-shu text-white hover:bg-shu-dark;
+}
+@utility btn-ink {
+  @apply btn bg-ink text-paper hover:bg-ink-2;
+}
+@utility btn-ai {
+  @apply btn bg-ai text-white hover:opacity-90;
+}
+@utility btn-ghost {
+  @apply btn border border-line bg-white/60 text-ink hover:border-ink-3 hover:bg-white;
+}
+@utility btn-sm {
+  @apply px-3.5 py-1.5 text-xs;
+}
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line bg-white;
+}
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+}
+@utility input {
+  @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-ink-3 focus:border-ai focus:ring-2 focus:ring-ai/15;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-semibold text-ink;
+}
+@utility eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.16em] text-ink-3;
+}
+@utility toggle-pill {
+  @apply rounded-full border px-3.5 py-2 text-sm font-medium transition;
+  &[aria-pressed='true'] {
+    @apply border-ink bg-ink text-paper;
+  }
+  &[aria-pressed='false'] {
+    @apply border-line bg-white text-ink-2 hover:border-ink-3;
+  }
+}
+
+/* Manga screentone */
+.screentone {
+  background-image: radial-gradient(currentColor 1px, transparent 1.2px);
+  background-size: 8px 8px;
+}
+.speedlines {
+  background-image: repeating-linear-gradient(115deg, currentColor 0 1px, transparent 1px 14px);
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up {
+  animation: fade-up 0.35s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; }
+}

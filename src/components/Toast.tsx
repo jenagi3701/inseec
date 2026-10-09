@@ -1,0 +1,29 @@
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { Icon } from './Icon';
+
+type Toast = { id: number; text: string };
+const Ctx = createContext<(text: string) => void>(() => {});
+
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const push = useCallback((text: string) => {
+    const id = Date.now() + Math.random();
+    setToasts((t) => [...t, { id, text }]);
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3200);
+  }, []);
+  return (
+    <Ctx.Provider value={push}>
+      {children}
+      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-[60] flex flex-col items-center gap-2 px-4 md:bottom-6" role="status" aria-live="polite">
+        {toasts.map((t) => (
+          <div key={t.id} className="fade-up flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper shadow-lg">
+            <Icon name="check" className="size-4 text-matcha-soft" />
+            {t.text}
+          </div>
+        ))}
+      </div>
+    </Ctx.Provider>
+  );
+}
+
+export const useToast = () => useContext(Ctx);
