@@ -24,6 +24,7 @@ Other scripts:
 | `npm run preview` | Serves the built bundle |
 | `npm test` | Runs unit tests (recommendation rules, reducer, demo data integrity) |
 | `npm run typecheck` | TypeScript only |
+| `npm run build:artifact` | Builds a single self-contained HTML page (`dist-artifact/kizuna.html`, in-memory routing, everything inline) for hosting in a sandboxed viewer such as a claude.ai artifact |
 
 No API keys, environment variables or paid services are needed.
 

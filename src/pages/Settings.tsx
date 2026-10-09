@@ -47,6 +47,14 @@ export default function Settings() {
   }, [hash]);
 
   const exportData = () => {
+    if (__EMBEDDED__) {
+      // Downloads are blocked in the embedded viewer: copy the JSON instead.
+      navigator.clipboard
+        .writeText(JSON.stringify(state, null, 2))
+        .then(() => toast('Données copiées dans le presse-papiers (JSON)'))
+        .catch(() => toast('Copie impossible dans cette vue. Lance l’app en local pour exporter.'));
+      return;
+    }
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -171,7 +179,7 @@ export default function Settings() {
         <div className="card p-6">
           <p className="text-sm text-ink-2">Kizuna ne collecte que ce qui sert aux recommandations : prénom, ville, passions, disponibilités et préférences. Pas de photo obligatoire, pas de données sensibles. Dans ce prototype, tout reste dans ton navigateur (localStorage).</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <button className="btn-ghost" onClick={exportData}><Icon name="arrowRight" className="size-4 rotate-90" /> Exporter mes données (JSON)</button>
+            <button className="btn-ghost" onClick={exportData}><Icon name="arrowRight" className="size-4 rotate-90" /> {__EMBEDDED__ ? 'Copier mes données (JSON)' : 'Exporter mes données (JSON)'}</button>
             <button className="btn-ghost text-sakura-deep" onClick={() => setDeleteOpen(true)}><Icon name="x" className="size-4" /> Supprimer mon compte</button>
           </div>
         </div>
