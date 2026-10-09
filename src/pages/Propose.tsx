@@ -95,8 +95,8 @@ export default function Propose() {
   return (
     <div className="mx-auto max-w-2xl">
       <Link to={circle ? `/guildes/${circle.id}` : '/activites'} className="mb-5 flex w-fit items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Retour</Link>
-      <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">依頼</span> {circle ? `Nouvel épisode pour « ${circle.name} »` : 'Organiser'}</span>
-      <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">{circle ? 'Proposer un épisode' : 'Proposer une quête'}</h1>
+      <span className="sticker bg-surface text-sakura-deep">{circle ? `Nouvel épisode pour « ${circle.name} »` : 'Organiser'}</span>
+      <h1 className="mt-2 font-manga text-4xl font-bold md:text-5xl">{circle ? 'Proposer un épisode' : 'Proposer une quête'}</h1>
       <p className="mt-2 font-semibold text-ink-2">Petite équipe, lieu public, prix clair : c’est tout ce qu’il faut pour une bonne quête.</p>
 
       <form onSubmit={submit} noValidate className="mt-8 space-y-6">

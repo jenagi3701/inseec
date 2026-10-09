@@ -11,11 +11,11 @@ import { interestLabel } from '../data/taxonomy';
 import { formatShortDay, formatTime, relativeDay } from '../lib/format';
 
 const RATINGS = [
-  { v: 1, label: 'Pas pour moi', face: '😕' },
-  { v: 2, label: 'Bof', face: '😐' },
-  { v: 3, label: 'Sympa', face: '🙂' },
-  { v: 4, label: 'Très bien', face: '😄' },
-  { v: 5, label: 'Génial', face: '🤩' },
+  { v: 1, label: 'Pas pour moi' },
+  { v: 2, label: 'Bof' },
+  { v: 3, label: 'Sympa' },
+  { v: 4, label: 'Très bien' },
+  { v: 5, label: 'Génial' },
 ] as const;
 
 export default function Feedback() {
@@ -44,12 +44,12 @@ function Form({ activity }: { activity: Activity }) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Link to={`/activites/${activity.id}`} className="mb-5 inline-flex items-center gap-1.5 text-sm font-extrabold text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> La quête</Link>
+      <Link to={`/activites/${activity.id}`} className="mb-5 inline-flex items-center gap-1.5 text-sm font-bold text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> La quête</Link>
       <div className="panel relative mb-2 overflow-hidden">
         <CoverArt activity={activity} className="h-36" />
       </div>
       <span className="sticker mt-6 bg-lav-soft text-lav-deep">Fin d’épisode · {relativeDay(activity.startsAt)} · bilan privé</span>
-      <h1 className="mt-3 font-manga text-3xl font-normal sm:text-4xl">{activity.title}</h1>
+      <h1 className="mt-3 font-manga text-3xl font-bold sm:text-4xl">{activity.title}</h1>
       <p className="mt-2 font-semibold text-ink-2">Tes réponses ne sont jamais montrées aux autres. Elles servent à former des guildes quand l’envie est partagée.</p>
 
       <section className="mt-10">
@@ -58,20 +58,19 @@ function Form({ activity }: { activity: Activity }) {
           {RATINGS.map((r) => (
             <button key={r.v} type="button" aria-pressed={rating === r.v} onClick={() => { setRating(r.v); setError(''); }}
               className="tile px-1 py-3 text-center text-xs font-bold sm:text-sm" aria-label={`${r.v} sur 5 : ${r.label}`}>
-              <span className="block text-3xl" aria-hidden="true">{r.face}</span>{r.label}
+              <span className="block font-manga text-2xl font-bold" aria-hidden="true">{r.v}</span>{r.label}
             </button>
           ))}
         </div>
       </section>
 
       <section className="panel dusk relative mt-10 overflow-hidden p-6">
-        <div className="speedlines absolute inset-[-60%] text-white opacity-[0.06]" aria-hidden="true" />
-        <h2 className="relative font-manga text-2xl font-normal">Aimerais-tu revoir cette équipe ?</h2>
-        <div className="relative mt-4 flex items-end gap-3"><AvatarStack users={others} size="md" /> <span className="bubble mb-7 text-xs text-ink">On se revoit ?</span></div>
+        <h2 className="relative font-manga text-2xl font-bold">Aimerais-tu revoir cette équipe ?</h2>
+        <div className="relative mt-4 flex items-end gap-3"><AvatarStack users={others} size="md" /></div>
         <div className="mt-5 grid gap-2 sm:grid-cols-3">
           {([['oui', 'Oui, avec plaisir'], ['peut-etre', 'Peut-être'], ['non', 'Pas cette fois']] as const).map(([v, l]) => (
             <button key={v} type="button" aria-pressed={meetAgain === v} onClick={() => { setMeetAgain(v); setError(''); }}
-              className={`relative rounded-2xl border-2 px-4 py-3 text-sm font-extrabold transition ${meetAgain === v ? 'border-edge bg-surface text-lav-deep shadow-[var(--shadow-sm)]' : 'border-white/40 hover:bg-surface/10'}`}>
+              className={`relative rounded-2xl border-2 px-4 py-3 text-sm font-bold transition ${meetAgain === v ? 'border-edge bg-surface text-lav-deep shadow-[var(--shadow-sm)]' : 'border-white/40 hover:bg-surface/10'}`}>
               {l}
             </button>
           ))}
@@ -88,14 +87,14 @@ function Form({ activity }: { activity: Activity }) {
               <input type="checkbox" className="size-4 accent-[var(--color-lav)]" checked={connectWith.includes(u!.id)}
                 onChange={(e) => setConnectWith((c) => (e.target.checked ? [...c, u!.id] : c.filter((x) => x !== u!.id)))} />
               <Avatar user={u} size="md" />
-              <span className="text-sm font-black">{u!.firstName}{u!.title ? <span className="block text-xs font-semibold text-ink-3">{u!.title}</span> : null}</span>
+              <span className="text-sm font-bold">{u!.firstName}{u!.title ? <span className="block text-xs font-semibold text-ink-3">{u!.title}</span> : null}</span>
             </label>
           ))}
         </div>
       </section>
 
       <section className="mt-10">
-        <label className="font-display text-xl font-black" htmlFor="note">Un mot pour l’organisateur·rice ?</label>
+        <label className="font-display text-xl font-bold" htmlFor="note">Un mot pour l’organisateur·rice ?</label>
         <textarea id="note" className="input mt-3 min-h-24" maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ce qui t’a plu, ce qui pourrait être amélioré…" />
       </section>
 
@@ -156,15 +155,14 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
     <div className="mx-auto max-w-3xl">
       <Link to="/historique" className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Historique</Link>
       <span className="sticker bg-matcha-soft text-matcha">Bilan envoyé · {activity.title}</span>
-      <h1 className="mt-3 font-manga text-3xl font-normal sm:text-4xl">{feedback.meetAgain === 'non' ? 'Merci pour ton retour.' : 'Et maintenant, on se revoit ?'}</h1>
+      <h1 className="mt-3 font-manga text-3xl font-bold sm:text-4xl">{feedback.meetAgain === 'non' ? 'Merci pour ton retour.' : 'Et maintenant, on se revoit ?'}</h1>
 
       {mutual.length > 0 && (
-        <div className="pop panel relative mt-6 overflow-hidden bg-sakura-soft p-5">
-          <div className="speedlines absolute inset-[-80%] text-sakura-deep opacity-15" aria-hidden="true" />
-          <p className="relative font-manga text-xl text-sakura-deep">Connexion mutuelle 🎉</p>
+        <div className="panel relative mt-6 overflow-hidden bg-sakura-soft p-5">
+          <p className="relative font-manga text-xl text-sakura-deep">Connexion mutuelle</p>
           <div className="relative mt-3 flex flex-wrap gap-3">
             {mutual.map((c) => (
-              <Link key={c.userId} to={`/profil/${c.userId}`} className="flex items-center gap-2 rounded-full border border-edge bg-surface py-1 pr-4 pl-1 text-sm font-black">
+              <Link key={c.userId} to={`/profil/${c.userId}`} className="flex items-center gap-2 rounded-full border border-edge bg-surface py-1 pr-4 pl-1 text-sm font-bold">
                 <Avatar user={getUser(c.userId)} size="sm" /> {getUser(c.userId)?.firstName}
               </Link>
             ))}
@@ -181,7 +179,7 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
             <section className="panel overflow-hidden">
               <div className="dusk border-b border-edge p-6">
                 <span className="sticker bg-surface text-lav-deep">Même équipe, nouvel épisode</span>
-                <h2 className="mt-3 font-manga text-2xl font-normal">{community.name} se retrouve bientôt</h2>
+                <h2 className="mt-3 font-manga text-2xl font-bold">{community.name} se retrouve bientôt</h2>
                 <p className="mt-1 text-ink-2">{community.rhythm}. {alsoYes.length} personnes de cette équipe ont aussi envie de revenir (simulation démo).</p>
               </div>
               <div className="grid gap-3 p-6 sm:grid-cols-2">
@@ -209,7 +207,7 @@ function FollowUp({ activity, feedback }: { activity: Activity; feedback: Feedba
             <section className="panel overflow-hidden">
               <div className="dusk border-b border-edge p-6">
                 <span className="sticker bg-surface text-lav-deep">Même équipe, nouvel épisode</span>
-                <h2 className="mt-3 font-manga text-2xl font-normal">{alsoYes.length} personne{alsoYes.length > 1 ? 's' : ''} sur {others.length} veulent aussi se revoir</h2>
+                <h2 className="mt-3 font-manga text-2xl font-bold">{alsoYes.length} personne{alsoYes.length > 1 ? 's' : ''} sur {others.length} veulent aussi se revoir</h2>
                 <div className="mt-3 flex items-center gap-3"><AvatarStack users={alsoYes.map(getUser)} /><span className="text-sm text-ink-2">Réponses simulées pour la démo</span></div>
               </div>
               <div className="p-6">

@@ -11,11 +11,11 @@ export const CATEGORIES: Category[] = [
 ];
 
 export const ENERGIES: Energy[] = [
-  { id: 'calme', label: 'Calme & cosy', description: 'Peu de pression, on peut juste être là.', emoji: '🍵' },
-  { id: 'creatif', label: 'Créatif & collaboratif', description: 'On fabrique, on dessine, on cuisine ensemble.', emoji: '🎨' },
-  { id: 'competitif', label: 'Compétitif & énergique', description: 'Tournois, défis, ça bouge.', emoji: '⚡' },
-  { id: 'social', label: 'Social & bavard', description: 'La discussion est au cœur de l’activité.', emoji: '💬' },
-  { id: 'culturel', label: 'Culturel & découverte', description: 'On apprend quelque chose de nouveau.', emoji: '⛩️' },
+  { id: 'calme', label: 'Calme & cosy', description: 'Peu de pression, on peut juste être là.' },
+  { id: 'creatif', label: 'Créatif & collaboratif', description: 'On fabrique, on dessine, on cuisine ensemble.' },
+  { id: 'competitif', label: 'Compétitif & énergique', description: 'Tournois, défis, ça bouge.' },
+  { id: 'social', label: 'Social & bavard', description: 'La discussion est au cœur de l’activité.' },
+  { id: 'culturel', label: 'Culturel & découverte', description: 'On apprend quelque chose de nouveau.' },
 ];
 
 export const INTERESTS: Interest[] = [

@@ -70,12 +70,14 @@ A rainy evening in Tokyo with friends. The page and its sections are midnight-pl
 - **Scope-aware tokens.** The default tokens are the night palette. The `.paper` and `.scope-day` classes re-declare the *same* token names with the day palette, so `text-ink`, `bg-sakura-soft`, `text-sakura-deep`… adapt to the surface they sit on. Accent *text* uses a light shade on night surfaces and a deep shade on cream, so pale pink text never lands on cream. Brand fills (sakura, rain, lavender, lantern, sage) always carry `text-on-accent` (`#252238`).
 - **Contrast.** Every text/surface token pair is at least 4.5:1 (WCAG AA). The requested secondary grey `#81778A` measures about 3.6:1 on both cream and midnight, so it is kept as the `mute` token for icons and dividers. Secondary text uses slightly deeper (cream) or lighter (night) derived greys.
 - **Depth.** Soft shadows, thin warm borders, gentle radial glows of lantern, sakura and rain light in the page background, and a hover glow on cards. No neon outlines or hard offset shadows.
-- **Typography** (Google Fonts, OFL licence): *Dela Gothic One* for manga-style titles, *Zen Maru Gothic* for headings and kanji, *Nunito* for UI text.
+- **Typography** (Google Fonts, OFL licence): *Shippori Mincho*, a Japanese Mincho serif, for titles, and *Zen Kaku Gothic New* for the interface.
 - **Original illustrations** (`src/components/art/`):
   - `Scene.tsx`: six settings (manga café, game room, neighbourhood street, arcade, drawing atelier, riverside). Each has three evening lights: golden hour, sakura dusk, and a rainy night with rain and wet-asphalt reflections. Interiors are lamp-lit, and lanterns and windows glow amber.
   - `AnimeAvatar.tsx`: avatar generator. Guild crests are in `Guild.tsx`, the logo in `ui.tsx`.
   - No copyrighted characters, panels or logos. Franchise names appear only as text tags.
-- **Motion:** floating characters, falling petals, a slow lantern flicker and pop-in bubbles, all disabled under `prefers-reduced-motion`.
+- **Restraint:** the look aims for a credible, editorial product rather than a game UI.
+  - Motion is limited to colour and shadow transitions on hover and focus. There are no floating, falling, popping or tilting elements, and all transitions are disabled under `prefers-reduced-motion`.
+  - No speech bubbles, sparkles, emoji or decorative textures in the interface. Quotes use a thin sakura rule, and the illustrations carry the atmosphere.
 
 ### Vocabulary (French UI)
 

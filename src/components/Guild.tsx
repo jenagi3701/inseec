@@ -31,10 +31,9 @@ export function GuildCard({ c }: { c: Community }) {
   const shared = c.tags.filter((t) => me?.interests.includes(t));
   const ep = next ? episodeOf(activities, next) : null;
   return (
-    <article className="paper hover-lift relative flex flex-col overflow-hidden">
+    <article className="paper relative flex flex-col overflow-hidden">
       <Link to={`/guildes/${c.id}`} className="absolute inset-0" aria-label={`Voir la guilde ${c.name}`} />
       <div className="relative flex items-start gap-4 border-b border-edge p-5" style={{ background: cat.tint }}>
-        <div className="screentone absolute inset-0 opacity-15" style={{ color: cat.color }} aria-hidden="true" />
         <GuildCrest categoryId={c.categoryId} born={c.origin === 'cercle'} className="relative size-16" />
         <div className="relative min-w-0">
           <div className="flex flex-wrap gap-1.5">

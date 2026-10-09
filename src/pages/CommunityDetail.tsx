@@ -31,7 +31,7 @@ export default function CommunityDetail() {
 
   return (
     <div>
-      <Link to="/guildes" className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-surface hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes guildes</Link>
+      <Link to="/guildes" className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-bold text-ink-2 hover:bg-surface hover:text-ink"><Icon name="arrowLeft" className="size-4" /> Mes guildes</Link>
 
       {/* ——— Guild banner ——— */}
       <header className="panel relative overflow-hidden">
@@ -45,7 +45,7 @@ export default function CommunityDetail() {
               <span className="sticker scope-day bg-surface" style={{ color: cat.ink }}>{cat.label}</span>
               {member && <span className="sticker bg-lavender text-on-accent">Membre</span>}
             </div>
-            <h1 className="mt-3 font-manga text-4xl leading-tight font-normal md:text-5xl">{c.name}</h1>
+            <h1 className="mt-3 font-manga text-4xl leading-tight font-bold md:text-5xl">{c.name}</h1>
             <p className="mt-1 font-display text-xl font-bold text-ink-2">{c.tagline}</p>
             <p className="mt-3 font-semibold text-ink-2">{c.description}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -72,7 +72,7 @@ export default function CommunityDetail() {
         ].map(([k, v, icon]) => (
           <div key={k} className="card flex items-center gap-3 p-4">
             <span className="inline-flex size-10 items-center justify-center rounded-xl border border-edge bg-lav-soft text-lav-deep"><Icon name={icon as 'users'} className="size-5" /></span>
-            <div><p className="text-[11px] font-black tracking-wider text-ink-3 uppercase">{k}</p><p className="font-bold">{v}</p></div>
+            <div><p className="text-[11px] font-bold tracking-wider text-ink-3 uppercase">{k}</p><p className="font-bold">{v}</p></div>
           </div>
         ))}
       </div>
@@ -94,10 +94,10 @@ export default function CommunityDetail() {
                       <span className={`relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-edge font-manga text-sm ${isNext ? 'bg-sakura text-on-accent' : done ? 'bg-lav-soft text-lav-deep' : 'bg-surface'}`} style={{ boxShadow: 'var(--shadow-sm)' }}>
                         {i + 1}
                       </span>
-                      <Link to={`/activites/${a.id}`} className={`card hover-lift flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 px-4 py-3 ${done ? 'bg-cream' : ''}`}>
+                      <Link to={`/activites/${a.id}`} className={`card flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 px-4 py-3 ${done ? 'bg-cream' : ''}`}>
                         <div className="min-w-0">
-                          <p className="text-[11px] font-black tracking-wider uppercase text-ink-3">Épisode {i + 1} · {formatShortDay(a.startsAt)} · {formatTime(a.startsAt)}</p>
-                          <p className="truncate font-display font-black">{a.title}</p>
+                          <p className="text-[11px] font-bold tracking-wider uppercase text-ink-3">Épisode {i + 1} · {formatShortDay(a.startsAt)} · {formatTime(a.startsAt)}</p>
+                          <p className="truncate font-display font-bold">{a.title}</p>
                         </div>
                         <span className={`sticker ${done ? (mine ? 'bg-lav-soft text-lav-deep' : 'bg-cream-2 text-ink-3') : mine ? 'bg-matcha-soft text-matcha' : isNext ? 'bg-sakura-soft text-sakura-deep' : 'bg-surface text-ink-3'}`}>
                           {done ? (mine ? 'Vécu ensemble' : 'Passé') : mine ? 'Inscrit·e' : isNext ? 'Prochain épisode' : 'À venir'}
@@ -109,7 +109,7 @@ export default function CommunityDetail() {
                 {member && (
                   <li className="relative flex items-center gap-4">
                     <span className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-ink-3 bg-surface text-ink-3"><Icon name="plus" className="size-5" /></span>
-                    <Link to={`/proposer?cercle=${c.id}`} className="font-extrabold text-lav-deep hover:underline">Écrire l’épisode suivant…</Link>
+                    <Link to={`/proposer?cercle=${c.id}`} className="font-bold text-lav-deep hover:underline">Écrire l’épisode suivant…</Link>
                   </li>
                 )}
               </ol>
@@ -145,7 +145,7 @@ export default function CommunityDetail() {
                     <Link to={m === ME ? '/profil' : `/profil/${m}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink-3 hover:bg-cream">
                       <Avatar user={u} size="md" />
                       <div className="min-w-0">
-                        <p className="flex flex-wrap items-center gap-1 text-sm font-black">
+                        <p className="flex flex-wrap items-center gap-1 text-sm font-bold">
                           {m === ME ? 'Toi' : u.firstName}
                           {m === c.organizerId && <span className="chip bg-peach px-1.5 py-0 text-[10px] text-peach-deep">Maître de guilde</span>}
                           {familiarIds.has(m) && <span className="chip bg-lav-soft px-1.5 py-0 text-[10px] text-lav-deep">Déjà rencontré·e</span>}

@@ -40,7 +40,6 @@ export interface Energy {
   id: EnergyId;
   label: string;
   description: string;
-  emoji: string;
 }
 
 export type InterestGroup = 'genre' | 'fandom' | 'loisir' | 'culture';

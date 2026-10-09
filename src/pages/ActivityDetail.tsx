@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../store/AppContext';
 import { useJoin, SaveButton, DateTicket } from '../components/ActivityCard';
 import { Icon, type IconName } from '../components/Icon';
-import { Avatar, CoverArt, EmptyState, Modal, PartySlots, Sparkle } from '../components/ui';
+import { Avatar, CoverArt, EmptyState, Modal, PartySlots } from '../components/ui';
 import { GuildCrest } from '../components/Guild';
 import { InterestBadge } from '../components/CharacterCard';
 import { ReportDialog } from '../components/ReportDialog';
@@ -30,18 +30,18 @@ function Info({ icon, label, children }: { icon: IconName; label: string; childr
         <Icon name={icon} className="size-[18px]" strokeWidth={2} />
       </span>
       <div>
-        <p className="text-[11px] font-black tracking-wider text-ink-3 uppercase">{label}</p>
+        <p className="text-[11px] font-bold tracking-wider text-ink-3 uppercase">{label}</p>
         <div className="text-sm font-semibold">{children}</div>
       </div>
     </div>
   );
 }
 
-function Section({ title, jp, children, className = '', aside }: { title: string; jp?: string; children: ReactNode; className?: string; aside?: ReactNode }) {
+function Section({ title, children, className = '', aside }: { title: string; jp?: string; children: ReactNode; className?: string; aside?: ReactNode }) {
   return (
     <section className={`card p-6 ${className}`}>
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl">{jp && <span className="mr-2 font-jp text-sakura-deep">{jp}</span>}{title}</h2>
+        <h2 className="text-xl">{title}</h2>
         {aside}
       </div>
       <div className="mt-4">{children}</div>
@@ -71,7 +71,6 @@ function Detail({ id }: { id: string }) {
   const hasBlocked = activity.participantIds.some((p) => blocked.has(p));
   const messages = state.messages.filter((m) => m.activityId === activity.id && !blocked.has(m.authorId));
   const feedback = state.feedback[activity.id];
-  const speakers = participants.filter((u) => u!.id !== ME);
 
   const send = (e: FormEvent) => {
     e.preventDefault();
@@ -86,14 +85,14 @@ function Detail({ id }: { id: string }) {
 
   return (
     <div className="pb-20 lg:pb-0">
-      <button onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-surface hover:text-ink">
+      <button onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-bold text-ink-2 hover:bg-surface hover:text-ink">
         <Icon name="arrowLeft" className="size-4" /> Retour
       </button>
 
       {/* ——— Quest hero ——— */}
       <div className="panel overflow-hidden">
         <div className="relative border-b border-edge">
-          <CoverArt activity={activity} className="h-52 md:h-72" large>
+          <CoverArt activity={activity} className="h-44 md:h-60" large>
             <div className="absolute top-3 right-3"><SaveButton activityId={activity.id} /></div>
             {ep && <span className="sticker absolute bottom-3 left-3 bg-lavender text-on-accent">Épisode {ep}{community ? ` · ${community.name}` : ''}</span>}
           </CoverArt>
@@ -111,12 +110,12 @@ function Detail({ id }: { id: string }) {
               ) : (
                 <span className="chip border-[1.5px] border-sakura/30 bg-sakura-pale text-sakura-deep">Quête unique · découverte</span>
               )}
-              <span className="chip bg-cream-2 text-ink-2">{energy.emoji} {energy.label}</span>
-              {activity.firstTimerFriendly && <span className="chip bg-matcha-soft text-matcha">🌱 Idéal pour une première fois</span>}
+              <span className="chip bg-cream-2 text-ink-2">{energy.label}</span>
+              {activity.firstTimerFriendly && <span className="chip bg-matcha-soft text-matcha">Idéal pour une première fois</span>}
               {activity.userCreated && <span className="chip bg-peach text-peach-deep">Proposée par toi</span>}
             </div>
-            <h1 className="mt-3 font-manga text-3xl leading-tight font-normal md:text-4xl">{activity.title}</h1>
-            <p className="mt-2 font-extrabold text-sakura-deep">{relativeDay(activity.startsAt)} · {formatDateTime(activity.startsAt)}</p>
+            <h1 className="mt-3 font-manga text-3xl leading-tight font-bold md:text-4xl">{activity.title}</h1>
+            <p className="mt-2 font-bold text-sakura-deep">{relativeDay(activity.startsAt)} · {formatDateTime(activity.startsAt)}</p>
           </div>
         </div>
       </div>
@@ -125,7 +124,6 @@ function Detail({ id }: { id: string }) {
         <div className="space-y-6">
           {past && joined && (
             <div className="panel dusk relative overflow-hidden p-6">
-              <div className="speedlines absolute inset-[-60%] text-white opacity-[0.06]" aria-hidden="true" />
               <p className="relative font-manga text-2xl">{feedback ? 'Merci pour ton bilan !' : 'Fin d’épisode. Envie de revoir cette équipe ?'}</p>
               <p className="relative mt-1 text-ink-2">{feedback ? 'Tu peux revenir sur ton bilan à tout moment.' : 'Ta réponse est privée. Elle permet de fonder une guilde si l’envie est partagée.'}</p>
               <Link to={`/activites/${activity.id}/bilan`} className="btn-ghost relative mt-4">{feedback ? 'Voir mon bilan' : 'Donner mon avis'}</Link>
@@ -140,8 +138,7 @@ function Detail({ id }: { id: string }) {
           </Section>
 
           {rec.reasons.length > 0 && !past && (
-            <section className="relative rounded-[var(--radius-card)] border-2 border-dashed border-lav bg-lav-soft/60 p-6">
-              <Sparkle className="absolute -top-3 -left-3 size-7" />
+            <section className="relative rounded-[var(--radius-card)] border border-edge bg-lav-soft/40 p-6">
               <h2 className="text-xl">Pourquoi cette quête pour toi</h2>
               <ul className="mt-3 space-y-1.5">
                 {rec.reasons.map((r) => (
@@ -164,8 +161,8 @@ function Detail({ id }: { id: string }) {
             <div className="mt-6 flex flex-col items-start gap-4 rounded-2xl border border-edge bg-sakura-pale p-4 sm:flex-row sm:items-center">
               <Avatar user={organizer} size="lg" />
               <div className="min-w-0 flex-1 text-sm">
-                <p className="text-[11px] font-black tracking-wider text-sakura-deep uppercase">Guide de la quête</p>
-                <p className="font-display text-lg font-black">{organizer?.firstName}{organizer?.title ? <span className="text-sm font-bold text-ink-3"> · {organizer.title}</span> : null}</p>
+                <p className="text-[11px] font-bold tracking-wider text-sakura-deep uppercase">Guide de la quête</p>
+                <p className="font-display text-lg font-bold">{organizer?.firstName}{organizer?.title ? <span className="text-sm font-bold text-ink-3"> · {organizer.title}</span> : null}</p>
                 <p className="font-semibold text-ink-2">Accueille personnellement les nouvelles personnes et s’engage sur la charte organisateur.</p>
               </div>
               {organizer && organizer.id !== ME && <Link to={`/profil/${organizer.id}`} className="btn-ghost btn-sm">Profil</Link>}
@@ -175,17 +172,10 @@ function Detail({ id }: { id: string }) {
           {activity.icebreakers.length > 0 && (
             <Section title="Pour briser la glace" jp="氷">
               <p className="text-sm font-semibold text-ink-2">Des questions posées sur la table. Personne n’est obligé·e d’y répondre.</p>
-              <div className="mt-5 space-y-5">
-                {activity.icebreakers.map((q, i) => {
-                  const who = speakers[i % Math.max(1, speakers.length)];
-                  const right = i % 2 === 1;
-                  return (
-                    <div key={q} className={`flex items-end gap-2 ${right ? 'flex-row-reverse' : ''}`}>
-                      {who && <Avatar user={who} size="md" />}
-                      <span className={`bubble mb-4 text-[15px] ${right ? 'bubble-right bg-sakura-pale' : ''}`}>« {q} »</span>
-                    </div>
-                  );
-                })}
+              <div className="mt-5 space-y-4">
+                {activity.icebreakers.map((q) => (
+                  <p key={q} className="border-l-2 border-sakura pl-4 font-manga text-[17px] leading-snug">« {q} »</p>
+                ))}
               </div>
             </Section>
           )}
@@ -202,7 +192,7 @@ function Detail({ id }: { id: string }) {
                       <li key={m.id} className={`group flex items-start gap-2.5 ${mine ? 'flex-row-reverse' : ''}`}>
                         <Avatar user={author} size="sm" />
                         <div className={`max-w-[80%] rounded-2xl border border-edge px-3.5 py-2 ${mine ? 'rounded-tr-sm bg-sakura-soft' : 'rounded-tl-sm bg-surface'}`}>
-                          <p className="text-xs font-black">{mine ? 'Toi' : author?.firstName} <span className="font-semibold text-ink-3">· {timeAgo(m.at)}</span></p>
+                          <p className="text-xs font-bold">{mine ? 'Toi' : author?.firstName} <span className="font-semibold text-ink-3">· {timeAgo(m.at)}</span></p>
                           <p className="text-sm font-semibold break-words text-ink-2">{m.text}</p>
                         </div>
                         {!mine && (
@@ -221,13 +211,13 @@ function Detail({ id }: { id: string }) {
                 <p className="mt-2 text-xs font-semibold text-ink-3">Visible uniquement par l’équipe. Pas de coordonnées personnelles dans le fil, s’il te plaît.</p>
               </>
             ) : (
-              <p className="rounded-2xl border-2 border-dashed border-line bg-cream p-4 text-sm font-semibold text-ink-2">
+              <p className="rounded-2xl border border-line bg-cream-2 p-4 text-sm font-semibold text-ink-2">
                 <Icon name="lock" className="mr-1 inline size-4" /> {messages.length} message{messages.length > 1 ? 's' : ''} dans le fil. La discussion est réservée aux membres de l’équipe pour la protéger.
               </p>
             )}
           </Section>
 
-          <Section title="Le code de l’équipe" jp="約" aside={<button className="text-sm font-extrabold text-lav-deep" onClick={() => setShowGuidelines((s) => !s)}>{showGuidelines ? 'Masquer' : 'Afficher'}</button>}>
+          <Section title="Le code de l’équipe" jp="約" aside={<button className="text-sm font-bold text-lav-deep" onClick={() => setShowGuidelines((s) => !s)}>{showGuidelines ? 'Masquer' : 'Afficher'}</button>}>
             <p className="text-sm font-semibold text-ink-2">Lieu public, bienveillance, consentement. Tu peux quitter l’équipe à tout moment.</p>
             {showGuidelines && <div className="mt-4"><GuidelinesList /></div>}
             <button className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-ink-3 hover:text-sakura-deep" onClick={() => setReport({ type: 'activity', id: activity.id, label: 'cette activité' })}>
@@ -241,19 +231,19 @@ function Detail({ id }: { id: string }) {
           <div className="panel overflow-hidden">
             <div className="flex items-baseline justify-between border-b border-edge bg-sakura-soft px-5 py-4">
               <p className="font-manga text-2xl">{formatPrice(activity.priceMin, activity.priceMax)}</p>
-              <p className={`text-sm font-black ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>
+              <p className={`text-sm font-bold ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>
                 {past ? 'Terminée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : joined ? 'Complet (dont toi)' : 'Équipe complète'}
               </p>
             </div>
             <div className="p-5">
-              <p className="mb-2 text-[11px] font-black tracking-wider text-ink-3 uppercase">Équipe · {activity.participantIds.length}/{activity.maxParticipants}</p>
+              <p className="mb-2 text-[11px] font-bold tracking-wider text-ink-3 uppercase">Équipe · {activity.participantIds.length}/{activity.maxParticipants}</p>
               <PartySlots users={participants} max={activity.maxParticipants} size="sm" limit={10} />
               <div className="mt-5">
                 {past ? (
                   <p className="text-sm font-semibold text-ink-2">{joined ? 'Tu faisais partie de l’équipe.' : 'Cette quête est terminée.'}</p>
                 ) : joined ? (
                   <>
-                    <p className="mb-3 flex items-center gap-2 rounded-xl border-2 border-matcha bg-matcha-soft px-3 py-2 text-sm font-black text-matcha"><Icon name="check" className="size-4" strokeWidth={2.5} /> Tu fais partie de l’équipe</p>
+                    <p className="mb-3 flex items-center gap-2 rounded-xl border-2 border-matcha bg-matcha-soft px-3 py-2 text-sm font-bold text-matcha"><Icon name="check" className="size-4" strokeWidth={2.5} /> Tu fais partie de l’équipe</p>
                     <button className="btn-ghost w-full" onClick={() => setConfirmLeave(true)}>Quitter l’équipe</button>
                   </>
                 ) : full ? (
@@ -281,7 +271,7 @@ function Detail({ id }: { id: string }) {
                     <Link to={isMe ? '/profil' : `/profil/${u!.id}`} className="flex items-center gap-3 rounded-2xl border-2 border-transparent p-1.5 hover:border-ink-3 hover:bg-cream">
                       <Avatar user={u} size="md" />
                       <div className="min-w-0 flex-1">
-                        <p className="flex flex-wrap items-center gap-1 text-sm font-black">
+                        <p className="flex flex-wrap items-center gap-1 text-sm font-bold">
                           {isMe ? 'Toi' : u!.firstName}
                           {u!.id === activity.organizerId && <span className="chip bg-peach px-1.5 py-0 text-[10px] text-peach-deep">Guide</span>}
                           {familiarIds.has(u!.id) && <span className="chip bg-lav-soft px-1.5 py-0 text-[10px] text-lav-deep">Déjà rencontré·e</span>}
@@ -298,11 +288,11 @@ function Detail({ id }: { id: string }) {
           </div>
 
           {community && (
-            <Link to={`/guildes/${community.id}`} className="card hover-lift flex items-center gap-4 p-5">
+            <Link to={`/guildes/${community.id}`} className="card flex items-center gap-4 p-5">
               <GuildCrest categoryId={community.categoryId} born={community.origin === 'cercle'} />
               <div>
                 <p className="eyebrow text-lav-deep">Cette équipe se retrouve</p>
-                <p className="font-display text-lg font-black">{community.name}</p>
+                <p className="font-display text-lg font-bold">{community.name}</p>
                 <p className="text-sm font-semibold text-ink-2">{community.rhythm} · {app.communityMembers(community).length} membres</p>
               </div>
             </Link>
@@ -315,7 +305,7 @@ function Detail({ id }: { id: string }) {
         <div className="fixed inset-x-3 bottom-[5.25rem] z-30 flex items-center justify-between gap-3 rounded-2xl border border-edge bg-surface px-4 py-2.5 lg:hidden" style={{ boxShadow: 'var(--shadow-sm)' }}>
           <div className="min-w-0">
             <p className="font-manga text-lg leading-none">{formatPrice(activity.priceMin, activity.priceMax)}</p>
-            <p className={`text-xs font-black ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>{joined ? 'Ta place est réservée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : 'Équipe complète'}</p>
+            <p className={`text-xs font-bold ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>{joined ? 'Ta place est réservée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : 'Équipe complète'}</p>
           </div>
           {joined ? (
             <span className="sticker shrink-0 bg-matcha-soft text-matcha"><Icon name="check" className="size-3.5" /> Inscrit·e</span>

@@ -13,7 +13,6 @@ export function LogoMark({ className = 'size-9' }: { className?: string }) {
       <path d="M10 6h44a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H30l-12 9v-9h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="#E99BB5" stroke="#2a2338" strokeWidth="2.5" strokeLinejoin="round" />
       <circle cx="25" cy="29" r="10" fill="none" stroke="#252238" strokeWidth="5" />
       <circle cx="39" cy="29" r="10" fill="none" stroke="#252238" strokeWidth="5" />
-      <path d="M52 2l1.6 3.6L57 7l-3.4 1.4L52 12l-1.6-3.6L47 7l3.4-1.4z" fill="#D7B77A" stroke="#30283D" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -53,7 +52,7 @@ export function AvatarStack({ users, max = 5, size = 'sm' }: { users: (Profile |
     <span className="flex -space-x-2">
       {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
       {extra > 0 && (
-        <span className="inline-flex items-center justify-center rounded-full border border-edge bg-cream-2 text-[10px] font-black text-ink-2" style={{ width: px, height: px }}>+{extra}</span>
+        <span className="inline-flex items-center justify-center rounded-full border border-edge bg-cream-2 text-[10px] font-bold text-ink-2" style={{ width: px, height: px }}>+{extra}</span>
       )}
     </span>
   );
@@ -70,7 +69,7 @@ export function PartySlots({ users, max, size = 'sm', limit = 8 }: { users: (Pro
     <span className="flex flex-wrap items-center gap-1" aria-label={`${present.length} membres d’équipe sur ${max} places`}>
       {shown.map((u) => <Avatar key={u.id} user={u} size={size} />)}
       {Array.from({ length: free }, (_, i) => (
-        <span key={i} className="inline-flex items-center justify-center rounded-full border-2 border-dashed border-ink-3/60 bg-surface/70 text-ink-3" style={{ width: px, height: px }} aria-hidden="true">
+        <span key={i} className="inline-flex items-center justify-center rounded-full border border-dashed border-ink-3/70 bg-surface/70 text-ink-3" style={{ width: px, height: px }} aria-hidden="true">
           <Icon name="plus" className="size-3" strokeWidth={2.5} />
         </span>
       ))}
@@ -81,13 +80,12 @@ export function PartySlots({ users, max, size = 'sm', limit = 8 }: { users: (Pro
 
 /* ——— Illustration ——— */
 /** Illustrated quest cover: scene + category sticker + hanko stamp. */
-export function CoverArt({ activity, category, className = 'h-36', large = false, children }: { activity?: Activity; category?: Category; className?: string; large?: boolean; children?: ReactNode }) {
+export function CoverArt({ activity, category, className = 'h-36', children }: { activity?: Activity; category?: Category; className?: string; large?: boolean; children?: ReactNode }) {
   const cat = category ?? categoryById(activity!.categoryId);
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ background: cat.tint }}>
       <Scene scene={cat.scene} seed={activity?.id ?? cat.id} className="absolute inset-0 h-full w-full" />
       <span className="sticker scope-day absolute top-3 left-3 bg-surface" style={{ color: cat.ink }}>{cat.questLabel}</span>
-      <Stamp kanji={cat.kanji} color={cat.color} className={`absolute right-3 bottom-3 ${large ? 'size-16 text-3xl' : 'size-11 text-xl'}`} />
       {children}
     </div>
   );
@@ -96,7 +94,7 @@ export function CoverArt({ activity, category, className = 'h-36', large = false
 /** Hanko-like stamp with a single kanji. */
 export function Stamp({ kanji, color, className = 'size-11 text-xl' }: { kanji: string; color: string; className?: string }) {
   return (
-    <span className={`inline-flex rotate-[-8deg] items-center justify-center rounded-xl border border-edge font-jp font-black text-on-accent ${className}`} style={{ background: color, boxShadow: 'var(--shadow-sm)' }} aria-hidden="true">
+    <span className={`inline-flex items-center justify-center rounded-xl border border-edge font-jp font-bold text-on-accent ${className}`} style={{ background: color, boxShadow: 'var(--shadow-sm)' }} aria-hidden="true">
       {kanji}
     </span>
   );
@@ -123,11 +121,9 @@ export function CategoryDot({ id }: { id: string }) {
 export function EmptyState({ icon, title, text, action }: { icon: IconName; title: string; text: string; action?: ReactNode }) {
   return (
     <div className="card relative flex flex-col items-center overflow-hidden px-6 py-12 text-center">
-      <div className="screentone absolute inset-0 text-lav-deep opacity-10" aria-hidden="true" />
       <span className="relative mb-4 inline-flex size-14 items-center justify-center rounded-2xl border border-edge bg-lav-soft text-lav-deep" style={{ boxShadow: 'var(--shadow-sm)' }}>
         <Icon name={icon} className="size-6" />
       </span>
-      <Sparkle className="absolute top-8 left-[calc(50%+28px)] size-4" />
       <h3 className="relative text-xl">{title}</h3>
       <p className="relative mt-1 max-w-sm text-sm text-ink-2">{text}</p>
       {action && <div className="relative mt-5">{action}</div>}
@@ -135,19 +131,18 @@ export function EmptyState({ icon, title, text, action }: { icon: IconName; titl
   );
 }
 
-export function SectionHeader({ title, kicker, link, linkLabel, jp }: { title: string; kicker?: string; link?: string; linkLabel?: string; jp?: string }) {
+export function SectionHeader({ title, kicker, link, linkLabel }: { title: string; kicker?: string; link?: string; linkLabel?: string; jp?: string }) {
   return (
     <div className="mb-5 flex items-end justify-between gap-4">
       <div>
         {kicker && <p className="eyebrow mb-1">{kicker}</p>}
-        <h2 className="relative inline-block text-2xl md:text-[1.7rem]">
-          {jp && <span className="mr-2 font-jp text-sakura-deep">{jp}</span>}
+        <h2 className="font-manga text-2xl font-bold md:text-[1.75rem]">
+          
           {title}
-          <span className="absolute -bottom-1 left-0 h-1.5 w-full -skew-x-12 rounded-full bg-sakura/35 -z-10" aria-hidden="true" />
         </h2>
       </div>
       {link && (
-        <Link to={link} className="shrink-0 rounded-full px-2 py-1 text-sm font-extrabold text-lav-deep hover:bg-lav-soft">
+        <Link to={link} className="shrink-0 rounded-full px-2 py-1 text-sm font-bold text-lav-deep hover:bg-lav-soft">
           {linkLabel ?? 'Tout voir'} →
         </Link>
       )}
@@ -182,7 +177,7 @@ export function Modal({ open, onClose, title, children, wide = false }: { open: 
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`scope-day pop max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border border-edge bg-cream p-6 outline-none sm:rounded-3xl ${wide ? 'sm:max-w-3xl' : 'sm:max-w-lg'}`}
+        className={`scope-day max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border border-edge bg-cream p-6 outline-none sm:rounded-3xl ${wide ? 'sm:max-w-3xl' : 'sm:max-w-lg'}`}
         style={{ boxShadow: '0 30px 60px -20px rgb(8 6 18 / 0.8)' }}
         onClick={(e) => e.stopPropagation()}
       >

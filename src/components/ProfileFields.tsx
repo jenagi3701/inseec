@@ -57,7 +57,7 @@ export function LevelFields({ p, set }: { p: Profile; set: Patch }) {
           aria-pressed={p.level === l.id}
           className="tile p-4"
         >
-          <p className="font-display font-black">{l.label}</p>
+          <p className="font-display font-bold">{l.label}</p>
           <p className="text-sm text-ink-2">{l.description}</p>
         </button>
       ))}
@@ -110,7 +110,7 @@ export function EnergyFields({ p, set }: { p: Profile; set: Patch }) {
               onClick={() => set({ energy: toggle(p.energy, e.id as EnergyId) })}
               className="tile p-3.5"
             >
-              <p className="text-sm font-black">{e.emoji} {e.label}</p>
+              <p className="text-sm font-bold">{e.label}</p>
               <p className="text-xs text-ink-2">{e.description}</p>
             </button>
           ))}
@@ -150,7 +150,7 @@ export function AvailabilityFields({ p, set }: { p: Profile; set: Patch }) {
           {formats.map((f) => (
             <button key={f.id} type="button" aria-pressed={p.format === f.id} onClick={() => set({ format: f.id })}
               className="tile p-3.5">
-              <p className="text-sm font-black">{f.label}</p>
+              <p className="text-sm font-bold">{f.label}</p>
               <p className="text-xs text-ink-2">{f.text}</p>
             </button>
           ))}

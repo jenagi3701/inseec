@@ -6,7 +6,7 @@ import { formatPrice, formatTime, recurrenceLabel, levelActivityLabel } from '..
 import { explain } from '../lib/matching';
 import { energyById } from '../data/taxonomy';
 import { Icon } from './Icon';
-import { Avatar, CoverArt, Modal, PartySlots, Sparkle } from './ui';
+import { Avatar, CoverArt, Modal, PartySlots } from './ui';
 import { GuidelinesList } from './Guidelines';
 import { useToast } from './Toast';
 
@@ -84,7 +84,7 @@ export function DateTicket({ iso, className = '' }: { iso: string; className?: s
   const d = new Date(iso);
   return (
     <span className={`inline-flex w-12 shrink-0 flex-col self-start items-center overflow-hidden rounded-xl border border-edge bg-surface text-center ${className}`} style={{ boxShadow: 'var(--shadow-sm)' }}>
-      <span className="w-full bg-sakura py-0.5 text-[10px] font-black tracking-wider text-on-accent uppercase">{d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</span>
+      <span className="w-full bg-sakura py-0.5 text-[10px] font-bold tracking-wider text-on-accent uppercase">{d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</span>
       <span className="font-manga text-lg leading-7">{d.getDate()}</span>
     </span>
   );
@@ -100,31 +100,29 @@ export function ActivityCard({ activity, showReason = true, compact = false }: {
   const friend = rec.familiar.length ? getUser(rec.familiar[0]) : undefined;
 
   return (
-    <article className="paper hover-lift group relative flex flex-col overflow-hidden">
+    <article className="paper group relative flex flex-col overflow-hidden">
       <Link to={`/activites/${activity.id}`} className="absolute inset-0 z-0" aria-label={`Voir ${activity.title}`} />
       <div className="relative border-b border-edge">
         <CoverArt activity={activity} className={compact ? 'h-28' : 'h-40'}>
           <div className="absolute top-3 right-3 z-10">
             <SaveButton activityId={activity.id} />
           </div>
-          {friend && !past && (
-            <div className="pop absolute bottom-3 left-3 flex items-end gap-1.5">
-              <Avatar user={friend} size="sm" />
-              <span className="bubble mb-5 px-2.5 py-1 text-[11px] leading-tight">
-                {friend.firstName}{rec.familiar.length > 1 ? ` +${rec.familiar.length - 1}` : ''} y va !
-              </span>
-            </div>
-          )}
         </CoverArt>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <div className="flex gap-3">
           <DateTicket iso={activity.startsAt} />
           <div className="min-w-0">
-            <p className="text-xs font-extrabold text-sakura-deep">{formatTime(activity.startsAt)} · {activity.district}</p>
+            <p className="text-xs font-bold text-sakura-deep">{formatTime(activity.startsAt)} · {activity.district}</p>
             <h3 className="text-[1.05rem] leading-snug">{activity.title}</h3>
           </div>
         </div>
+        {friend && !past && (
+          <p className="mt-3 flex items-center gap-2 text-xs font-bold text-lav-deep">
+            <Avatar user={friend} size="xs" />
+            {friend.firstName}{rec.familiar.length > 1 ? ` et ${rec.familiar.length - 1} autre${rec.familiar.length > 2 ? 's' : ''} que tu connais y vont` : ' y va, tu l’as déjà rencontré·e'}
+          </p>
+        )}
         {!compact && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {activity.recurrence ? (
@@ -134,21 +132,20 @@ export function ActivityCard({ activity, showReason = true, compact = false }: {
             ) : (
               <span className="chip border-[1.5px] border-sakura/30 bg-sakura-pale text-sakura-deep">Quête unique</span>
             )}
-            <span className="chip bg-cream-2 text-ink-2">{energy.emoji} {energy.label}</span>
+            <span className="chip bg-cream-2 text-ink-2">{energy.label}</span>
             <span className="chip bg-cream-2 text-ink-2">{formatPrice(activity.priceMin, activity.priceMax)}</span>
-            {activity.level === 'debutant' && <span className="chip bg-matcha-soft text-matcha">🌱 {levelActivityLabel(activity.level)}</span>}
+            {activity.level === 'debutant' && <span className="chip bg-matcha-soft text-matcha">{levelActivityLabel(activity.level)}</span>}
           </div>
         )}
         {showReason && rec.reasons.length > 0 && !compact && (
-          <p className="relative mt-3 rounded-2xl border-2 border-dashed border-lav/40 bg-lav-soft/50 px-3 py-2 pl-8 text-xs leading-relaxed text-ink-2">
-            <Sparkle className="absolute top-2 left-2 size-4" color="#B9A7CC" />
-            <span className="font-extrabold text-ink">Pour toi : </span>
+          <p className="relative mt-3 rounded-2xl border border-edge bg-lav-soft/50 px-3 py-2 pl-8 text-xs leading-relaxed text-ink-2">
+            <span className="font-bold text-ink">Pour toi : </span>
             {explain(rec)}
           </p>
         )}
         <div className="mt-auto flex items-end justify-between gap-3 pt-4">
           <div className="min-w-0">
-            <p className="mb-1 text-[10px] font-black tracking-wider text-ink-3 uppercase">Équipe · {activity.participantIds.length}/{activity.maxParticipants}</p>
+            <p className="mb-1 text-[10px] font-bold tracking-wider text-ink-3 uppercase">Équipe · {activity.participantIds.length}/{activity.maxParticipants}</p>
             <PartySlots users={participants} max={activity.maxParticipants} size="xs" limit={compact ? 4 : 7} />
           </div>
           <div className="relative z-10 shrink-0">

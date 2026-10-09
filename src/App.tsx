@@ -2,7 +2,7 @@ import { lazy, Suspense, type ComponentType, type ReactNode } from 'react';
 import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AppLayout } from './components/Layout';
 import Landing from './pages/Landing';
-import { EmptyState, Sparkle } from './components/ui';
+import { EmptyState } from './components/ui';
 
 // Pages are code-split: the landing page ships in the main bundle, the rest loads on demand.
 const named = <T, K extends keyof T>(load: () => Promise<T>, name: K) =>
@@ -27,8 +27,7 @@ const MemberProfile = named(() => import('./pages/Profile'), 'MemberProfile');
 
 function Loading() {
   return (
-    <div className="flex min-h-[40vh] items-center justify-center gap-2 text-sm font-extrabold text-ink-3" role="status">
-      <Sparkle className="float size-5" /> Chargement…
+    <div className="flex min-h-[40vh] items-center justify-center gap-2 text-sm font-bold text-ink-3" role="status">Chargement…
     </div>
   );
 }

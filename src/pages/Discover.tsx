@@ -76,8 +76,8 @@ export default function Discover() {
         <Scene scene="riverside" time="crepuscule" seed="board" className="absolute inset-y-0 right-0 h-full w-full md:w-[58%]" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream/95 via-cream/90 to-cream/75 md:bg-gradient-to-r md:from-cream md:from-45% md:via-cream/85 md:via-62% md:to-cream/10" aria-hidden="true" />
         <div className="relative p-6 md:p-8">
-          <span className="sticker bg-surface text-ink-2"><span className="font-jp text-sakura-deep">依頼</span> Lyon & Villeurbanne</span>
-          <h1 className="mt-3 font-manga text-4xl font-normal md:text-5xl">Tableau des quêtes</h1>
+          <span className="sticker bg-surface text-ink-2">Lyon & Villeurbanne</span>
+          <h1 className="mt-3 font-manga text-4xl font-bold md:text-5xl">Tableau des quêtes</h1>
           <p className="mt-2 max-w-md font-semibold text-ink-2">Toutes les activités à venir. Choisis selon tes passions… et ton énergie du jour.</p>
         </div>
       </header>
@@ -89,7 +89,7 @@ export default function Discover() {
         </div>
         <div className="flex gap-2">
           <select className="input w-auto" value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label="Trier">
-            <option value="pertinence">Pour moi ✨</option>
+            <option value="pertinence">Pour moi</option>
             <option value="date">Date</option>
             <option value="distance">Distance</option>
           </select>
@@ -110,13 +110,13 @@ export default function Discover() {
       <div className="-mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-1" role="group" aria-label="Énergie sociale">
         {ENERGIES.map((e) => (
           <button key={e.id} className="toggle-pill shrink-0 text-xs" aria-pressed={energy === e.id} onClick={() => setParam('energie', energy === e.id ? '' : e.id)}>
-            {e.emoji} {e.label}
+            {e.label}
           </button>
         ))}
       </div>
 
       {showFilters && (
-        <div className="pop card mt-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="card mt-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
           <Check checked={onlyBeginner} onChange={setOnlyBeginner} label="Débutant·es bienvenu·es" />
           <Check checked={onlyFree} onChange={setOnlyFree} label="Gratuit ou prix libre" />
           <Check checked={onlyRecurring} onChange={setOnlyRecurring} label="Groupes récurrents" />

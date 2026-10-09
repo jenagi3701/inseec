@@ -35,7 +35,6 @@ export default function Signup() {
       <div className="mx-auto grid min-h-[calc(100dvh-28px)] max-w-6xl md:grid-cols-2">
         <div className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[2rem] border border-edge p-10 md:flex" style={{ boxShadow: 'var(--shadow-sm)' }}>
           <div className="absolute inset-0 bg-gradient-to-b from-midnight via-plum to-[#4a3f63]" aria-hidden="true" />
-          <div className="screentone absolute inset-0 text-white opacity-[0.06]" aria-hidden="true" />
           <Scene scene="street" time="soir" seed="signup" className="absolute inset-x-0 bottom-0 aspect-[400/220] h-auto w-full" />
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent" aria-hidden="true" />
           <Link to="/" className="relative"><Logo light /></Link>
@@ -50,7 +49,7 @@ export default function Signup() {
         </div>
         <div className="flex flex-col justify-center px-4 py-10 sm:px-10">
           <Link to="/" className="mb-8 md:hidden"><Logo /></Link>
-          <h1 className="font-manga text-4xl font-normal">Rejoins l’aventure</h1>
+          <h1 className="font-manga text-4xl font-bold">Rejoins l’aventure</h1>
           <p className="mt-2 font-semibold text-ink-2">2 minutes pour créer ton personnage et trouver tes premières quêtes.</p>
           <form onSubmit={submit} noValidate className="mt-8 space-y-4">
             <div>

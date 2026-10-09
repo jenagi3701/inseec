@@ -151,7 +151,8 @@ The visual metaphor: **your social life as a slice-of-life anime adventure.**
 - Midnight-plum page and deep-plum sections, with warm-cream "paper" objects for the content people act on (quest invitations, character sheets, guild cards, dialogs).
 - Sakura Pink for primary actions and selections, Rainy Tokyo Blue for secondary actions, Muted Lavender for guilds, and Lantern Gold only for small warm details.
 - Soft shadows, thin borders, lantern and sakura glows, and lamp-lit or rainy evening illustrations.
-- Dela Gothic One for titles, Zen Maru Gothic for headings, Nunito for UI text.
+- Shippori Mincho (Japanese serif) for titles and Zen Kaku Gothic New for the interface: an editorial, authentic Japanese pairing.
+- Minimal motion: colour and shadow transitions only. No floating, falling or pop-in effects, and no speech bubbles, sparkles or emoji in the UI.
 - Scope-aware design tokens keep every text/surface pair at WCAG AA or better.
 
 **Guard-rails:**

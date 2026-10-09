@@ -21,8 +21,8 @@ const GLOSSARY: [string, string, string][] = [
 export default function About() {
   return (
     <div className="mx-auto max-w-4xl">
-      <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">物語</span> À propos du projet</span>
-      <h1 className="font-manga text-4xl leading-tight font-normal md:text-5xl">Les passions créent le premier lien. Les activités le renforcent. Les guildes lui laissent le temps de grandir.</h1>
+      <span className="sticker bg-surface text-sakura-deep">À propos du projet</span>
+      <h1 className="font-manga text-4xl leading-tight font-bold md:text-5xl">Les passions créent le premier lien. Les activités le renforcent. Les guildes lui laissent le temps de grandir.</h1>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <div className="rounded-3xl bg-cream-2 p-6">
@@ -37,7 +37,7 @@ export default function About() {
         </div>
       </div>
 
-      <h2 className="mt-14 font-manga text-3xl font-normal">Ce qui nous différencie</h2>
+      <h2 className="mt-14 font-manga text-3xl font-bold">Ce qui nous différencie</h2>
       <div className="mt-6 space-y-4">
         {FEATURES.map((f) => (
           <div key={f.name} className="card grid gap-4 p-6 md:grid-cols-[auto_1fr_16rem]">
@@ -51,28 +51,28 @@ export default function About() {
         ))}
       </div>
 
-      <h2 className="mt-14 font-manga text-3xl font-normal">Le vocabulaire de l’aventure</h2>
+      <h2 className="mt-14 font-manga text-3xl font-bold">Le vocabulaire de l’aventure</h2>
       <p className="mt-2 font-semibold text-ink-2">Un univers inspiré des RPG, mais des mots toujours compréhensibles. Chaque terme est accompagné de son sens concret dans l’interface.</p>
       <dl className="mt-6 grid gap-3 sm:grid-cols-2">
         {GLOSSARY.map(([term, jp, meaning]) => (
           <div key={term} className="card flex items-start gap-3 p-4">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-edge bg-sakura-soft font-jp font-black text-sakura-deep">{jp}</span>
-            <div><dt className="font-display font-black">{term}</dt><dd className="text-sm font-semibold text-ink-2">{meaning}</dd></div>
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-edge bg-sakura-soft font-jp font-bold text-sakura-deep">{jp}</span>
+            <div><dt className="font-display font-bold">{term}</dt><dd className="text-sm font-semibold text-ink-2">{meaning}</dd></div>
           </div>
         ))}
       </dl>
 
-      <h2 className="mt-14 font-manga text-3xl font-normal">Identité visuelle & droits</h2>
+      <h2 className="mt-14 font-manga text-3xl font-bold">Identité visuelle & droits</h2>
       <div className="mt-6 card p-6 text-sm font-semibold text-ink-2">
         <ul className="space-y-2">
           <li>• <strong className="text-ink">Illustrations originales</strong> : décors (café manga, rue de quartier, arcade, atelier, bord de fleuve, table de jeu), avatars et blasons sont dessinés en SVG pour ce projet. Aucun personnage, panneau de manga ou logo existant n’est reproduit.</li>
           <li>• <strong className="text-ink">Avatars générés</strong> à partir de pièces simples (coiffure, couleurs, expression, accessoire) : chaque membre crée son propre personnage, sans photo.</li>
           <li>• <strong className="text-ink">Franchises citées comme étiquettes</strong> : les noms d’œuvres sont de simples centres d’intérêt saisis par les membres. Kizuna n’est affilié à aucun studio, éditeur ou ayant droit.</li>
-          <li>• <strong className="text-ink">Typographies libres</strong> (Google Fonts, licence OFL) : Dela Gothic One, Zen Maru Gothic, Nunito.</li>
+          <li>• <strong className="text-ink">Typographies libres</strong> (Google Fonts, licence OFL) : Shippori Mincho et Zen Kaku Gothic New.</li>
         </ul>
       </div>
 
-      <h2 className="mt-14 font-manga text-3xl font-normal">Ce qui est simulé dans ce prototype</h2>
+      <h2 className="mt-14 font-manga text-3xl font-bold">Ce qui est simulé dans ce prototype</h2>
       <div className="mt-6 card p-6 text-sm text-ink-2">
         <ul className="space-y-2">
           <li>• <strong className="text-ink">Pas de backend</strong> : toutes les données (profil, inscriptions, guildes, messages) sont stockées dans le navigateur (localStorage).</li>

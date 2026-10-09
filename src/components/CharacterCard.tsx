@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Profile } from '../data/types';
-import { ENERGIES, interestById, interestLabel, levelLabel } from '../data/taxonomy';
+import { interestById, interestLabel, levelLabel } from '../data/taxonomy';
 import { AVATAR_BGS } from './art/AnimeAvatar';
 import { Avatar, avatarOf } from './ui';
 
@@ -16,20 +16,19 @@ export function InterestBadge({ id, highlight = false }: { id: string; highlight
   const group = interestById(id)?.group ?? 'loisir';
   return (
     <span className={`chip border-[1.5px] ${highlight ? 'border-edge bg-sakura text-on-accent' : `border-transparent ${GROUP_STYLE[group]}`}`}>
-      {highlight && '★ '}
+      
       {interestLabel(id)}
     </span>
   );
 }
 
 /** Character-sheet style profile card. */
-export function CharacterCard({ user, highlight = [], maxBadges = 6, footer, className = '', tilt = 0 }: { user: Profile; highlight?: string[]; maxBadges?: number; footer?: ReactNode; className?: string; tilt?: number }) {
+export function CharacterCard({ user, highlight = [], maxBadges = 6, footer, className = '' }: { user: Profile; highlight?: string[]; maxBadges?: number; footer?: ReactNode; className?: string }) {
   const bg = AVATAR_BGS[avatarOf(user).bg % AVATAR_BGS.length];
   const badges = [...user.interests].sort((a, b) => Number(highlight.includes(b)) - Number(highlight.includes(a))).slice(0, maxBadges);
   return (
-    <article className={`paper overflow-hidden ${className}`} style={{ transform: tilt ? `rotate(${tilt}deg)` : undefined }}>
+    <article className={`paper overflow-hidden ${className}`}>
       <div className="relative h-20 border-b border-edge" style={{ background: bg }}>
-        <div className="screentone absolute inset-0 text-ink opacity-10" />
         <span className="sticker absolute top-2.5 right-2.5 bg-surface">{levelLabel(user.level)}</span>
       </div>
       <div className="relative -mt-12 px-5 pb-5">
@@ -39,7 +38,6 @@ export function CharacterCard({ user, highlight = [], maxBadges = 6, footer, cla
         <p className="mt-0.5 text-xs font-semibold text-ink-3">
           {user.neighborhood ?? user.city}
           {user.newInTown ? ' · nouveau·elle en ville' : ''}
-          {user.energy.length > 0 && ` · ${user.energy.map((e) => ENERGIES.find((x) => x.id === e)?.emoji).join(' ')}`}
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {badges.map((i) => <InterestBadge key={i} id={i} highlight={highlight.includes(i)} />)}

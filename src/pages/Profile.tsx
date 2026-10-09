@@ -33,7 +33,7 @@ function InterestGraph({ interests, highlight }: { interests: string[]; highligh
         const items = interests.filter((i) => interestById(i)?.group === g);
         if (!items.length) return null;
         return (
-          <div key={g} className="rounded-2xl border-2 border-dashed border-line bg-cream p-4">
+          <div key={g} className="rounded-2xl border border-line bg-cream-2 p-4">
             <p className="eyebrow mb-2">{INTEREST_GROUP_LABELS[g]}</p>
             <div className="flex flex-wrap gap-1.5">
               {items.map((i) => <InterestBadge key={i} id={i} highlight={highlight?.includes(i)} />)}
@@ -50,8 +50,6 @@ function Portrait({ user, children }: { user: Profile; children?: React.ReactNod
   return (
     <div className="paper overflow-hidden">
       <div className="relative border-b border-edge" style={{ background: AVATAR_BGS[cfg.bg % AVATAR_BGS.length] }}>
-        <div className="screentone-lg absolute inset-0 text-ink opacity-10" aria-hidden="true" />
-        <div className="speedlines absolute inset-[-50%] text-white opacity-30" aria-hidden="true" />
         <AnimeAvatar config={cfg} size={260} square className="relative mx-auto block h-auto w-full max-w-[260px]" title={`Avatar de ${user.firstName}`} />
         <span className="sticker absolute top-3 left-3 bg-surface">{levelLabel(user.level)}</span>
       </div>
@@ -86,27 +84,27 @@ export function MyProfile() {
   return (
     <div>
       <div className="mb-6">
-        <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">プロフィール</span> Fiche personnage</span>
+        <span className="sticker bg-surface text-sakura-deep">Fiche personnage</span>
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[20rem_1fr]">
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Portrait user={me}>
-            <h1 className="font-manga text-3xl font-normal">{me.firstName}{state.privacy.showAge && me.age ? `, ${me.age}` : ''}</h1>
+            <h1 className="font-manga text-3xl font-bold">{me.firstName}{state.privacy.showAge && me.age ? `, ${me.age}` : ''}</h1>
             {me.title && <p className="font-bold text-sakura-deep">{me.title}</p>}
             <p className="mt-1 text-sm font-semibold text-ink-2">{me.city}{state.privacy.showNeighborhood && me.neighborhood ? ` · ${me.neighborhood}` : ''}{me.newInTown ? ' · nouveau·elle en ville' : ''}</p>
-            {me.bio && <p className="bubble mt-4 text-sm font-semibold">{me.bio}</p>}
+            {me.bio && <p className="mt-4 border-l-2 border-sakura pl-3 text-sm leading-relaxed text-ink-2">{me.bio}</p>}
             <div className="mt-6 grid gap-2">
               <button className="btn-primary" onClick={() => { setAvatarDraft(avatarOf(me)); setAvatarOpen(true); }}><Icon name="sparkle" className="size-4" /> Modifier mon avatar</button>
               <button className="btn-ghost" onClick={() => { setNameDraft({ firstName: me.firstName, title: me.title ?? '' }); setNameOpen(true); }}>Prénom & titre</button>
             </div>
           </Portrait>
-          <p className="text-xs font-semibold text-ink-3"><Icon name="lock" className="inline size-3.5" /> Les autres membres voient ton prénom, ton avatar, ton quartier (si activé), ta bio et tes passions. Jamais ton e-mail. <Link to="/parametres" className="font-extrabold text-lav-deep">Confidentialité</Link></p>
+          <p className="text-xs font-semibold text-ink-3"><Icon name="lock" className="inline size-3.5" /> Les autres membres voient ton prénom, ton avatar, ton quartier (si activé), ta bio et tes passions. Jamais ton e-mail. <Link to="/parametres" className="font-bold text-lav-deep">Confidentialité</Link></p>
         </div>
 
         <div className="space-y-6">
           <section className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">好</span>Mon graphe de passions</h2>
+              <h2 className="text-xl">Mon graphe de passions</h2>
               <button className="btn-ghost btn-sm" onClick={() => open('interets')}>Modifier</button>
             </div>
             <p className="mt-1 mb-4 text-sm font-semibold text-ink-2">Tes recommandations traversent toutes ces passions, pas une seule. Les titres d’œuvres sont de simples étiquettes.</p>
@@ -114,7 +112,7 @@ export function MyProfile() {
           </section>
 
           <section className="card p-6">
-            <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">旅</span>Mon parcours</h2>
+            <h2 className="text-xl">Mon parcours</h2>
             <p className="mt-1 text-xs font-semibold text-ink-3">Visible par toi seul·e. Ici, on ne collectionne pas les amis.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <Link to="/historique" className="flex items-center gap-3 rounded-2xl border border-edge bg-sakura-pale p-4 hover:-translate-y-0.5">
@@ -132,16 +130,16 @@ export function MyProfile() {
             {[
               { key: 'ville', label: 'Ville & distance', value: `${me.city}${me.neighborhood ? ` · ${me.neighborhood}` : ''} · ${me.distanceKm} km max` },
               { key: 'niveau', label: 'Niveau', value: levelLabel(me.level) },
-              { key: 'energie', label: 'Ambiance & taille d’équipe', value: `${me.energy.map((e) => { const x = ENERGIES.find((y) => y.id === e); return x ? `${x.emoji} ${x.label}` : ''; }).join(', ')} · ${GROUP_SIZES.find((g) => g.id === me.groupSize)?.label}` },
+              { key: 'energie', label: 'Ambiance & taille d’équipe', value: `${me.energy.map((e) => { const x = ENERGIES.find((y) => y.id === e); return x ? x.label : ''; }).join(', ')} · ${GROUP_SIZES.find((g) => g.id === me.groupSize)?.label}` },
               { key: 'dispo', label: 'Disponibilités', value: `${me.availability.map((s) => SLOTS.find((x) => x.id === s)?.label).join(', ') || '—'} · ${me.format === 'recurrent' ? 'Guildes récurrentes' : me.format === 'ponctuel' ? 'Quêtes ponctuelles' : 'Guildes & quêtes ponctuelles'}` },
               { key: 'toi', label: 'Langues & bio', value: me.languages.join(', ') },
             ].map((r) => (
               <div key={r.key} className="flex items-start justify-between gap-4 px-6 py-4">
                 <div>
-                  <p className="text-sm font-black">{r.label}</p>
+                  <p className="text-sm font-bold">{r.label}</p>
                   <p className="text-sm font-semibold text-ink-2">{r.value}</p>
                 </div>
-                <button className="shrink-0 text-sm font-extrabold text-lav-deep" onClick={() => open(r.key)}>Modifier</button>
+                <button className="shrink-0 text-sm font-bold text-lav-deep" onClick={() => open(r.key)}>Modifier</button>
               </div>
             ))}
           </section>
@@ -159,7 +157,7 @@ export function MyProfile() {
         {avatarDraft && <AvatarEditor value={avatarDraft} onChange={setAvatarDraft} name={me.firstName} />}
         <div className="sticky bottom-0 mt-6 flex justify-end gap-2 bg-cream pt-3">
           <button className="btn-ghost" onClick={() => setAvatarOpen(false)}>Annuler</button>
-          <button className="btn-primary" onClick={() => { dispatch({ type: 'saveProfile', profile: { ...me, avatar: avatarDraft! } }); setAvatarOpen(false); toast('Nouvel avatar enregistré ✨'); }}>Enregistrer l’avatar</button>
+          <button className="btn-primary" onClick={() => { dispatch({ type: 'saveProfile', profile: { ...me, avatar: avatarDraft! } }); setAvatarOpen(false); toast('Nouvel avatar enregistré'); }}>Enregistrer l’avatar</button>
         </div>
       </Modal>
       <Modal open={nameOpen} onClose={() => setNameOpen(false)} title="Prénom & titre">
@@ -210,7 +208,7 @@ export function MemberProfile() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[20rem_1fr]">
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Portrait user={u}>
-            <h1 className="font-manga text-3xl font-normal">{u.firstName}</h1>
+            <h1 className="font-manga text-3xl font-bold">{u.firstName}</h1>
             {u.title && <p className="font-bold text-sakura-deep">{u.title}</p>}
             <p className="mt-1 text-sm font-semibold text-ink-2">{u.neighborhood ?? u.city}{u.newInTown ? ' · nouveau·elle en ville' : ''}</p>
             <p className="mt-1 text-xs font-semibold text-ink-3">Personnage fictif (démo)</p>
@@ -238,8 +236,8 @@ export function MemberProfile() {
         </div>
 
         <div className="space-y-6">
-          {u.bio && <p className="bubble text-base font-semibold">{u.bio}</p>}
-          {!met && <p className="rounded-2xl border-2 border-dashed border-line bg-surface p-4 text-sm font-semibold text-ink-2">Vous ne vous êtes pas encore rencontré·es. La connexion devient possible après une quête commune.</p>}
+          {u.bio && <p className="border-l-2 border-sakura pl-4 font-manga text-lg leading-relaxed">{u.bio}</p>}
+          {!met && <p className="rounded-2xl border border-line bg-surface p-4 text-sm font-semibold text-ink-2">Vous ne vous êtes pas encore rencontré·es. La connexion devient possible après une quête commune.</p>}
 
           <section className="card p-6">
             <h2 className="text-xl">Passions {shared.length > 0 && <span className="text-base font-bold text-sakura-deep">· ★ {shared.length} en commun avec toi</span>}</h2>
@@ -248,11 +246,11 @@ export function MemberProfile() {
 
           {(together.length > 0 || sharedGuilds.length > 0) && (
             <section className="card p-6">
-              <h2 className="text-xl"><span className="mr-2 font-jp text-sakura-deep">絆</span>Votre histoire commune</h2>
+              <h2 className="text-xl">Votre histoire commune</h2>
               {sharedGuilds.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-3">
                   {sharedGuilds.map((c) => (
-                    <Link key={c.id} to={`/guildes/${c.id}`} className="flex items-center gap-2 rounded-2xl border border-edge bg-lav-soft py-1.5 pr-4 pl-2 text-sm font-black text-lav-deep hover:-translate-y-0.5">
+                    <Link key={c.id} to={`/guildes/${c.id}`} className="flex items-center gap-2 rounded-2xl border border-edge bg-lav-soft py-1.5 pr-4 pl-2 text-sm font-bold text-lav-deep hover:-translate-y-0.5">
                       <GuildCrest categoryId={c.categoryId} className="size-8" /> {c.name}
                     </Link>
                   ))}

@@ -24,7 +24,7 @@ export function GuidelinesList({ compact = false }: { compact?: boolean }) {
         <li key={g.title} className="flex gap-3 rounded-2xl border border-edge bg-surface p-4">
           <Icon name="leaf" className="mt-0.5 size-5 shrink-0 text-matcha" />
           <div>
-            <p className="text-sm font-black">{g.title}</p>
+            <p className="text-sm font-bold">{g.title}</p>
             <p className="text-sm font-semibold text-ink-2">{g.text}</p>
           </div>
         </li>

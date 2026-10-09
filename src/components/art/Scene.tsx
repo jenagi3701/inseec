@@ -70,17 +70,6 @@ function Tone({ id }: { id: string }) {
   );
 }
 
-function Petals({ color = '#E99BB5', seed = 0 }: { color?: string; seed?: number }) {
-  const pts = [[60, 40], [140, 90], [230, 30], [310, 110], [370, 60], [190, 150], [30, 130]];
-  return (
-    <g fill={color} stroke={INK} strokeWidth=".8">
-      {pts.map(([x, y], i) => (
-        <path key={i} d="M0 0c3-4 8-3 8 1-1 4-6 5-8-1z" transform={`translate(${(x + seed * 13) % 400} ${y}) rotate(${(i * 47 + seed * 20) % 360})`} />
-      ))}
-    </g>
-  );
-}
-
 const windowGlow = (time: Time) => (time === 'jour' ? '#f6dca6' : '#f2c97e');
 
 /* ——— 1. Manga café / bookshop ——— */
@@ -216,7 +205,7 @@ function Street({ id, time }: { id: string; time: Time }) {
       <path d="M140 164v42" {...line} />
       {/* lanterns */}
       {[60, 220].map((x) => (
-        <g key={x} className="float" style={{ animationDelay: `${x / 100}s`, transformOrigin: `${x}px 118px` }}>
+        <g key={x}>
           <ellipse className="lantern-glow" cx={x} cy="140" rx="26" ry="30" fill="#f2c97e" opacity=".22" />
           <path d={`M${x} 118v8`} {...line} />
           <ellipse cx={x} cy="140" rx="11" ry="15" fill={x === 60 ? '#e8a08a' : '#E99BB5'} {...line} />
@@ -241,7 +230,6 @@ function Street({ id, time }: { id: string; time: Time }) {
         <path d="M26 16c8 0 10-8 6-12" fill="none" {...line} />
         <circle cx="12" cy="10" r="1.2" fill={INK} /><circle cx="18" cy="10" r="1.2" fill={INK} />
       </g>
-      <Petals seed={id.length} />
       <Tone id={id} />
     </>
   );
@@ -377,7 +365,6 @@ function Riverside({ id, time }: { id: string; time: Time }) {
         <path d="M40-6v-4h16v4" fill="none" stroke={INK} strokeWidth="1.5" />
       </g>
       <Wires y={22} time={time} />
-      <Petals color="#D7B77A" seed={id.length} />
       <Tone id={id} />
     </>
   );
@@ -397,7 +384,7 @@ function Rain({ id }: { id: string }) {
     <>
       <defs>
         <pattern id={`rain${id}`} width="18" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(14)">
-          <path d="M9 0v10" stroke="#cfe0e8" strokeWidth="1" strokeLinecap="round" opacity=".45" />
+          <path d="M9 0v6" stroke="#cfe0e8" strokeWidth=".6" strokeLinecap="round" opacity=".28" />
         </pattern>
       </defs>
       <rect width="400" height="220" fill={`url(#rain${id})`} />

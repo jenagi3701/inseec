@@ -5,7 +5,7 @@ import type { Profile } from '../data/types';
 import { ME } from '../store/state';
 import { DemoBanner } from '../components/Layout';
 import { Icon } from '../components/Icon';
-import { Logo, Sparkle } from '../components/ui';
+import { Logo } from '../components/ui';
 import { AboutFields, AvailabilityFields, CityFields, EnergyFields, InterestFields, LevelFields } from '../components/ProfileFields';
 import { AvatarEditor, randomAvatar } from '../components/AvatarEditor';
 import { CharacterCard } from '../components/CharacterCard';
@@ -97,7 +97,7 @@ export default function Onboarding() {
         <div className="mb-10 flex items-center gap-1.5" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Progression de l’inscription">
           {STEPS.map((s, i) => (
             <div key={s.key} className="flex flex-1 items-center gap-1.5">
-              <span className={`inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-2 font-jp text-sm font-black transition ${i < step ? 'border-edge bg-lavender text-on-accent' : i === step ? 'border-edge bg-sakura text-on-accent' : 'border-line bg-surface text-ink-3'}`}>{s.jp}</span>
+              <span className={`inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-2 font-jp text-sm font-bold transition ${i < step ? 'border-edge bg-lavender text-on-accent' : i === step ? 'border-edge bg-sakura text-on-accent' : 'border-line bg-surface text-ink-3'}`}>{s.jp}</span>
               {i < STEPS.length - 1 && <span className={`h-1 flex-1 rounded-full ${i < step ? 'bg-lavender' : 'bg-line'}`} />}
             </div>
           ))}
@@ -105,10 +105,10 @@ export default function Onboarding() {
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_20rem]">
           <div>
-            <div key={step} className="fade-up">
+            <div key={step} className="">
               {!isLast ? (
                 <>
-                  <h1 className="font-manga text-3xl font-normal sm:text-4xl">{current.title}</h1>
+                  <h1 className="font-manga text-3xl font-bold sm:text-4xl">{current.title}</h1>
                   <p className="mt-2 mb-8 font-semibold text-ink-2">{current.sub}</p>
                   {current.key === 'ville' && <CityFields p={p} set={set} />}
                   {current.key === 'perso' && (
@@ -139,7 +139,7 @@ export default function Onboarding() {
               </button>
               <div className="flex gap-2">
                 {!isLast && current.optional && (
-                  <button className="rounded-full px-4 text-sm font-extrabold text-ink-2 hover:text-ink" onClick={skip}>Passer</button>
+                  <button className="rounded-full px-4 text-sm font-bold text-ink-2 hover:text-ink" onClick={skip}>Passer</button>
                 )}
                 {isLast ? (
                   <button className="btn-primary" onClick={finish}>Commencer l’aventure <Icon name="arrowRight" className="size-4" /></button>
@@ -153,8 +153,8 @@ export default function Onboarding() {
           {/* Live character card */}
           <aside className="hidden lg:block">
             <div className="sticky top-6">
-              <p className="eyebrow mb-3 flex items-center gap-2"><Sparkle className="size-4" /> Ta fiche se construit</p>
-              <CharacterCard user={preview} maxBadges={8} tilt={1.5} footer={p.interests.length === 0 ? <p className="text-xs font-semibold text-ink-3">Tes badges de passion apparaîtront ici.</p> : undefined} />
+              <p className="eyebrow mb-3 flex items-center gap-2">Ta fiche se construit</p>
+              <CharacterCard user={preview} maxBadges={8} footer={p.interests.length === 0 ? <p className="text-xs font-semibold text-ink-3">Tes badges de passion apparaîtront ici.</p> : undefined} />
             </div>
           </aside>
         </div>
@@ -166,7 +166,7 @@ export default function Onboarding() {
 function Summary({ p }: { p: Profile }) {
   return (
     <div>
-      <h1 className="font-manga text-3xl font-normal sm:text-4xl">Enchanté·e, {p.firstName} !</h1>
+      <h1 className="font-manga text-3xl font-bold sm:text-4xl">Enchanté·e, {p.firstName} !</h1>
       <p className="mt-2 mb-8 font-semibold text-ink-2">Voici ta fiche. Tu pourras tout modifier depuis ton profil.</p>
       <div className="mb-6 max-w-xs lg:hidden"><CharacterCard user={p} maxBadges={8} /></div>
       <dl className="card divide-y-2 divide-line">
@@ -174,11 +174,11 @@ function Summary({ p }: { p: Profile }) {
           ['Ville', `${p.city}${p.neighborhood ? ` · ${p.neighborhood}` : ''} · jusqu’à ${p.distanceKm} km`],
           ['Niveau', levelLabel(p.level)],
           ['Passions', p.interests.map(interestLabel).join(', ')],
-          ['Ambiances', (p.energy.length ? p.energy : ['social', 'calme']).map((e) => { const x = ENERGIES.find((y) => y.id === e); return x ? `${x.emoji} ${x.label}` : ''; }).join(', ')],
+          ['Ambiances', (p.energy.length ? p.energy : ['social', 'calme']).map((e) => { const x = ENERGIES.find((y) => y.id === e); return x ? x.label : ''; }).join(', ')],
           ['Langues', p.languages.join(', ') || '—'],
         ].map(([k, v]) => (
           <div key={k} className="grid gap-1 px-5 py-3.5 sm:grid-cols-[8rem_1fr]">
-            <dt className="text-sm font-black">{k}</dt>
+            <dt className="text-sm font-bold">{k}</dt>
             <dd className="text-sm font-semibold text-ink-2">{v}</dd>
           </div>
         ))}

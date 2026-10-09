@@ -68,8 +68,8 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-3xl space-y-10">
       <div>
-        <span className="sticker bg-surface text-sakura-deep"><span className="font-jp">設定</span> Compte</span>
-        <h1 className="mt-2 font-manga text-4xl font-normal md:text-5xl">Paramètres & sécurité</h1>
+        <span className="sticker bg-surface text-sakura-deep">Compte</span>
+        <h1 className="mt-2 font-manga text-4xl font-bold md:text-5xl">Paramètres & sécurité</h1>
         <nav className="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Sections">
           {[['confidentialite', 'Confidentialité'], ['connexions', 'Connexions'], ['blocages', 'Blocages & signalements'], ['charte', 'Charte'], ['securite', 'Conseils sécurité'], ['donnees', 'Mes données']].map(([id, l]) => (
             <a key={id} href={`#${id}`} className="chip border border-line bg-surface px-3 py-1.5 text-ink-2 hover:border-ink-3-3">{l}</a>

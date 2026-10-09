@@ -4,7 +4,7 @@ import { useApp } from '../store/AppContext';
 import { t } from '../i18n';
 import { timeAgo } from '../lib/format';
 import { Icon, type IconName } from './Icon';
-import { Avatar, Logo, Sparkle } from './ui';
+import { Avatar, Logo } from './ui';
 
 const MAIN_NAV: { to: string; label: string; icon: IconName; hint: string }[] = [
   { to: '/accueil', label: t('nav.home'), icon: 'home', hint: 'Ton tableau de bord' },
@@ -24,8 +24,7 @@ const MENU: { to: string; label: string; icon: IconName }[] = [
 
 export function DemoBanner() {
   return (
-    <div className="flex items-center justify-center gap-2 bg-night px-4 py-1.5 text-center text-[11px] font-bold tracking-wide text-on-night/80">
-      <Sparkle className="size-3 shrink-0" /> {t('demo.banner')}
+    <div className="flex items-center justify-center gap-2 bg-night px-4 py-1.5 text-center text-[11px] font-bold tracking-wide text-on-night/80"> {t('demo.banner')}
     </div>
   );
 }
@@ -63,14 +62,14 @@ function Notifications() {
         onClick={() => setOpen((o) => !o)}
       >
         <Icon name="bell" />
-        {unread > 0 && <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full border border-edge bg-sakura text-[10px] font-black text-on-accent">{unread}</span>}
+        {unread > 0 && <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full border border-edge bg-sakura text-[10px] font-bold text-on-accent">{unread}</span>}
       </button>
       {open && (
         <div className={`${popover} w-[min(22rem,calc(100vw-2rem))]`} style={popShadow}>
           <div className="flex items-center justify-between border-b border-edge bg-sakura-soft px-4 py-3">
-            <p className="font-display font-black">{t('nav.notifications')}</p>
+            <p className="font-display font-bold">{t('nav.notifications')}</p>
             {unread > 0 && (
-              <button className="text-xs font-extrabold text-lav-deep" onClick={() => dispatch({ type: 'markNotificationsRead' })}>
+              <button className="text-xs font-bold text-lav-deep" onClick={() => dispatch({ type: 'markNotificationsRead' })}>
                 Tout marquer comme lu
               </button>
             )}
@@ -119,7 +118,7 @@ function UserMenu() {
           <div className="flex items-center gap-3 px-4 pt-1 pb-3">
             <Avatar user={me} size="md" />
             <div className="min-w-0">
-              <p className="truncate font-display font-black">{me?.firstName}</p>
+              <p className="truncate font-display font-bold">{me?.firstName}</p>
               {me?.title && <p className="truncate text-xs text-ink-3">{me.title}</p>}
             </div>
           </div>
@@ -165,7 +164,7 @@ export function AppLayout() {
                 key={n.to}
                 to={n.to}
                 title={n.hint}
-                className={({ isActive }) => `inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-extrabold transition ${isActive ? 'bg-sakura text-on-accent' : 'text-ink-2 hover:bg-sakura-pale hover:text-ink'}`}
+                className={({ isActive }) => `inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-bold transition ${isActive ? 'bg-sakura text-on-accent' : 'text-ink-2 hover:bg-sakura-pale hover:text-ink'}`}
               >
                 <Icon name={n.icon} className="size-4" />
                 {n.label}
@@ -184,7 +183,7 @@ export function AppLayout() {
       <main className="mx-auto max-w-6xl px-4 py-6 md:py-10">
         <Outlet />
       </main>
-      <footer className="mx-auto hidden max-w-6xl border-t-2 border-dashed border-line px-4 py-8 text-xs font-semibold text-ink-3 md:flex md:justify-between">
+      <footer className="mx-auto hidden max-w-6xl border-t border-line px-4 py-8 text-xs font-semibold text-ink-3 md:flex md:justify-between">
         <span>Kizuna · prototype étudiant · Lyon · illustrations originales</span>
         <span className="flex gap-4">
           <Link to="/parametres#charte" className="hover:text-ink">Code de la guilde</Link>
@@ -197,7 +196,7 @@ export function AppLayout() {
             <NavLink
               key={n.to}
               to={n.to}
-              className={({ isActive }) => `flex flex-col items-center gap-0.5 rounded-2xl py-2 text-[11px] font-extrabold transition ${isActive ? 'bg-sakura-soft text-sakura-deep' : 'text-ink-3'}`}
+              className={({ isActive }) => `flex flex-col items-center gap-0.5 rounded-2xl py-2 text-[11px] font-bold transition ${isActive ? 'bg-sakura-soft text-sakura-deep' : 'text-ink-3'}`}
             >
               <Icon name={n.icon} className="size-[22px]" strokeWidth={2} />
               {n.label}
