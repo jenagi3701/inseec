@@ -85,7 +85,7 @@ function Detail({ id }: { id: string }) {
   };
 
   return (
-    <div>
+    <div className="pb-20 lg:pb-0">
       <button onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-extrabold text-ink-2 hover:bg-white hover:text-ink">
         <Icon name="arrowLeft" className="size-4" /> Retour
       </button>
@@ -161,7 +161,7 @@ function Detail({ id }: { id: string }) {
               <Info icon="chat" label="Langue">{activity.language}</Info>
               <Info icon="repeat" label="Rythme">{recurrenceLabel(activity.recurrence)}{community && <><br /><span className="font-normal text-ink-3">{community.rhythm}</span></>}</Info>
             </div>
-            <div className="mt-6 flex items-center gap-4 rounded-2xl border-2 border-ink bg-sakura-pale p-4">
+            <div className="mt-6 flex flex-col items-start gap-4 rounded-2xl border-2 border-ink bg-sakura-pale p-4 sm:flex-row sm:items-center">
               <Avatar user={organizer} size="lg" />
               <div className="min-w-0 flex-1 text-sm">
                 <p className="text-[11px] font-black tracking-wider text-sakura-deep uppercase">Guide de la quête</p>
@@ -310,6 +310,22 @@ function Detail({ id }: { id: string }) {
         </aside>
       </div>
 
+      {/* Mobile: keep the main action reachable without scrolling to the sidebar */}
+      {!past && (
+        <div className="fixed inset-x-3 bottom-[5.25rem] z-30 flex items-center justify-between gap-3 rounded-2xl border-2 border-ink bg-white px-4 py-2.5 lg:hidden" style={{ boxShadow: '4px 4px 0 0 #2b2440' }}>
+          <div className="min-w-0">
+            <p className="font-manga text-lg leading-none">{formatPrice(activity.priceMin, activity.priceMax)}</p>
+            <p className={`text-xs font-black ${spots <= 2 ? 'text-sakura-deep' : 'text-matcha'}`}>{joined ? 'Ta place est réservée' : spots > 0 ? `${spots} place${spots > 1 ? 's' : ''} libre${spots > 1 ? 's' : ''}` : 'Équipe complète'}</p>
+          </div>
+          {joined ? (
+            <span className="sticker shrink-0 bg-matcha-soft text-matcha"><Icon name="check" className="size-3.5" /> Inscrit·e</span>
+          ) : full ? (
+            <span className="sticker shrink-0 bg-cream-2 text-ink-3">Complet</span>
+          ) : (
+            <button className="btn-primary btn-sm shrink-0 px-4 py-2 text-sm" onClick={join} aria-label="Rejoindre l’équipe (barre mobile)">Rejoindre</button>
+          )}
+        </div>
+      )}
       {guidelinesModal}
       <Modal open={confirmLeave} onClose={() => setConfirmLeave(false)} title="Quitter l’équipe ?">
         <p className="text-sm font-semibold text-ink-2">Ta place sera libérée pour quelqu’un d’autre. Pas de souci, ça arrive : l’équipe sera prévenue sans détail.</p>

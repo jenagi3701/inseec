@@ -34,8 +34,10 @@ export default function Signup() {
       <DemoBanner />
       <div className="mx-auto grid min-h-[calc(100dvh-28px)] max-w-6xl md:grid-cols-2">
         <div className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[2rem] border-2 border-ink p-10 md:flex" style={{ boxShadow: '6px 6px 0 0 #2b2440' }}>
-          <Scene scene="street" time="soir" seed="signup" className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/30 to-ink/80" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#2b2440] via-[#3e3a6e] to-[#6c5ca8]" aria-hidden="true" />
+          <div className="screentone absolute inset-0 text-white opacity-[0.06]" aria-hidden="true" />
+          <Scene scene="street" time="soir" seed="signup" className="absolute inset-x-0 bottom-0 aspect-[400/220] h-auto w-full" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent" aria-hidden="true" />
           <Link to="/" className="relative"><Logo light /></Link>
           <div className="relative text-cream">
             <div className="mb-6 flex -space-x-3">

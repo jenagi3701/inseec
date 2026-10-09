@@ -41,7 +41,7 @@ export function Agenda() {
           <div className="space-y-8">
             {groupByDay(mine).map((day) => (
               <section key={day[0].startsAt}>
-                <h2 className="mb-3 font-sans text-sm font-black tracking-wide text-ink-2 capitalize">{relativeDay(day[0].startsAt)} · {formatDay(day[0].startsAt)}</h2>
+                <h2 className="mb-3 font-sans text-sm font-black tracking-wide text-ink-2">{relativeDay(day[0].startsAt)} · {formatDay(day[0].startsAt)}</h2>
                 <div className="space-y-3">
                   {day.map((a) => {
                     const rec = recommendFor(a);
@@ -49,8 +49,8 @@ export function Agenda() {
                     return (
                       <Link key={a.id} to={`/activites/${a.id}`} className="card hover-lift flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
                         <DateTicket iso={a.startsAt} />
-                        <div className="w-14 shrink-0 text-center">
-                          <p className="font-manga text-lg">{formatTime(a.startsAt).replace(' h ', 'h')}</p>
+                        <div className="w-16 shrink-0 text-center">
+                          <p className="font-manga text-base">{formatTime(a.startsAt).replace(' h ', 'h')}</p>
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="flex items-center gap-2 font-display font-black"><CategoryDot id={a.categoryId} /> <span className="truncate">{a.title}</span></p>
